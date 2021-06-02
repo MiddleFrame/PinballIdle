@@ -1,15 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FlipperController : MonoBehaviour
 {
-    public bool isFlipper { get; set; }
+    public bool IsFlipper { get; set; }
     HingeJoint2D hj;
+    
+ 
+   
+    float y;
+
     private void Start()
     {
 
         hj = GetComponent<HingeJoint2D>();
+      
       
        
     }
@@ -17,7 +24,9 @@ public class FlipperController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isFlipper)
+        
+
+        if (IsFlipper)
         {
             hj.useMotor = true;
             /* var motor = hj.motor;
@@ -34,4 +43,18 @@ public class FlipperController : MonoBehaviour
                hj.motor = motor;*/
         }
     }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(GameManager.automod && other.tag == "Player")
+        IsFlipper = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (GameManager.automod && collision.tag == "Player")
+            IsFlipper = false;
+    }
+
+
+    
 }

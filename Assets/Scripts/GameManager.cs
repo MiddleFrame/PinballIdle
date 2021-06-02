@@ -7,27 +7,36 @@ using System.IO;
 public class GameManager : MonoBehaviour
 {
     public Text pointSum;
+    public GameObject panelLeft;
+    public GameObject panelRight;
     static public int Point = 0;
-    static public int PointSum;
-
+    static public long PointSum;
+    static public bool automod=false;
     [Serializable]
     class SaveData
     {
-        public int PointSum;
+        public long PointSum;
     }
     private void Start()
     {
         LoadGame();
         
     }
+    private void Awake()
+    {
+        LoadGame();
+
+    }
 
     void SaveGame()
     {
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath
-          + "/MySaveData.dat");
-        SaveData data = new SaveData();
-        data.PointSum = PointSum;
+          + "/Save.dat");
+        SaveData data = new SaveData
+        {
+            PointSum = PointSum
+        };
         bf.Serialize(file, data);
         file.Close();
 
@@ -36,16 +45,16 @@ public class GameManager : MonoBehaviour
     void LoadGame()
     {
         if (File.Exists(Application.persistentDataPath
-          + "/MySaveData.dat"))
+          + "/Save.dat"))
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file =
               File.Open(Application.persistentDataPath
-              + "/MySaveData.dat", FileMode.Open);
+              + "/Save.dat", FileMode.Open);
             SaveData data = (SaveData)bf.Deserialize(file);
             file.Close();
             PointSum = data.PointSum;
-            pointSum.text = ""+PointSum;
+            pointSum.text = LetsScript.NormalSum();
 
         }
     }
@@ -56,5 +65,13 @@ public class GameManager : MonoBehaviour
             SaveGame();
         else
             LoadGame();
+    }
+
+    public void Button6()
+    {
+        panelLeft.SetActive(automod);
+        panelRight.SetActive(automod);
+
+        automod = !automod;
     }
 }
