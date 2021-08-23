@@ -26,8 +26,10 @@ public class GameManager : MonoBehaviour
     public Text CostResetText;
    // public Text PointAfkText;
     public TimeSpan date;
+    public Text time;
     Color mycolor;
    public GameObject buttonBuyAutomod;
+    public GameObject x2bonus;
     public GameObject BackPanel;
     public HingeJoint2D hj1;
     public GameObject textError;
@@ -85,84 +87,134 @@ public class GameManager : MonoBehaviour
     void SaveGame()
     {
         PlayerPrefs.SetString("LeaveDate", DateTime.Now.ToString());
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath
-          + "/Save.dat");
-        FileStream file1 = File.Create(Application.persistentDataPath
-          + "/Quest.dat");
-        SaveData data = new SaveData
-        {
-            PointSum = PointSum,
-            isBuyAutomod = Automod_slider.activeSelf,
-            CostOfGrade = StandartBuff.CostOnGrade,
-            CostOfAfk = AfkBuff.CostOnGrade,
-            PointOnBit = StandartBuff.pointOnBit,
-            PointOnAfk = AfkBuff.pointOnBit,
-            CountBall = Teleport.i,
-            MaximumPoint=maximumPoint
-        };
-        SaveQuest data1 = new SaveQuest
-        {
-            QuestCompleate = new bool[10]
-        };
+        //BinaryFormatter bf = new BinaryFormatter();
+        //FileStream file = File.Create(Application.persistentDataPath
+         // + "/Save.dat");
+       // FileStream file1 = File.Create(Application.persistentDataPath
+       //   + "/Quest.dat");
+        //SaveData data = new SaveData
+        //{
+        //    PointSum = PointSum,
+        //    isBuyAutomod = Automod_slider.activeSelf,
+        //    CostOfGrade = StandartBuff.CostOnGrade,
+        //    CostOfAfk = AfkBuff.CostOnGrade,
+        //    PointOnBit = StandartBuff.pointOnBit,
+        //    PointOnAfk = AfkBuff.pointOnBit,
+        //    CountBall = Teleport.i,
+        //    MaximumPoint=maximumPoint
+        //};
+        PlayerPrefs.SetString("PointSum", PointSum.ToString());
+        PlayerPrefs.SetString("isBuyAutomod", Automod_slider.activeSelf.ToString());
+        PlayerPrefs.SetInt("CostOfGrade", StandartBuff.CostOnGrade);
+     PlayerPrefs.SetInt("CostOfAfk", AfkBuff.CostOnGrade);
+        PlayerPrefs.SetInt("PointOnBit", StandartBuff.pointOnBit);
+        PlayerPrefs.SetInt("PointOnAfk", AfkBuff.pointOnBit);
+        PlayerPrefs.SetInt("CountBall", Teleport.i);
+        PlayerPrefs.SetInt("MaximumPoint", maximumPoint);
+    //SaveQuest data1 = new SaveQuest
+    //    {
+    //        QuestCompleate = new bool[10]
+    //    };
         for (int j=0; j < 10; j++)
         {
-            data1.QuestCompleate[j] = QuestManager.QuestsCompleate[j];
+            PlayerPrefs.SetString($"QuestCompleate[{j}]", QuestManager.QuestsCompleate[j].ToString());
         }
-        bf.Serialize(file, data);
-        bf.Serialize(file1, data1);
-        file.Close();
-        file1.Close();
+        //bf.Serialize(file, data);
+        //bf.Serialize(file1, data1);
+        //file.Close();
+        //file1.Close();
 
     }
 
     void LoadGame()
     {
-        if (File.Exists(Application.persistentDataPath
-          + "/Save.dat"))
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file =
-              File.Open(Application.persistentDataPath
-              + "/Save.dat", FileMode.Open);
-            FileStream file1 =
-             File.Open(Application.persistentDataPath
-             + "/Quest.dat", FileMode.Open);
-            SaveData data = (SaveData)bf.Deserialize(file);
-            SaveQuest data1 = (SaveQuest)bf.Deserialize(file);
-            file.Close();
-            file1.Close();
-            PointSum = data.PointSum;
-            StandartBuff.CostOnGrade = data.CostOfGrade;
-            AfkBuff.CostOnGrade = data.CostOfAfk;
-            StandartBuff.pointOnBit = data.PointOnBit;
-            AfkBuff.pointOnBit = data.PointOnAfk;
-            Teleport.i = data.CountBall;
-            maximumPoint = data.MaximumPoint;
-            CostReset = 20000 + Teleport.i * 50000;
-            CostResetText.text = LetsScript.NormalSum(CostReset);
-            for (int j = 0; j < 10; j++)
-            {
-                QuestManager.QuestsCompleate[j] = data1.QuestCompleate[j];
-            }
-            if (Teleport.i == 5)
-            {
-                CostReset = int.MaxValue;
-                CostResetText.text = "Max";
-            }
+       // if (File.Exists(Application.persistentDataPath
+       //   + "/Save.dat"))
+       // {
+            //BinaryFormatter bf = new BinaryFormatter();
+            //FileStream file =
+            //  File.Open(Application.persistentDataPath
+            //  + "/Save.dat", FileMode.Open);
+            //FileStream file1 =
+            // File.Open(Application.persistentDataPath
+            // + "/Quest.dat", FileMode.Open);
+            //SaveData data = (SaveData)bf.Deserialize(file);
+            //SaveQuest data1 = (SaveQuest)bf.Deserialize(file);
+            //file.Close();
+            //file1.Close();
+            //PointSum = data.PointSum;
+            //StandartBuff.CostOnGrade = data.CostOfGrade;
+            //AfkBuff.CostOnGrade = data.CostOfAfk;
+            //StandartBuff.pointOnBit = data.PointOnBit;
+            //AfkBuff.pointOnBit = data.PointOnAfk;
+            //Teleport.i = data.CountBall;
+            //maximumPoint = data.MaximumPoint;
+            
+            
+          
        
-            Automod_slider.SetActive(data.isBuyAutomod);
-            buttonBuyAutomod.SetActive(!data.isBuyAutomod);
-            if(data.isBuyAutomod)
-                Auto_flipper_text.text = "Auto-flippers";
+            
+            //if(data.isBuyAutomod)
+            //    Auto_flipper_text.text = "Auto-flippers";
             
 
-        }
+       // }
         if (PlayerPrefs.HasKey("LeaveDate"))
         {
            date = DateTime.Now- DateTime.Parse(PlayerPrefs.GetString("LeaveDate"));
         }
+        if (PlayerPrefs.HasKey("PointSum"))
+        {
+            PointSum = long.Parse(PlayerPrefs.GetString("PointSum"));
 
+        }
+        if (PlayerPrefs.HasKey("isBuyAutomod"))
+        {
+           bool flag =  bool.Parse(PlayerPrefs.GetString("isBuyAutomod"));
+            if (flag)
+                Auto_flipper_text.text = "Auto-flippers";
+            Automod_slider.SetActive(flag);
+            buttonBuyAutomod.SetActive(!flag);
+        }
+        if (PlayerPrefs.HasKey("CostOfGrade"))
+        {
+            StandartBuff.CostOnGrade = PlayerPrefs.GetInt("CostOfGrade");
+        }
+        if (PlayerPrefs.HasKey("CostOfAfk"))
+        {
+            AfkBuff.CostOnGrade = PlayerPrefs.GetInt("CostOfAfk");
+        }
+        if (PlayerPrefs.HasKey("PointOnBit"))
+        {
+            StandartBuff.pointOnBit= PlayerPrefs.GetInt("PointOnBit");
+        }
+        if (PlayerPrefs.HasKey("PointOnAfk"))
+        {
+            AfkBuff.pointOnBit = PlayerPrefs.GetInt("PointOnAfk");
+        }
+        if (PlayerPrefs.HasKey("CountBall"))
+        {
+            Teleport.i = PlayerPrefs.GetInt("CountBall");
+        }
+        if (PlayerPrefs.HasKey("MaximumPoint"))
+        {
+            maximumPoint = PlayerPrefs.GetInt("MaximumPoint");
+        }
+        if (PlayerPrefs.HasKey("QuestCompleate[0]"))
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                QuestManager.QuestsCompleate[j] = bool.Parse(PlayerPrefs.GetString($"QuestCompleate[{j}]"));
+            }
+        }
+        CostReset = 20000 + Teleport.i * 50000;
+        CostResetText.text = LetsScript.NormalSum(CostReset);
+
+        if (Teleport.i == 5)
+        {
+            CostReset = int.MaxValue;
+            CostResetText.text = "Max";
+        }
     }
 
     private void OnApplicationPause(bool pause)
@@ -523,11 +575,66 @@ public class GameManager : MonoBehaviour
 
     public void AcceptNewGame()
     {
+        CostReset = 20000;
+        CostResetText.text = LetsScript.NormalSum(CostReset);
         Teleport.i = 0;
-        PointSum = CostReset;
-        ResetAll();
-        Teleport.i = 0;
+        StandartBuff.pointOnBit = 1;
+        AfkBuff.pointOnBit = 1;
+        StandartBuff.CostOnGrade = 100;
+        AfkBuff.CostOnGrade = 100;
+        StandartCost.text = LetsScript.NormalSum(StandartBuff.CostOnGrade);
+        StandartAfkCost.text = LetsScript.NormalSum(AfkBuff.CostOnGrade);
+        Point = 0;
+        PointSum = 0;
+        pointSum.text = LetsScript.NormalSum(GameManager.PointSum);
+        point.text = "" + 0;
+        Auto_flipper_text.text = "Buy auto-flippers";
+        Automod_slider.SetActive(false);
+        buttonBuyAutomod.SetActive(true);
+        automod = false;
+        PointBuffText.text = StandartBuff.pointOnBit + "→" + (StandartBuff.pointOnBit + 1);
+        PointBuffAfkText.text = AfkBuff.pointOnBit + "→" + (AfkBuff.pointOnBit + 1);
         for (int j = 1; j < 6; j++)
             Teleport.mainballsstatic[j].SetActive(false);
+        for (int j = 0; j < QuestManager.QuestsCompleate.Length; j++)
+        {
+            if(j<2)
+                QuestManager.QuestsCompleate[j] = false;
+            else
+                QuestManager.QuestsCompleate[j] = true;
+        }
+    }
+
+
+    public void Doreward()
+    {
+        if (Advertisement.IsReady())
+        {
+            x2bonus.SetActive(false);
+
+            Advertisement.Show("Rewarded_Android");
+            int variabled = StandartBuff.pointOnBit;
+            StandartBuff.pointOnBit *= 2;
+            StartCoroutine(TimeBuff(variabled));
+            StartCoroutine(ShowButton());
+            
+
+        }
+    }
+    IEnumerator ShowButton()
+    {
+        yield return new WaitForSeconds(60f);
+        x2bonus.SetActive(true);
+    }
+    IEnumerator TimeBuff(int were)
+    {
+
+        for (int i = 30; i > 0; i--)
+        {
+            (time).text = i.ToString();
+            yield return new WaitForSeconds(1f);
+        }
+        time.text = "";
+        StandartBuff.pointOnBit -= were;
     }
 }
