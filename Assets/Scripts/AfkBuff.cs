@@ -5,7 +5,7 @@ using UnityEngine;
 public class AfkBuff : MonoBehaviour
 {
     // Start is called before the first frame update
-    static public int pointOnBit = 0;
+    static public int pointOnBit = 1;
     static public int CostOnGrade = 100;
 
     

@@ -9,8 +9,9 @@ public class FlipperController : MonoBehaviour
     HingeJoint2D hj;
     CircleCollider2D cc2d;
     int flag = 1;
-   
-   
+    public AudioSource As;
+    public AudioClip Ac;
+
 
     private void Start()
     {
@@ -21,6 +22,11 @@ public class FlipperController : MonoBehaviour
        
     }
 
+    public void Audio()
+    {
+        As.PlayOneShot(Ac);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -29,6 +35,7 @@ public class FlipperController : MonoBehaviour
         if (IsFlipper)
         {
             hj.useMotor = true;
+           
             /* var motor = hj.motor;
               motor.motorSpeed = 2000f;
               hj.motor = motor;*/
