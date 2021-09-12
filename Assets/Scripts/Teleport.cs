@@ -9,7 +9,8 @@ public class Teleport : MonoBehaviour
     public static GameObject SpawnPoint;
     public static GameObject[] mainballsstatic= new GameObject[6];
     public  GameObject[] mainballs;
-
+    public Text PointQuest1;
+    public Text TimeQuest2;
     public Text point;
     public float angle=0.2f;
     public float speed;
@@ -45,8 +46,26 @@ public class Teleport : MonoBehaviour
                 break;
             else if (j == 5)
             {
-                GameManager.Point = 0;
-                point.text = "" + 0;
+                if (!GameManager.isQuestStarted)
+                {
+                    GameManager.Point = 0;
+                    point.text = "" + 0;
+                }
+                else if (GameManager.NumberQuest == 0)
+                {
+                    PointQuest1.text = 0 + "\\30";
+                    GameManager.quest1point = 0;
+                }
+                else if (GameManager.NumberQuest == 1)
+                {
+                    TimeQuest2.text = "30";
+                    GameManager.timeQuest = 30;
+                }
+                else if (GameManager.NumberQuest == 2 || GameManager.NumberQuest == 3|| GameManager.NumberQuest == 4)
+                {
+                    PointQuest1.text = 0 + "\\20";
+                    GameManager.quest1point = 0;
+                }
                 StartCoroutine(Spawn());
             }
         }

@@ -24,9 +24,12 @@ public class Checker : MonoBehaviour
         {
             if (timeChangeColor > 0.1f)
                 timeChangeColor -= Time.deltaTime;
-            if (timeChangeColor <= 0.1f && sr.color != Color.white)
+            if (timeChangeColor <= 0.1f && (sr.color != Color.white || sr.color != new Color32(0x0E, 0x43, 0x60, 0xFF)))
             {
                 timeChangeColor = 0f;
+                if (GameManager.DarkTheme)
+                    sr.color = new Color32(0x0E, 0x43, 0x60, 0xFF);
+                else
                 sr.color = Color.white;
             }
         }
@@ -42,7 +45,7 @@ public class Checker : MonoBehaviour
             timeChangeColor += 1.5f;
             for (int i = 0; i < 5; i++)
             {
-                if (Sr[i].color == Color.white)
+                if (Sr[i].color == Color.white || Sr[i].color == new Color32(0x0E, 0x43, 0x60, 0xFF))
                     break;
                 if (i == 4)
                 {
@@ -60,7 +63,11 @@ public class Checker : MonoBehaviour
     {
         for (int i = 0; i < 5; i++)
         {
+            if(GameManager.DarkTheme)
+                Sr[i].color = new Color32(0x0E, 0x43, 0x60, 0xFF);
+            else
             Sr[i].color = Color.white;
+           
             StartCoroutine(_blind(Sr[i]));
 
         }
@@ -71,7 +78,10 @@ public class Checker : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         sr.color = new Color32(0xFF, 0xC9, 0x45, 0xFF);
         yield return new WaitForSeconds(0.5f);
-        sr.color = Color.white;
+        if (GameManager.DarkTheme)
+           sr.color = new Color32(0x0E, 0x43, 0x60, 0xFF);
+        else
+           sr.color = Color.white;
         StartCoroutine(_Stopper());
         StartCoroutine(_Cooldown());
     }

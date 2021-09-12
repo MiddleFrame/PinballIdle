@@ -9,7 +9,7 @@ public class QuestManager : MonoBehaviour
     public Text[] QuestsTexts;
     public Text[] ProgressQuestsTexts;
    static public Text[] StaticProgressQuestsTexts = new Text[10];
-    static public bool[] QuestsCompleate = new bool[10] { false, false,true,true,true,true,true,true,true,true };
+    static public bool[] QuestsCompleate = new bool[5] { false, false,false,false,false };
     // Start is called before the first frame update
     void Awake()
     {
@@ -20,26 +20,5 @@ public class QuestManager : MonoBehaviour
 
     }
 
-    static public void Updates()
-    {
-
-        if (GameManager.maximumPoint <= Quest0Challenge)
-            StaticProgressQuestsTexts[0].text = $"{GameManager.maximumPoint}/{Quest0Challenge}";
-        else
-        {
-            StaticProgressQuestsTexts[0].text = $"{Quest0Challenge}/{Quest0Challenge}";
-            StaticProgressQuestsTexts[0].color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
-            QuestsCompleate[0] = true;
-        }
-    }
-
-    static public void Quest2()
-    {
-        if (Teleport.i == 0)
-        {
-            StaticProgressQuestsTexts[1].color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
-            StaticProgressQuestsTexts[1].text = "20/20";
-            QuestsCompleate[1] = true;
-        }
-    }
+   
 }
