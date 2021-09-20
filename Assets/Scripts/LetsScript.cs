@@ -6,6 +6,7 @@ using System;
 
 public class LetsScript : MonoBehaviour
 {
+    
     public Text MaxPoint;
     public Text lvltext;
     public Text lvlbuff;
@@ -30,6 +31,7 @@ public class LetsScript : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
+       // Handheld.Vibrate();
         As.PlayOneShot(Ac);
         if (!GameManager.isQuestStarted)
         {
@@ -46,6 +48,7 @@ public class LetsScript : MonoBehaviour
             if (hitneeded==0)
             {
                 GameManager.lvl++;
+                Gm.LvlUpGems();
                 hitneeded = 500 * GameManager.lvl;
                 lvltext.text = $" level - {GameManager.lvl}";
                 lvlbuff.text = $"x{GameManager.lvl}";

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Teleport : MonoBehaviour
 {
+    public GameObject centerSpawn;
     public GameObject spawnPoint;
     public static GameObject SpawnPoint;
     public static GameObject[] mainballsstatic= new GameObject[6];
@@ -30,8 +31,8 @@ public class Teleport : MonoBehaviour
     {
         angle += a*Time.deltaTime; 
 
-        var x = Mathf.Cos(angle * speed) * radius+0;
-        var y = Mathf.Sin(angle * speed) * radius+1.95f;
+        var x = Mathf.Cos(angle * speed) * radius+centerSpawn.transform.position.x;
+        var y = Mathf.Sin(angle * speed) * radius+centerSpawn.transform.position.y;
         spawnPoint.transform.position = new Vector2(x, y);
         if ((x < -1.35f && a>0)|| (x>1.35f&& a<0))
             a = -a;

@@ -9,6 +9,32 @@ using UnityEditor;
 public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListener, IUnityAdsLoadListener
 {
     //\
+    public Image[] MiniField;
+    public Sprite[] MiniFieldDark;
+    public GameObject[] Arrows;
+    public GameObject[] PanelBackGround;
+    public GameObject[] Handlles;
+    int lvlNeeded = 3;
+    public GameObject ButtonRelive;
+    public GameObject LevelNeedToReliveText;
+    public Text ReliveText;
+    public Text Gems;
+    public Sprite MaxBuff;
+    public Image StopperCooldown;
+    public Image StopperTime;
+    public Sprite NumberOn;
+    public Sprite NumberOff;
+    public Image Number;
+    public Sprite DarkOn;
+    public Sprite DarkOff;
+    public Image Dark;
+    public Sprite LvlTextOn;
+    public Sprite LvlTextOff;
+    public Image LvlText;
+    public Sprite SoundOn;
+    public Sprite SoundOff;
+    public Image Sound;
+    public GameObject ProgressBarGM;
     public GameObject[] BottonSkin;
     public SpriteRenderer spawnPoint;
     public Sprite spawnPointDefault;
@@ -21,6 +47,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public GameObject Phone;
     public GameObject ProgressBarBackground;
     public Image DarkThemeImage;
+    public Text GemText;
     public LetsScript let;
     public static bool DarkTheme = false;
     static public int lvl=1;
@@ -28,7 +55,6 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public Text lvlbuff;
     public Image lvlImage;
     public Image ProgressBar;
-    private float speed = 3f;
     public long POintSpent = 0;
     public Camera MainCamera;
     public Sprite DefaultLock;
@@ -46,6 +72,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public GameObject[] BuyBallButtons = new GameObject[5];
     public Text PointQuest1;
     static public int quest1point=0;
+    public static int gems=0;
     public GameObject StopButton;
     public GameObject QuestPanel;
     public GameObject BottonPanel;
@@ -165,26 +192,12 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers+0.75);
         StopperCooldownText.text = Checker.coldownStopper-3 + "→" + (Checker.coldownStopper -3 - 0.75);
         PointBuffAfkText.text = AfkBuff.pointOnBit + "→" + (AfkBuff.pointOnBit + 1);
-        if (AudioListener.volume == 0)
-        {
-
-            if (SoundImage.color != Color.red)
-            {
-                SoundImage.color = Color.red;
-                
-            }
-        }
-        if (!ExNum)
-        {
-
-            TextNum.color = Color.red;
-          
-        }
 
     }
 
     void SaveGame()
     {
+        PlayerPrefs.SetInt("Gems", gems);
         PlayerPrefs.SetString("LeaveDate", DateTime.Now.ToString());
         PlayerPrefs.SetString("DarkTheme", DarkTheme.ToString());
         PlayerPrefs.SetString("PointSum", PointSum.ToString());
@@ -215,24 +228,29 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PlayerPrefs.SetString($"BuyBallButtons[{j}]", BuyBallButtons[j].activeSelf.ToString());
         }
        
-        if (PlayerPrefs.HasKey("reward"))
+        if (PlayerPrefs.HasKey("Reward"))
         {
-            if(bool.Parse(PlayerPrefs.GetString("reward")))
+            if(bool.Parse(PlayerPrefs.GetString("Reward")))
             PlayerPrefs.SetInt("RewardPoints", (int)Math.Floor((date).TotalMinutes));
         }
     }
     private void Update()
     {
-       
+       /*
         if (isQuestStarted)
             BottonPanel.transform.position = Vector3.MoveTowards(BottonPanel.transform.position, EndPointBottonPanel.transform.position, speed * Time.deltaTime);
         else if (!isQuestStarted)
             BottonPanel.transform.position = Vector3.MoveTowards(BottonPanel.transform.position, StartPointBottonPanel.transform.position, speed * Time.deltaTime);
-
+            */
     }
     void LoadGame()
     {
-
+        if (PlayerPrefs.HasKey("Gems"))
+        {
+            gems = PlayerPrefs.GetInt("Gems");
+            Gems.text = $"{gems} ";
+            LvlUpGems();
+        }
         if (PlayerPrefs.HasKey("DarkTheme"))
         {
             if (bool.Parse(PlayerPrefs.GetString("DarkTheme")))
@@ -241,34 +259,29 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 EnableDisableDark();
             }
         }
-        if (PlayerPrefs.HasKey("reward"))
+        if (PlayerPrefs.HasKey("Reward"))
         {
-            Reward = bool.Parse(PlayerPrefs.GetString("reward"));
+            Reward = bool.Parse(PlayerPrefs.GetString("Reward"));
+            if(Reward)
             AfkPoints.text = PlayerPrefs.GetInt("RewardPoints")+"";
         }
         if (PlayerPrefs.HasKey("ExNum"))
         {
-            ExNum = bool.Parse(PlayerPrefs.GetString("ExNum"));
-            if (ExNum)
-            {
-                ExNum = false;
-                ExNum1(TextNum);
-               
+            if (bool.Parse(PlayerPrefs.GetString("ExNum")))
+            {   
+                ExNum1();
             }
         }
         if (PlayerPrefs.HasKey("Sound"))
         {
-            AudioListener.volume = float.Parse(PlayerPrefs.GetString("Sound"));
-            if(AudioListener.volume < 0.9f)
-            {
-                SoundImage.color = Color.red;
-                SoundImage.GetComponent<RectTransform>().localScale = new Vector2(-SoundImage.GetComponent<RectTransform>().localScale.x, SoundImage.GetComponent<RectTransform>().localScale.y);
-            }
+           if( float.Parse(PlayerPrefs.GetString("Sound"))<1)
+            Sounds();
         }
         if (PlayerPrefs.HasKey("LeaveDate") )
         {
-           if (ButtonPick.activeSelf)
-           date = DateTime.Now- DateTime.Parse(PlayerPrefs.GetString("LeaveDate"));
+            if(!Reward)
+                if (ButtonPick.activeSelf)
+                     date = DateTime.Now- DateTime.Parse(PlayerPrefs.GetString("LeaveDate"));
         }
         if (PlayerPrefs.HasKey("PointSum"))
         {
@@ -323,15 +336,29 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (PlayerPrefs.HasKey("TimeStoppers"))
         {
-            Checker.TimeStoppers = PlayerPrefs.GetFloat("TimeStoppers");
+          
+                Checker.TimeStoppers = PlayerPrefs.GetFloat("TimeStoppers");
+            if (Checker.TimeStoppers >= 5)
+            {
+                Checker.costOnGrade = 0;
+                StopperBuff();
+            }
         }
         if(PlayerPrefs.HasKey("coldownStopper"))
         {
             Checker.coldownStopper = PlayerPrefs.GetFloat("coldownStopper");
+            if (Checker.coldownStopper <= 6)
+            {
+                Checker.costOnCooldown = 0;
+                StopperBuffCooldown();
+            }
         }
         if(PlayerPrefs.HasKey("costStopper"))
         {
-            Checker.costOnGrade=long.Parse( PlayerPrefs.GetString("costStopper" ));
+            if (Checker.TimeStoppers < 5)
+                Checker.costOnGrade = long.Parse(PlayerPrefs.GetString("costStopper"));
+            else
+                Checker.costOnGrade = 0;
         }
         if (PlayerPrefs.HasKey("PointSent"))
         {
@@ -342,8 +369,10 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             SumSent.text = $"Total points spent:     0";
         if (PlayerPrefs.HasKey("costColdownStopper"))
         {
-           
-           Checker.costOnCooldown=long.Parse(PlayerPrefs.GetString("costColdownStopper"));
+            if (Checker.coldownStopper > 6)
+                Checker.costOnCooldown = long.Parse(PlayerPrefs.GetString("costColdownStopper"));
+            else
+                Checker.costOnCooldown = 0;
         }
         if (PlayerPrefs.HasKey("QuestNewCompleate[0]"))
         {
@@ -373,10 +402,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (PlayerPrefs.HasKey("TextView"))
         {
-            bool flag = bool.Parse(PlayerPrefs.GetString("TextView"));
-            if (!flag)
+           
+            if (!bool.Parse(PlayerPrefs.GetString("TextView")))
             {
-               
                 LvltextView();
             }
         }
@@ -390,7 +418,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 _buyStopper();
     
     }
-
+    private void OnApplicationQuit()
+    {
+        PlayerPrefs.SetString("reward", false.ToString());
+    }
+    private void OnApplicationFocus(bool focus)
+    {
+        OnApplicationPause(!focus);
+    }
     private void OnApplicationPause(bool pause)
     {
         if (pause) {
@@ -409,7 +444,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointBuffAfkText.text = AfkBuff.pointOnBit + "→" + (AfkBuff.pointOnBit + 1);
             StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers + 0.75);
             StopperCooldownText.text = Checker.coldownStopper - 3 + "→" + (Checker.coldownStopper - 3 - 0.75);
-            PlayerPrefs.SetString("Reward", false.ToString());
+           
         }
     }
     public void QuestNumber(int i)
@@ -458,38 +493,48 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     }
 
-    public void Sounds(Image image)
+    public void Sounds()
     {
         if (AudioListener.volume == 1)
         {
-            image.color = Color.red;
             AudioListener.volume = 0;
+            Sound.sprite = SoundOff;
         }
         else
         {
 
-            image.color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
+            Sound.sprite = SoundOn;
             AudioListener.volume = 1;
         }
-        image.GetComponent<RectTransform>().localScale = new Vector2(-image.GetComponent<RectTransform>().localScale.x, image.GetComponent<RectTransform>().localScale.y);
+        
     }
 
     public void StopperBuff()
     {
         if (PointSum >= Checker.costOnGrade)
         {
-            PointSum -= Checker.costOnGrade;
-            POintSpent += Checker.costOnGrade;
-            SumSent.text = $"Total points spent:     {POintSpent}";
-            pointSum.text = NormalSum(GameManager.PointSum);
-            Checker.TimeStoppers += 0.75f;
-            Checker.costOnGrade = (long)(Checker.costOnGrade * 1.2f);
-            StopperCost.text = NormalSum(Checker.costOnGrade);
-            StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers + 0.75);
+            if (Checker.TimeStoppers < 5)
+            {
+                PointSum -= Checker.costOnGrade;
+                POintSpent += Checker.costOnGrade;
+                SumSent.text = $"Total points spent:     {POintSpent}";
+                pointSum.text = NormalSum(GameManager.PointSum);
+                Checker.TimeStoppers += 0.75f;
+                Checker.costOnGrade = (long)(Checker.costOnGrade * 1.2f);
+                StopperCost.text = NormalSum(Checker.costOnGrade);
+                StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers + 0.75);
+            }
+            if (Checker.TimeStoppers >= 5)
+            {
+                StopperTime.sprite = MaxBuff;
+                StopperText.text = Checker.TimeStoppers + "";
+                StopperCost.text = "MAX";
+            }
         }
         else
         {
             textError.SetActive(true);
+            Checker.costOnGrade = 0;
             StartCoroutine(ViewText(textError));
             StopCoroutine(ViewText(textError));
         }
@@ -500,14 +545,25 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     {
         if (PointSum >= Checker.costOnCooldown)
         {
-            PointSum -= Checker.costOnCooldown;
-            POintSpent += Checker.costOnCooldown;
-            SumSent.text = $"Total points spent:     {POintSpent}";
-            pointSum.text = NormalSum(GameManager.PointSum);
-            Checker.coldownStopper -= 0.75f;
-            Checker.costOnCooldown = (long)(Checker.costOnCooldown * 1.2f);
-            StopperCooldownCost.text = NormalSum(Checker.costOnCooldown);
-            StopperCooldownText.text = Checker.coldownStopper + "→" + (Checker.coldownStopper - 0.75);
+            if (Checker.coldownStopper > 6)
+            {
+                PointSum -= Checker.costOnCooldown;
+                POintSpent += Checker.costOnCooldown;
+                SumSent.text = $"Total points spent:     {POintSpent}";
+                pointSum.text = NormalSum(GameManager.PointSum);
+
+                Checker.coldownStopper -= 0.75f;
+                Checker.costOnCooldown = (long)(Checker.costOnCooldown * 1.2f);
+                StopperCooldownCost.text = NormalSum(Checker.costOnCooldown);
+                StopperCooldownText.text = Checker.coldownStopper + "→" + (Checker.coldownStopper - 0.75);
+            }
+            if (Checker.coldownStopper <= 6)
+            {
+                StopperCooldown.sprite = MaxBuff;
+                StopperCooldownText.text = Checker.coldownStopper+"";
+                Checker.costOnCooldown = 0;
+                StopperCooldownCost.text = "MAX";
+            }
         }
         else
         {
@@ -583,7 +639,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             {
             if (DarkTheme)
             {
-                button1.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
+                button1.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
             }
             else
                 button1.GetComponent<Image>().color = mycolor;
@@ -593,7 +649,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             {
             if (DarkTheme)
             {
-                button1.GetComponent<Image>().color = Color.white;
+                button1.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
             }
             else
                 button1.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF); ;
@@ -625,7 +681,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             {
             if (DarkTheme)
             {
-                button2.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
+                button2.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
             }
             else
                 button2.GetComponent<Image>().color = mycolor;
@@ -635,7 +691,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             {
             if (DarkTheme)
             {
-                button2.GetComponent<Image>().color = Color.white;
+                button2.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
             }
             else
                 button2.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
@@ -668,7 +724,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             if (DarkTheme)
             {
-                button3.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
+                button3.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
             }
             else
                 button3.GetComponent<Image>().color = mycolor;
@@ -678,7 +734,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             if (DarkTheme)
             {
-                button3.GetComponent<Image>().color = Color.white;
+                button3.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
             }
             else
                 button3.GetComponent<Image>().color = new Color(0xE6,0xE6,0xE6,0xFF);
@@ -709,7 +765,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             if (DarkTheme)
             {
-                button4.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
+                button4.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
             }
             else
                 button4.GetComponent<Image>().color = mycolor;
@@ -719,10 +775,10 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             if (DarkTheme)
             {
-                button4.GetComponent<Image>().color = Color.white;
+                button4.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
             }
             else
-                button4.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF); ;
+                button4.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF); 
         }
         if (Shop4.activeSelf)
             BackPanel.SetActive(false);
@@ -766,7 +822,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             if (DarkTheme)
             {
-                button6.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
+                button6.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
             }
             else
                 button6.GetComponent<Image>().color = mycolor;
@@ -775,7 +831,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             if (DarkTheme)
             {
-                button6.GetComponent<Image>().color = Color.white;
+                button6.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
             }
             else
                 button6.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF); ;
@@ -806,7 +862,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             if (DarkTheme)
             {
-                button5.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
+                button5.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
             }
             else
             button5.GetComponent<Image>().color = mycolor;
@@ -815,7 +871,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             if (DarkTheme)
             {
-                button5.GetComponent<Image>().color = Color.white;
+                button5.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF); 
             }
             else
                 button5.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF); ;
@@ -827,22 +883,16 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Shop5.SetActive(!Shop5.activeSelf);
 
     }
-    public void ExNum1(Image image)
+    public void ExNum1()
     {
-        if (!ExNum)
-        {
-            image.color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
-            if(image.GetComponent<RectTransform>().localScale.x<0)
-            image.GetComponent<RectTransform>().localScale = new Vector2(-image.GetComponent<RectTransform>().localScale.x, image.GetComponent<RectTransform>().localScale.y);
-        }
-        else
-        {
-            image.color = Color.red;
-            if (image.GetComponent<RectTransform>().localScale.x > 0)
-                image.GetComponent<RectTransform>().localScale = new Vector2(-image.GetComponent<RectTransform>().localScale.x, image.GetComponent<RectTransform>().localScale.y);
-        }
+        
        
         ExNum = !ExNum;
+        if (ExNum)
+            Number.sprite = NumberOn;
+        else
+            Number.sprite = NumberOff;
+
     }
 
 
@@ -853,13 +903,16 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Debug.Log(Reward.ToString());
         if ((long)Math.Floor((date).TotalMinutes) > 0 && !Reward)
         {
-            PointSum += (long)Math.Floor((date).TotalMinutes) *AfkBuff.pointOnBit; //+ (long)(Math.Floor((date).TotalMinutes) / 10) + AfkBuff.pointOnBit;
-            string days = date.Days != 0? date.Days.ToString()+" days" : "" ;
-            string hours = date.Hours != 0? date.Hours.ToString()+" h" : "" ;
-            AfkPointText.text = "While you were leavig:"; 
-            AfkPointTime.text = $"{days} {hours} {date.Minutes} min";
-            AfkPoints.text = $" {(long)Math.Floor((date).TotalMinutes)* AfkBuff.pointOnBit}";
-            AfkPointsLast.text =    "points";
+            if (!Reward)
+            {
+                PointSum += (long)Math.Floor((date).TotalMinutes) * AfkBuff.pointOnBit; //+ (long)(Math.Floor((date).TotalMinutes) / 10) + AfkBuff.pointOnBit;
+                string days = date.Days != 0 ? date.Days.ToString() + " days" : "";
+                string hours = date.Hours != 0 ? date.Hours.ToString() + " h" : "";
+                AfkPointText.text = "While you were leavig:";
+                AfkPointTime.text = $"{days} {hours} {date.Minutes} min";
+                AfkPoints.text = $" {(long)Math.Floor((date).TotalMinutes) * AfkBuff.pointOnBit}";
+                AfkPointsLast.text = "points";
+            }
             AfkMenu.SetActive(true);
             
         }
@@ -952,8 +1005,12 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     
     public void AcceptNewGame()
     {
-        CostReset = 20000;
-        CostResetText.text = NormalSum(CostReset);
+       
+        gems += lvl;
+        Gems.text = $"{gems} ";
+        lvl = 0;
+        LvlUpGems();
+      
         Teleport.i = 0;
         StandartBuff.pointOnBit = 1;
         AfkBuff.pointOnBit = 1;
@@ -961,7 +1018,20 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         MaxPoint.text = $"Record:    0";
         POintSpent = 0;
         SumSent.text = $"Total points spent:     {POintSpent}";
+        Checker.coldownStopper = 12;
+        Checker.TimeStoppers = 3;
+        Checker.costOnGrade = 1000;
+        Checker.costOnCooldown = 1000;
         StandartBuff.CostOnGrade = 100;
+        StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers + 0.75);
+        StopperCooldownText.text = Checker.coldownStopper - 3 + "→" + (Checker.coldownStopper - 3 - 0.75);
+        StopperCost.text = NormalSum(Checker.costOnGrade);
+        StopperCooldownCost.text = NormalSum(Checker.costOnCooldown);
+        StopperTextMain.text = "Buy \"Stoppers\"";
+        StoppersButton.SetActive(true);
+        stopperPanel.SetActive(false);
+        stopperPanelCooldown.SetActive(false);
+        Checkers.SetActive(false);
         AfkBuff.CostOnGrade = 100;
         QuestManager.Quest0Challenge = 35;
         NumberOfBall.text = $"Number of extra ball  0\\5";
@@ -1119,7 +1189,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public void CompleatedQuest()
     {
         BlockCanvas.SetActive(true);
-        Shop3.SetActive(true);
+        Button3();
         QuestManager.QuestsCompleate[NumberQuest] = true;
         ButtonQuests[NumberQuest].GetComponent<Image>().sprite = CompleatedImage;
         StartCoroutine(BackScreen(PanelQuest[NumberQuest]));
@@ -1132,14 +1202,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Lock[NumberQuest].GetComponent<Image>().sprite=CompleatedImageLock;
         while (Go.transform.position.x<QuestBlock.transform.position.x)
         {
-            Go.transform.position = new Vector2(Go.transform.position.x+ 0.8f * Time.deltaTime,Go.transform.position.y);
+            Go.transform.position = new Vector2(Go.transform.position.x+ 1f * Time.deltaTime,Go.transform.position.y);
             yield return new WaitForFixedUpdate();
         }
         BlockCanvas.SetActive(false);
         isQuestStarted = false;
         BuyBallButtons[NumberQuest].SetActive(true);
         Go.SetActive(false);
-        Shop3.SetActive(false);
+      
     }
     public void OnUnityAdsAdLoaded(string placementId)
     {
@@ -1158,7 +1228,13 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     public void OnUnityAdsShowStart(string placementId)
     {
-        throw new NotImplementedException();
+        if (MyReward == reward.x3reward && placementId != "Interstitial_Android")
+        {
+            AfkPoints.text = $"{3 * (long)(Math.Floor((date).TotalMinutes)) * AfkBuff.pointOnBit}";
+            PointSum += (long)(Math.Floor((date).TotalMinutes)) * 3 * AfkBuff.pointOnBit;
+            Reward = true;
+            PlayerPrefs.SetString("Reward", Reward.ToString());
+        }
     }
 
     public void OnUnityAdsShowClick(string placementId)
@@ -1188,7 +1264,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             AfkPoints.text = $"{3 *(long)(Math.Floor((date).TotalMinutes)) * AfkBuff.pointOnBit}";
             PointSum += (long)(Math.Floor((date).TotalMinutes)) * 3 * AfkBuff.pointOnBit;
             Reward = true;
-            PlayerPrefs.SetString("reward", Reward.ToString());
+            PlayerPrefs.SetString("Reward", Reward.ToString());
         }
     }
     public void Stop()
@@ -1197,6 +1273,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         point.gameObject.SetActive(true);
         lvlTextPanel.SetActive(true);
         pointSum.gameObject.SetActive(true);
+        BottonPanel.SetActive(true);
+        ProgressBarGM.SetActive(true);
         StopButton.SetActive(false);
         ProgressBar.gameObject.SetActive(true);
         if (NumberQuest == 0)
@@ -1210,7 +1288,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         else if(NumberQuest == 2)
         {
             MainCamera.orthographicSize = 5;
-            EndPointBottonPanel.transform.position = new Vector2(EndPointBottonPanel.transform.position.x, EndPointBottonPanel.transform.position.y + 50f);
+           
             PointQuest1.gameObject.SetActive(false);
         }
         else if(NumberQuest == 3)
@@ -1219,7 +1297,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             StopCoroutine(CameraRotation());
             MainCamera.transform.rotation = new Quaternion(MainCamera.transform.rotation.x, MainCamera.transform.rotation.y, 0, 0);
          
-            BottonPanel.SetActive(true);
+           
            
         }
         else if(NumberQuest == 4)
@@ -1230,50 +1308,42 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
            
         }
     }
-    IEnumerator ShowButtonStopAndRestart()
-    {
-        yield return new WaitForSeconds(1f);
-        StopButton.SetActive(true);
-        
-    }
+   
     public void StartQuest()
     {
+        BottonPanel.SetActive(false);
         isQuestStarted = true;
         lvlTextPanel.SetActive(false);
-        StartCoroutine(ShowButtonStopAndRestart());
+        ProgressBarGM.SetActive(false);
+        StopButton.SetActive(true);
+        
         quest1point = 0;
         ProgressBar.gameObject.SetActive(false);
         switch (NumberQuest)
         {
             case 0:
                 PointQuest1.text = "0\\30";
-                speed = 3f;
                 PointQuest1.gameObject.SetActive(true);
                 break;
             case 1:
                 TimeQuest2.gameObject.SetActive(true);
-                speed = 3f;
                 StartCoroutine(Quest2());
                 break;
             case 2:
                 PointQuest1.text = "0\\20";
                 PointQuest1.gameObject.SetActive(true);
                 MainCamera.orthographicSize = 25;
-                speed = 3f;
                 EndPointBottonPanel.transform.position = new Vector2(EndPointBottonPanel.transform.position.x , EndPointBottonPanel.transform.position.y - 50f);
                 break;
             case 3:
- 
                 PointQuest1.text = "0\\20";
                 PointQuest1.gameObject.SetActive(true);
-                BottonPanel.SetActive(false);
                 StartCoroutine(CameraRotation());
-                speed = 3f;
+               
                 break;
             case 4:
                 PointQuest1.text = "0\\20";
                 PointQuest1.gameObject.SetActive(true);
-                speed = 30f;
                 MainCamera.orthographicSize = 1;
                 break;
             default:
@@ -1306,7 +1376,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         else
         {
             MainCamera.transform.rotation = new Quaternion(MainCamera.transform.rotation.x, MainCamera.transform.rotation.y, 0, 0);
-            BottonPanel.transform.position = new Vector2(0, -7);
+            //BottonPanel.transform.position = new Vector2(0, -7);
         }
     }
     IEnumerator Quest2()
@@ -1332,18 +1402,19 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         if (!lvlTextPanel.activeSelf)
         {
             lvlTextPanel.SetActive(true);
-            lvlImage.color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
+            LvlText.sprite = LvlTextOn;
 
         }
         else
         {
             lvlTextPanel.SetActive(false);
-            lvlImage.color = Color.red;
+            LvlText.sprite = LvlTextOff;
         }
-        lvlImage.GetComponent<RectTransform>().localScale = new Vector2(-lvlImage.GetComponent<RectTransform>().localScale.x, lvlImage.GetComponent<RectTransform>().localScale.y);
+        
     }
     public void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
     {
+       
         Debug.Log(showResult);
         if (showResult == ShowResult.Finished && placementId!= "Interstitial_Android")
         {
@@ -1370,7 +1441,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 StandartBuff.pointOnBit *= 2;
                 StartCoroutine(TimeBuff(variabled));
                 StartCoroutine(ShowButton());
-                PlayerPrefs.SetString("reward", Reward.ToString());
+                PlayerPrefs.SetString("Reward", Reward.ToString());
             }
         }
         else if (showResult == ShowResult.Skipped && placementId != "Interstitial_Android")
@@ -1384,49 +1455,65 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         else
         throw new NotImplementedException();
         Reward = false;
+        PlayerPrefs.SetString("Reward", Reward.ToString());
     }
 
     public void EnableDisableDark()
     {
-        if (!DarkTheme)
+        DarkTheme = !DarkTheme;
+        if (DarkTheme)
         {
-            DarkThemeImage.color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
-            
+            Dark.sprite = DarkOn;  
         }
         else
         {
-            DarkThemeImage.color = Color.red;
+            Dark.sprite = DarkOff;
         }
-        DarkThemeImage.GetComponent<RectTransform>().localScale = new Vector2(-DarkThemeImage.GetComponent<RectTransform>().localScale.x, DarkThemeImage.GetComponent<RectTransform>().localScale.y);
-        DarkTheme = !DarkTheme;
+       
         if (DarkTheme)
         {
             spawnPoint.sprite = spawnPointDark;
             ColorBlock cb = button1.GetComponent<Button>().colors;
-            cb.normalColor = new Color32(0x16, 0x71, 0x99, 0xFF);
+            cb.normalColor = Color.white;// new Color32(0x16, 0x71, 0x99, 0xFF);
             cb.pressedColor = new Color32(0x0E, 0x43, 0x60, 0xFF);
-            cb.selectedColor = new Color32(0x16, 0x71, 0x99, 0xFF);
-            cb.highlightedColor = new Color32(0x16, 0x71, 0x99, 0xFF);
-            cb.disabledColor = new Color32(0x16, 0x71, 0x99, 0xFF);
-            button6.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
+            cb.selectedColor = Color.white; //new Color32(0x16, 0x71, 0x99, 0xFF);
+            cb.highlightedColor = Color.white;// new Color32(0x16, 0x71, 0x99, 0xFF);
+            cb.disabledColor = Color.white; //new Color32(0x16, 0x71, 0x99, 0xFF);
+            
             button1.GetComponent<Button>().colors = cb;
             button2.GetComponent<Button>().colors = cb;
             button3.GetComponent<Button>().colors = cb;
             button4.GetComponent<Button>().colors = cb;
             button5.GetComponent<Button>().colors = cb;
             button6.GetComponent<Button>().colors = cb;
+            button1.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF); 
+            button2.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF); 
+            button3.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF); 
+            button4.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF); 
+            button5.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF); 
+            button6.GetComponent<Image>().color = new Color32(0x16, 0x71, 0x99, 0xFF);
+            if (Shop6.activeSelf)
+                button6.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
         }
         else
         {
             spawnPoint.sprite = spawnPointDefault;
-            button6.GetComponent<Image>().color = mycolor;
+           
             button1.GetComponent<Button>().colors = colorB;
             button2.GetComponent<Button>().colors = colorB;
             button3.GetComponent<Button>().colors = colorB;
             button4.GetComponent<Button>().colors = colorB;
             button5.GetComponent<Button>().colors = colorB;
             button6.GetComponent<Button>().colors = colorB;
-      }
+            button1.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
+            button2.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
+            button3.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
+            button4.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
+            button5.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
+            button6.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
+            if (Shop6.activeSelf)
+                button6.GetComponent<Image>().color = mycolor;
+        }
         ProgressBarBackground.GetComponent<Image>().color = ChangeColor(ProgressBarBackground.GetComponent<Image>().color);
        
       
@@ -1451,21 +1538,54 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         for (int h = 0; h <BottonSkin.Length; h++)
         {
-            BottonSkin[h].GetComponent<Image>().color = ChangeColor(BottonSkin[h].GetComponent<Image>().color, "Panel");
+            BottonSkin[h].GetComponent<Image>().color = ChangeColor(BottonSkin[h].GetComponent<Image>().color, "AnotherPanel");
         }
         for (int h = 0; h < AllText.Length; h++)
         {
             AllText[h].color = ChangeColor(AllText[h].color);
+        }
+        for (int h = 0; h < Lock.Length; h++)
+        {
+            Lock[h].GetComponent<Image>().color = ChangeColor(Lock[h].GetComponent<Image>().color, "Lock");
+        }
+        for (int h = 0; h < PanelQuest.Length; h++)
+        {
+            PanelQuest[h].GetComponent<Image>().color = ChangeColor(PanelQuest[h].GetComponent<Image>().color, "8080");
+        }
+        for (int h = 0; h < PanelBackGround.Length; h++)
+        {
+            PanelBackGround[h].GetComponent<Image>().color = ChangeColor(PanelBackGround[h].GetComponent<Image>().color, "Background");
+        }
+        for (int h = 0; h < Handlles.Length; h++)
+        {
+            Handlles[h].GetComponent<Image>().color = ChangeColor(Handlles[h].GetComponent<Image>().color, "808080");
+        }
+        for (int h = 0; h < Arrows.Length; h++)
+        {
+            Arrows[h].GetComponent<Image>().color = ChangeColor(Arrows[h].GetComponent<Image>().color);
         }
     }
     ColorBlock colorB;
     public Color32 ChangeColor(Color gr, string tag = "")
     {
         if (DarkTheme)
-        { 
+        {
+            if(tag == "Panel")
+            {
+                return new Color32(0x20, 0x93, 0xBC, 0xFF);
+            }
+            else if (tag == "Shop")
+            {
+                return new Color32(0x20, 0x93, 0xBC, 0xFF);
+            }
+            else if(tag == "8080")
+            {
+                return new Color32(0x16, 0x71, 0x99, 0xFF);
+            }
+            
             if (gr == Color.black)
                 return Color.white;
-            else if (gr == new Color32(0x80, 0x80, 0x80, 0xFF) || gr == new Color32(0xCC, 0xCC, 0xCC, 0xFF) || gr == Color.white)
+            else if (gr == new Color32(0x80, 0x80, 0x80, 0xFF) || gr == new Color32(0xCC, 0xCC, 0xCC, 0xFF) || gr == Color.white|| gr == new Color32(0x99, 0x99, 0x99, 0xFF))
             {
                 return new Color32(0x0E, 0x43, 0x60, 0xFF);
             }
@@ -1477,9 +1597,20 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             {
                 return Color.white;
             }
+          
         }
         else
         {
+            if (tag == "Panel")
+                return new Color32(0xB3, 0xB3, 0xB3, 0xFF);
+            else if (tag == "Shop")
+                return new Color32(0xB3, 0xB3, 0xB3, 0xFF);
+            else if (tag == "Lock")
+                return new Color32(0x4D, 0x4D, 0x4D, 0xFF);
+            else if (tag == "Background")
+                return new Color32(0x99, 0x99, 0x99, 0xFF);
+            else if(tag == "8080")
+                return new Color32(0x80, 0x80, 0x80, 0xFF);
             if (gr == Color.white)
                 return Color.black;
             else if (gr == new Color32(0x0E, 0x43, 0x60, 0xFF))
@@ -1493,11 +1624,6 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             }
             else if (gr == new Color32(0x16, 0x71, 0x99, 0xFF))
             {
-                if (tag == "Panel")
-                    return new Color32(0xB3, 0xB3, 0xB3, 0xFF);
-                else if (tag == "Shop")
-                    return new Color32(0xB3, 0xB3, 0xB3, 0xFF);
-                else 
                     return new Color32(0xE6, 0xE6, 0xE6, 0xFF);
             }
             else
@@ -1505,5 +1631,32 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
     }
     
+
+
+    public void TextDown(GameObject tx)
+    {
+        tx.transform.position -= new Vector3( 0, 0.08f,0);
+    }
+
+    public void TextUp(GameObject tx)
+    {
+        tx.transform.position += new Vector3(0, 0.08f, 0);
+    }
+
+
+    public void LvlUpGems()
+    {
+        if (lvl >= lvlNeeded)
+        {
+            ButtonRelive.SetActive(true);
+            LevelNeedToReliveText.SetActive(false);
+        }
+        else
+        {
+            ButtonRelive.SetActive(false);
+            LevelNeedToReliveText.SetActive(true) ;
+        }
+        ReliveText.text = $"Reset all progress and get {lvl} gems";
+    }
 }
 

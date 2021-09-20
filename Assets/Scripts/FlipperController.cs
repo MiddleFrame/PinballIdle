@@ -7,7 +7,7 @@ public class FlipperController : MonoBehaviour
 {
     public bool IsFlipper { get; set; }
     HingeJoint2D hj;
-    CircleCollider2D cc2d;
+    BoxCollider2D cc2d;
     int flag = 1;
     public AudioSource As;
     public AudioClip Ac;
@@ -17,7 +17,7 @@ public class FlipperController : MonoBehaviour
     {
 
         hj = GetComponent<HingeJoint2D>();
-        cc2d = GetComponent<CircleCollider2D>();
+        cc2d = GetComponent<BoxCollider2D>();
       
        
     }
@@ -54,8 +54,10 @@ public class FlipperController : MonoBehaviour
     {
         if (GameManager.automod && other.tag == "Player")
         {
+            
             IsFlipper = true;
-            cc2d.offset += new Vector2(flag*0.15f, 0) ;
+            cc2d.size = new Vector2(cc2d.size.x - flag * 0.4f, cc2d.size.y) ;
+            cc2d.offset = new Vector2(cc2d.offset.x - flag * 0.4f, cc2d.offset.y) ;
             flag = -flag;
         }
     }
