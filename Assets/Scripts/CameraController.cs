@@ -5,7 +5,8 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject MainBall;
+    public GameObject[] MainBall;
+    public GameObject[] Field;
     void Start()
     {
         
@@ -15,6 +16,9 @@ public class CameraController : MonoBehaviour
     void FixedUpdate()
     {
         if (GameManager.isQuestStarted && GameManager.NumberQuest == 4)
-            gameObject.transform.position =new Vector3( MainBall.transform.position.x, MainBall.transform.position.y, gameObject.transform.position.z);
+        {
+           // gameObject.transform.position = new Vector3(MainBall[FieldManager.CorrectField].transform.position.x, MainBall[FieldManager.CorrectField].transform.position.y, gameObject.transform.position.z);
+            Field[FieldManager.CorrectField].transform.position = new Vector3(-MainBall[FieldManager.CorrectField].transform.localPosition.x, -MainBall[FieldManager.CorrectField].transform.localPosition.y, Field[FieldManager.CorrectField].transform.position.z);
+        }
     }
 }

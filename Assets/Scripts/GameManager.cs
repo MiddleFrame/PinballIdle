@@ -9,8 +9,36 @@ using UnityEditor;
 public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListener, IUnityAdsLoadListener
 {
     //\
+    public Sprite ButtonBuy;
+    public ScrollRect[] Scroll;
+    public GameObject CircleBuffPanel;
+    public GameObject x2areasBuyButton;
+    public Text x2AreasCostText;
+    int[] x2AreasCost = new int[] { 50000, 75000, 90000 };
+    public GameObject[] x2Areas;
+    public Text CircleBuffText;
+    public GameObject CircleBuffButton;
+    public Text CircleTextBuffCost;
+    public FieldManager Fm;
+    public GameObject StoppersBuffCooldownButton;
+    public GameObject StoppersBuffButton;
+    public LetsScript Romb;
+    public Text RombCostBuff;
+    public Text PointBuffTextRomb;
+    public GameObject RombBaff;
+    public Text RombBuy;
+    public GameObject RombButton;
+    public GameObject StrongRomb;
+    public Text CircleF2;
+    public GameObject    buttonBuyCirlce;
+    public GameObject[] ContentShop1;
+    public GameObject[] ContentShop2;
+    public GameObject[] ContentShop3;
+    public Text lvlBuff;
+    public Text GemGet;
     public Image[] MiniField;
     public Sprite[] MiniFieldDark;
+    public Sprite[] MiniFieldLight;
     public GameObject[] Arrows;
     public GameObject[] PanelBackGround;
     public GameObject[] Handlles;
@@ -37,6 +65,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public GameObject ProgressBarGM;
     public GameObject[] BottonSkin;
     public SpriteRenderer spawnPoint;
+    public SpriteRenderer spawnPointF2;
     public Sprite spawnPointDefault;
     public Sprite spawnPointDark;
     public Text[] AllText;
@@ -44,7 +73,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public GameObject[] AllPanel;
     public GameObject[] Stoppers;
     public GameObject[] Balls = new GameObject[6];
+    public GameObject[] BallsF2;
     public GameObject Phone;
+    public GameObject PhoneF2;
     public GameObject ProgressBarBackground;
     public Image DarkThemeImage;
     public Text GemText;
@@ -65,6 +96,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     static public int timeQuest= 30;
     public Text TimeQuest2;
     public GameObject spawnPointLine;
+    public GameObject spawnPointLineF2;
     public GameObject QuestBlock;
     public GameObject BlockCanvas;
     public GameObject[] PanelQuest = new GameObject[5];
@@ -100,7 +132,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public Text SumSent;
     public Text NumberOfBall;
     public Text point;
+    public Text pointField2;
     public Text StandartCost;
+    public Text StandartCostF2;
     public Text StopperCost;
     public Text StandartAfkCost;
     public Text StopperCooldownCost;
@@ -110,23 +144,23 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public Text StopperText;
     public Text StopperCooldownText;
     public Text AfkPointTime;
-    public Text Auto_flipper_text;
+    public Text[] Auto_flipper_text;
     public Text PointBuffText;
+    public Text PointBuffTextF2;
     public Text PointBuffAfkText;
     public Text CostResetText;
    // public Text PointAfkText;
     public TimeSpan date;
     public Text time;
     Color mycolor = new Color(0.776f, 0.776f, 0.776f, 1.000f);
-   public GameObject buttonBuyAutomod;
+   public GameObject[] buttonBuyAutomod;
     public GameObject x2bonus;
     public GameObject BackPanel;
     public HingeJoint2D hj1;
     public GameObject textError;
     public GameObject textError2;
-    public GameObject Automod_slider;
+    public GameObject[] Automod_slider;
     public HingeJoint2D hj2;
-    public GameObject panelLeft;
     public GameObject panelRight;
     public GameObject Shop5;
     public GameObject Shop4;
@@ -144,8 +178,10 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     public GameObject NumberBut;
     public int CostReset = 20000;
     static public int Point = 0;
+    static public int PointField2 = 0;
     static public long PointSum;
-    static public bool automod=false;
+    static public long[] PointsNow = new long[] { 0,0};
+    static public bool[] automod= new bool[] { false, false };
     public GameObject AfkMenu;
     public int price=0;
     public GameObject lvlTextPanel;
@@ -182,17 +218,27 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Advertisement.Load("4265503", this);
         ScorePoint();
         pointSum.text = NormalSum(PointSum);
-        StandartCost.text = NormalSum(StandartBuff.CostOnGrade);
+        StandartCost.text = NormalSum(StandartBuff.CostOnGrade[0]);
+        StandartCostF2.text = NormalSum(StandartBuff.CostOnGrade[1]);
         StandartAfkCost.text = NormalSum(AfkBuff.CostOnGrade);
+        if(Checker.costOnGrade!=0)
         StopperCost.text = NormalSum(Checker.costOnGrade);
+        if(Checker.costOnCooldown!=0)
         StopperCooldownCost.text = NormalSum(Checker.costOnCooldown);
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         colorB = button1.GetComponent<Button>().colors;
-        PointBuffText.text = StandartBuff.pointOnBit + "→" + (StandartBuff.pointOnBit + 1);
-        StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers+0.75);
-        StopperCooldownText.text = Checker.coldownStopper-3 + "→" + (Checker.coldownStopper -3 - 0.75);
+        PointBuffText.text = StandartBuff.pointOnBit[0] + "→" + (StandartBuff.pointOnBit[0] + 1);
+        PointBuffTextF2.text = StandartBuff.pointOnBit[1] + "→" + (StandartBuff.pointOnBit[1] + 1);
+        if (Checker.costOnGrade != 0)
+            StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers + 0.75);
+        else
+            StopperText.text = Checker.TimeStoppers + "";
+        if (Checker.costOnCooldown != 0)
+            StopperCooldownText.text = Checker.coldownStopper - 3 + "→" + (Checker.coldownStopper - 3 - 0.75);
+        else
+            StopperCooldownText.text = Checker.coldownStopper - 3 + "";
         PointBuffAfkText.text = AfkBuff.pointOnBit + "→" + (AfkBuff.pointOnBit + 1);
-
+        PointBuffTextRomb.text = Romb.PointLet + "→" + (Romb.PointLet + 1);
     }
 
     void SaveGame()
@@ -201,12 +247,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         PlayerPrefs.SetString("LeaveDate", DateTime.Now.ToString());
         PlayerPrefs.SetString("DarkTheme", DarkTheme.ToString());
         PlayerPrefs.SetString("PointSum", PointSum.ToString());
-        PlayerPrefs.SetString("isBuyAutomod", Automod_slider.activeSelf.ToString());
-        PlayerPrefs.SetInt("CostOfGrade", StandartBuff.CostOnGrade);
+        PlayerPrefs.SetString("isBuyAutomod", Automod_slider[0].activeSelf.ToString());
+        PlayerPrefs.SetString("isBuyAutomodF2", Automod_slider[1].activeSelf.ToString());
+        PlayerPrefs.SetInt("CostOfGrade", StandartBuff.CostOnGrade[0]);
         PlayerPrefs.SetInt("CostOfAfk", AfkBuff.CostOnGrade);
-        PlayerPrefs.SetInt("PointOnBit", StandartBuff.pointOnBit);
+        PlayerPrefs.SetInt("PointOnBit", StandartBuff.pointOnBit[0]);
         PlayerPrefs.SetInt("PointOnAfk", AfkBuff.pointOnBit);
-        PlayerPrefs.SetInt("CountBall", Teleport.i);
+        PlayerPrefs.SetInt("CountBall", Teleport.i[0]);
+        PlayerPrefs.SetInt("CountBallF2", Teleport.i[1]);
         PlayerPrefs.SetInt("MaximumPoint", maximumPoint);
         PlayerPrefs.SetString("Stoppers", Checkers.activeSelf.ToString());
         PlayerPrefs.SetFloat("TimeStoppers", Checker.TimeStoppers);
@@ -219,11 +267,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         PlayerPrefs.SetInt("HitNeeded",LetsScript.hitneeded);
         PlayerPrefs.SetInt("lvl",lvl);
         PlayerPrefs.SetString("TextView", lvlTextPanel.activeSelf.ToString());
-        for (int j=0; j < 5; j++)
+        for (int j=0; j < 10; j++)
         {
             PlayerPrefs.SetString($"QuestNewCompleate[{j}]", QuestManager.QuestsCompleate[j].ToString());
         }
-        for (int j = 0; j < 5; j++)
+        for (int j = 0; j < 10; j++)
         {
             PlayerPrefs.SetString($"BuyBallButtons[{j}]", BuyBallButtons[j].activeSelf.ToString());
         }
@@ -233,6 +281,23 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             if(bool.Parse(PlayerPrefs.GetString("Reward")))
             PlayerPrefs.SetInt("RewardPoints", (int)Math.Floor((date).TotalMinutes));
         }
+        for (int j = 0; j < FieldManager.Fields.Length; j++)
+        {
+            PlayerPrefs.SetString($"FieldOpen[{j}]", FieldManager.Fields[j].ToString());
+        }
+        PlayerPrefs.SetInt("CostOfGradeF2", StandartBuff.CostOnGrade[1]);
+        PlayerPrefs.SetInt("PointOnBitF2", StandartBuff.pointOnBit[1]);
+        PlayerPrefs.SetString("Romb", StrongRomb.activeSelf.ToString());
+        PlayerPrefs.SetInt("RombBuff", Romb.PointLet);
+        PlayerPrefs.SetInt("RombCostBuff", RombCost);
+        PlayerPrefs.SetInt("CircleBuff", Cirlce.MaxPointNeed);
+        PlayerPrefs.SetInt("CircleCostBuff", CirleBuffCost);
+        PlayerPrefs.SetString("Circle", (!buttonBuyCirlce.activeSelf).ToString());
+        for (int j = 0; j < x2Areas.Length; j++)
+        {
+            PlayerPrefs.SetString($"x2Areas[{j}]", x2Areas[j].activeSelf.ToString());
+        }
+
     }
     private void Update()
     {
@@ -248,12 +313,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         if (PlayerPrefs.HasKey("Gems"))
         {
             gems = PlayerPrefs.GetInt("Gems");
+            if (gems < 10)
+                gems = 10;
             Gems.text = $"{gems} ";
             LvlUpGems();
         }
         if (PlayerPrefs.HasKey("DarkTheme"))
         {
-            if (bool.Parse(PlayerPrefs.GetString("DarkTheme")))
+            if (bool.Parse(PlayerPrefs.GetString("DarkTheme")) && !DarkTheme)
             {
                //PlayerSettings.SplashScreen.unityLogoStyle = PlayerSettings.SplashScreen.UnityLogoStyle.LightOnDark;
                 EnableDisableDark();
@@ -267,14 +334,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (PlayerPrefs.HasKey("ExNum"))
         {
-            if (bool.Parse(PlayerPrefs.GetString("ExNum")))
+            if (bool.Parse(PlayerPrefs.GetString("ExNum"))&& !ExNum)
             {   
                 ExNum1();
             }
         }
         if (PlayerPrefs.HasKey("Sound"))
         {
-           if( float.Parse(PlayerPrefs.GetString("Sound"))<1)
+           if(float.Parse(PlayerPrefs.GetString("Sound"))<1 && AudioListener.volume>0.9)
             Sounds();
         }
         if (PlayerPrefs.HasKey("LeaveDate") )
@@ -293,13 +360,31 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             
            bool flag =  bool.Parse(PlayerPrefs.GetString("isBuyAutomod"));
             if (flag)
-                Auto_flipper_text.text = "Auto-flippers";
-            Automod_slider.SetActive(flag);
-            buttonBuyAutomod.SetActive(!flag);
+                Auto_flipper_text[0].text = "Auto-flippers";
+            Automod_slider[0].SetActive(flag);
+            buttonBuyAutomod[0].SetActive(!flag);
+        }
+        if (PlayerPrefs.HasKey("isBuyAutomodF2"))
+        {
+
+            bool flag = bool.Parse(PlayerPrefs.GetString("isBuyAutomodF2"));
+            if (flag)
+                Auto_flipper_text[1].text = "Auto-flippers";
+            Automod_slider[1].SetActive(flag);
+            buttonBuyAutomod[1].SetActive(!flag);
+        }
+        if (PlayerPrefs.HasKey("isBuyAutomodF2"))
+        {
+            
+           bool flag =  bool.Parse(PlayerPrefs.GetString("isBuyAutomodF2"));
+            if (flag)
+                Auto_flipper_text[1].text = "Auto-flippers";
+            Automod_slider[1].SetActive(flag);
+            buttonBuyAutomod[1].SetActive(!flag);
         }
         if (PlayerPrefs.HasKey("CostOfGrade"))
         {
-            StandartBuff.CostOnGrade = PlayerPrefs.GetInt("CostOfGrade");
+            StandartBuff.CostOnGrade[0] = PlayerPrefs.GetInt("CostOfGrade");
         
         }
         if (PlayerPrefs.HasKey("CostOfAfk"))
@@ -309,7 +394,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (PlayerPrefs.HasKey("PointOnBit"))
         {
-            StandartBuff.pointOnBit= PlayerPrefs.GetInt("PointOnBit");
+            StandartBuff.pointOnBit[0]= PlayerPrefs.GetInt("PointOnBit");
         }
         if (PlayerPrefs.HasKey("PointOnAfk"))
         {
@@ -317,17 +402,29 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (PlayerPrefs.HasKey("CountBall"))
         {
-            Teleport.i = PlayerPrefs.GetInt("CountBall");
-            if (Teleport.i > 0)
+            Teleport.i[0] = PlayerPrefs.GetInt("CountBall");
+            if (Teleport.i[0] > 0)
             {
-                if (Teleport.i > 5)
+                if (Teleport.i[0] > 5)
                 {
-                    Teleport.i = 5;
+                    Teleport.i[0] = 5;
                 }
-                NumberOfBall.text = $"Number of extra ball  {Teleport.i}\\5";
+                NumberOfBall.text = $"Number of extra ball  {Teleport.i[0]+Teleport.i[1]}\\10";
             }
             else
-                NumberOfBall.text = $"Number of extra ball  0\\5";
+                NumberOfBall.text = $"Number of extra ball  0\\10";
+        }
+        if (PlayerPrefs.HasKey("CountBallF2"))
+        {
+            Teleport.i[1] = PlayerPrefs.GetInt("CountBall");
+            if (Teleport.i[1] > 0)
+            {
+                if (Teleport.i[1] > 5)
+                {
+                    Teleport.i[1] = 5;
+                }
+                NumberOfBall.text = $"Number of extra ball  {Teleport.i[0]+Teleport.i[1]}\\10";
+            }
         }
         if (PlayerPrefs.HasKey("MaximumPoint"))
         {
@@ -376,7 +473,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (PlayerPrefs.HasKey("QuestNewCompleate[0]"))
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 10; j++)
             {
                 QuestManager.QuestsCompleate[j] = bool.Parse(PlayerPrefs.GetString($"QuestNewCompleate[{j}]"));
                 if (QuestManager.QuestsCompleate[j])
@@ -397,6 +494,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         if (PlayerPrefs.HasKey("lvl"))
         {
             lvl = PlayerPrefs.GetInt("lvl");
+            if (lvl == 0)
+                lvl = 1;
             let.lvltext.text = $" level - {GameManager.lvl}";
             let.lvlbuff.text = $"x{GameManager.lvl}";
         }
@@ -416,7 +515,77 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         if (PlayerPrefs.HasKey("Stoppers"))
             if (bool.Parse(PlayerPrefs.GetString("Stoppers")))
                 _buyStopper();
-    
+        if (PlayerPrefs.HasKey("FieldOpen[0]"))
+        {
+            for (int j = 0; j < FieldManager.Fields.Length; j++)
+            {
+                FieldManager.Fields[j] = bool.Parse( PlayerPrefs.GetString($"FieldOpen[{j}]"));
+                if (FieldManager.Fields[j] && j>0)
+                    Fm._buyNewField(j-1);
+                
+            }
+        }
+        if (PlayerPrefs.HasKey("CostOfGradeF2"))
+        {
+            StandartBuff.CostOnGrade[1]= PlayerPrefs.GetInt("CostOfGradeF2");
+            StandartCostF2.text = NormalSum(StandartBuff.CostOnGrade[1]);
+        }
+        if (PlayerPrefs.HasKey("PointOnBitF2"))
+        {
+            StandartBuff.pointOnBit[1] = PlayerPrefs.GetInt("PointOnBitF2");
+            PointBuffTextF2.text = StandartBuff.pointOnBit[1] + "→" + (StandartBuff.pointOnBit[1] + 1);
+        }
+        if (PlayerPrefs.HasKey("Romb"))
+        {
+            bool flag = bool.Parse(PlayerPrefs.GetString("Romb"));
+            if(flag)
+            _buyStrongRombF2();
+        }
+        if (PlayerPrefs.HasKey("RombBuff"))
+        {
+            Romb.PointLet = PlayerPrefs.GetInt("RombBuff");
+            PointBuffTextRomb.text = Romb.PointLet + "→" + (Romb.PointLet + 1);
+        }
+        if (PlayerPrefs.HasKey("RombCostBuff"))
+        {
+            RombCost = PlayerPrefs.GetInt("RombCostBuff");
+            RombCostBuff.text = NormalSum(RombCost);
+        }
+        if (PlayerPrefs.HasKey("CircleBuff"))
+        {
+            Cirlce.MaxPointNeed = PlayerPrefs.GetInt("CircleBuff");
+            CircleBuffText.text = Cirlce.MaxPointNeed + "→" + (Cirlce.MaxPointNeed - 1);
+            if (Cirlce.MaxPointNeed < 4)
+                StandartBuffCircle();
+        }
+        if (PlayerPrefs.HasKey("CircleCostBuff"))
+        {
+            CirleBuffCost = PlayerPrefs.GetInt("CircleCostBuff");
+            if(CirleBuffCost>0)
+            CircleTextBuffCost.text = NormalSum(CirleBuffCost);
+        }
+        if (PlayerPrefs.HasKey("Circle"))
+        {
+            bool flag = bool.Parse( PlayerPrefs.GetString("Circle"));
+            if (flag)
+                _buySafeCircleF2();
+        }
+
+        if (PlayerPrefs.HasKey("x2Areas[0]")) {
+            for (int j = 0; j < x2Areas.Length; j++)
+            {
+                x2Areas[j].SetActive(bool.Parse(PlayerPrefs.GetString($"x2Areas[{j}]")));
+                if (j!= x2Areas.Length && x2Areas[j].activeSelf)
+                {
+                    x2AreasCostText.text = NormalSum(x2AreasCost[j + 1]);
+                }
+               
+              }
+            if (x2Areas[x2Areas.Length-1].activeSelf)
+            {
+                Buyx2Areas();
+            }
+        }
     }
     private void OnApplicationQuit()
     {
@@ -425,6 +594,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     private void OnApplicationFocus(bool focus)
     {
         OnApplicationPause(!focus);
+        
     }
     private void OnApplicationPause(bool pause)
     {
@@ -436,14 +606,13 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             LoadGame();
             ScorePoint();
             pointSum.text = NormalSum(PointSum);
-            StandartCost.text = NormalSum(StandartBuff.CostOnGrade);
+            StandartCost.text = NormalSum(StandartBuff.CostOnGrade[0]);
             StandartAfkCost.text = NormalSum(AfkBuff.CostOnGrade);
             StandartAfkCost.text = NormalSum(AfkBuff.CostOnGrade);
-            StopperCost.text = NormalSum(Checker.costOnGrade);
-            PointBuffText.text = StandartBuff.pointOnBit + "→" + (StandartBuff.pointOnBit + 1);
+            
+            PointBuffText.text = StandartBuff.pointOnBit[0] + "→" + (StandartBuff.pointOnBit[0] + 1);
             PointBuffAfkText.text = AfkBuff.pointOnBit + "→" + (AfkBuff.pointOnBit + 1);
-            StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers + 0.75);
-            StopperCooldownText.text = Checker.coldownStopper - 3 + "→" + (Checker.coldownStopper - 3 - 0.75);
+           
            
         }
     }
@@ -453,14 +622,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     }
     public void Automod(GameObject image)
     {
-        
-        panelLeft.SetActive(automod);
-        panelRight.SetActive(automod);
         hj1.useMotor = false;
         hj2.useMotor = false;
-        automod = !automod;
+        automod[FieldManager.CorrectField] = !automod[FieldManager.CorrectField];
 
-        if (automod)
+        if (automod[FieldManager.CorrectField])
         {
             image.transform.localScale = new Vector3(1, image.transform.localScale.y, image.transform.localScale.z);
             image.GetComponent<Image>().color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
@@ -473,16 +639,96 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     }
     public void StandartBuff1()
     {
-        if (PointSum >= StandartBuff.CostOnGrade)
+        if (PointSum >= StandartBuff.CostOnGrade[0])
         {
-            PointSum -= StandartBuff.CostOnGrade;
-            POintSpent += StandartBuff.CostOnGrade;
+            PointSum -= StandartBuff.CostOnGrade[0];
+            POintSpent += StandartBuff.CostOnGrade[0];
             SumSent.text = $"Total points spent:     {POintSpent}";
             pointSum.text = NormalSum(GameManager.PointSum);
-            StandartBuff.pointOnBit += 1;
-            StandartBuff.CostOnGrade = (int)(StandartBuff.CostOnGrade * 1.2f);
-            StandartCost.text =NormalSum(StandartBuff.CostOnGrade);
-            PointBuffText.text = StandartBuff.pointOnBit + "→" + (StandartBuff.pointOnBit + 1);
+            StandartBuff.pointOnBit[0] += 1;
+            StandartBuff.CostOnGrade[0] = (int)(StandartBuff.CostOnGrade[0] * 1.2f);
+            StandartCost.text =NormalSum(StandartBuff.CostOnGrade[0]);
+            PointBuffText.text = StandartBuff.pointOnBit[0] + "→" + (StandartBuff.pointOnBit[0] + 1);
+        }
+        else
+        {
+            textError.SetActive(true);
+            StartCoroutine(ViewText(textError));
+            StopCoroutine(ViewText(textError));
+        }
+
+    }
+
+
+    public void StandartBuff2()
+    {
+        if (PointSum >= StandartBuff.CostOnGrade[1])
+        {
+            PointSum -= StandartBuff.CostOnGrade[1];
+            POintSpent += StandartBuff.CostOnGrade[1];
+            SumSent.text = $"Total points spent:     {POintSpent}";
+            pointSum.text = NormalSum(GameManager.PointSum);
+            StandartBuff.pointOnBit[1] += 1;
+            StandartBuff.CostOnGrade[1] = (int)(StandartBuff.CostOnGrade[1] * 1.2f);
+            StandartCostF2.text = NormalSum(StandartBuff.CostOnGrade[1]);
+            PointBuffTextF2.text = StandartBuff.pointOnBit[1] + "→" + (StandartBuff.pointOnBit[1] + 1);
+        }
+        else
+        {
+            textError.SetActive(true);
+            StartCoroutine(ViewText(textError));
+            StopCoroutine(ViewText(textError));
+        }
+
+    }
+    int RombCost = 1000;
+    public void StandartBuffRomb()
+    {
+        if (PointSum >= RombCost)
+        {
+            PointSum -= RombCost;
+            POintSpent += RombCost;
+            SumSent.text = $"Total points spent:     {POintSpent}";
+            pointSum.text = NormalSum(GameManager.PointSum);
+            Romb.PointLet += 1;
+            RombCost = (int)(RombCost * 1.2f);
+            RombCostBuff.text = NormalSum(RombCost);
+            PointBuffTextRomb.text = Romb.PointLet + "→" + (Romb.PointLet + 1);
+        }
+        else
+        {
+            textError.SetActive(true);
+            StartCoroutine(ViewText(textError));
+            StopCoroutine(ViewText(textError));
+        }
+
+    }
+   int CirleBuffCost = 5000;
+    public void StandartBuffCircle()
+    {
+        if (PointSum >= CirleBuffCost)
+        {
+            if (Cirlce.MaxPointNeed > 3)
+            {
+                PointSum -= CirleBuffCost;
+                POintSpent += CirleBuffCost;
+                SumSent.text = $"Total points spent:     {POintSpent}";
+                pointSum.text = NormalSum(GameManager.PointSum);
+
+                Cirlce.MaxPointNeed--;
+                CirleBuffCost = (int)(CirleBuffCost * 1.2f);
+                CircleTextBuffCost.text = NormalSum(CirleBuffCost);
+                CircleBuffText.text = Cirlce.MaxPointNeed + "→" + (Cirlce.MaxPointNeed - 1);
+            }
+            if (Cirlce.MaxPointNeed <= 3)
+            {
+                TextDown(CircleTextBuffCost.gameObject);
+                CircleBuffButton.GetComponent<Button>().enabled = false;
+                CircleBuffButton.GetComponent<Image>().sprite = MaxBuff;
+                CircleBuffText.text = Cirlce.MaxPointNeed + "";
+                CirleBuffCost = 0;
+                CircleTextBuffCost.text = "MAX";
+            }
         }
         else
         {
@@ -495,7 +741,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     public void Sounds()
     {
-        if (AudioListener.volume == 1)
+        if (AudioListener.volume >0.9)
         {
             AudioListener.volume = 0;
             Sound.sprite = SoundOff;
@@ -526,6 +772,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             }
             if (Checker.TimeStoppers >= 5)
             {
+                
+                TextDown(StopperCost.gameObject);
+                StoppersBuffButton.GetComponent<Button>().enabled = false;
                 StopperTime.sprite = MaxBuff;
                 StopperText.text = Checker.TimeStoppers + "";
                 StopperCost.text = "MAX";
@@ -540,7 +789,50 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
 
     }
+    public void Buyx2Areas()
+    {
+        int g =0;
+        int cost = 0;
+        if (x2Areas[0].activeSelf)
+            g = 1;
+        if (x2Areas[1].activeSelf)
+            g = 2;
+        if (x2Areas[2].activeSelf)
+            g = 3;
+        if (g < 3) {
+            cost = x2AreasCost[g];
+            if (PointSum >= cost)
+            {
+                PointSum -= cost;
+                POintSpent += cost;
+                SumSent.text = $"Total points spent:     {POintSpent}";
+                pointSum.text = NormalSum(GameManager.PointSum);
 
+                x2Areas[g].SetActive(true);
+                if (g < 2)
+                    x2AreasCostText.text = NormalSum(x2AreasCost[g + 1]);
+                else
+                {
+                    Buyx2Areas();
+                    x2AreasCostText.text = "MAX";
+                }
+            }
+            else
+            {
+                textError.SetActive(true);
+                StartCoroutine(ViewText(textError));
+                StopCoroutine(ViewText(textError));
+            }
+        }
+        else
+        {
+            TextDown(x2AreasCostText.gameObject);
+            x2areasBuyButton.GetComponent<Button>().enabled = false;
+            x2areasBuyButton.GetComponent<Image>().sprite = MaxBuff;
+            x2AreasCostText.text = "MAX";
+        }
+
+}
     public void StopperBuffCooldown()
     {
         if (PointSum >= Checker.costOnCooldown)
@@ -559,6 +851,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             }
             if (Checker.coldownStopper <= 6)
             {
+                TextDown(StopperCooldownCost.gameObject);
+                StoppersBuffCooldownButton.GetComponent<Button>().enabled = false;
                 StopperCooldown.sprite = MaxBuff;
                 StopperCooldownText.text = Checker.coldownStopper+"";
                 Checker.costOnCooldown = 0;
@@ -602,9 +896,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             POintSpent += 100000;
             SumSent.text = $"Total points spent:     {POintSpent}";
             pointSum.text = NormalSum(GameManager.PointSum);
-            Auto_flipper_text.text = "Auto-flippers";
-            Automod_slider.SetActive(true);
-            buttonBuyAutomod.SetActive(false);
+            Auto_flipper_text[0].text = "Auto-flippers";
+            Automod_slider[0].SetActive(true);
+            buttonBuyAutomod[0].SetActive(false);
         }
         else
         {
@@ -612,6 +906,78 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
            StartCoroutine(ViewText(textError));
            StopCoroutine(ViewText(textError));
         }
+    }
+
+    public void BuyAutomodF2()
+    {
+        if (PointSum >= 100000)
+        {
+            PointSum -= 100000;
+            POintSpent += 100000;
+            SumSent.text = $"Total points spent:     {POintSpent}";
+            pointSum.text = NormalSum(GameManager.PointSum);
+            Auto_flipper_text[1].text = "Auto-flippers";
+            Automod_slider[1].SetActive(true);
+            buttonBuyAutomod[1].SetActive(false);
+        }
+        else
+        {
+            textError.SetActive(true);
+           StartCoroutine(ViewText(textError));
+           StopCoroutine(ViewText(textError));
+        }
+    }
+
+    public void BuyStrongRombF2()
+    {
+        if (PointSum >= 20000)
+        {
+            PointSum -= 20000;
+            POintSpent += 20000;
+            SumSent.text = $"Total points spent:     {POintSpent}";
+            pointSum.text = NormalSum(GameManager.PointSum);
+            _buyStrongRombF2();
+        }
+        else
+        {
+            textError.SetActive(true);
+            StartCoroutine(ViewText(textError));
+            StopCoroutine(ViewText(textError));
+        }
+    }
+
+    void _buyStrongRombF2()
+    {
+        RombBuy.text = "Strong Romb";
+        RombButton.SetActive(false);
+        StrongRomb.SetActive(true);
+        RombBaff.SetActive(true);
+    }
+
+    public void BuySafeCircleF2()
+    {
+        if (PointSum >= 20000)
+        {
+            PointSum -= 20000;
+            POintSpent += 20000;
+            SumSent.text = $"Total points spent:     {POintSpent}";
+            pointSum.text = NormalSum(GameManager.PointSum);
+            _buySafeCircleF2();
+        }
+        else
+        {
+            textError.SetActive(true);
+            StartCoroutine(ViewText(textError));
+            StopCoroutine(ViewText(textError));
+        }
+    }
+
+    void _buySafeCircleF2()
+    {
+        CircleBuffPanel.SetActive(true);
+        Cirlce.PointNeed = Cirlce.MaxPointNeed;
+        CircleF2.text = "Safe Circle";
+        buttonBuyCirlce.SetActive(false);
     }
 
     public IEnumerator ViewText(GameObject text)
@@ -635,8 +1001,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             else if (Shop5.activeSelf)
                 Button5();
         }
-            if (!Shop1.activeSelf)
+        if (!Shop1.activeSelf)
             {
+            ContentShop1[FieldManager.CorrectField].SetActive(true);
+            for(int h = 0; h< ContentShop1.Length; h++)
+            {
+                if(h!=FieldManager.CorrectField)
+                ContentShop1[h].SetActive(false);
+            }
             if (DarkTheme)
             {
                 button1.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
@@ -645,7 +1017,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 button1.GetComponent<Image>().color = mycolor;
 
             }
-            else
+        else
             {
             if (DarkTheme)
             {
@@ -654,9 +1026,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             else
                 button1.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF); ;
             }
-            if (Shop1.activeSelf)
+        if (Shop1.activeSelf)
                 BackPanel.SetActive(false);
-            else
+        else
                 BackPanel.SetActive(true);
         
         Shop1.SetActive(!Shop1.activeSelf);
@@ -679,6 +1051,12 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (!Shop2.activeSelf)
             {
+            ContentShop2[FieldManager.CorrectField].SetActive(true);
+            for (int h = 0; h < ContentShop1.Length; h++)
+            {
+                if (h != FieldManager.CorrectField)
+                    ContentShop2[h].SetActive(false);
+            }
             if (DarkTheme)
             {
                 button2.GetComponent<Image>().color = new Color32(0x20, 0x93, 0xBC, 0xFF);
@@ -709,6 +1087,13 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     {
         if (!isQuestStarted)
         {
+            Scroll[2].content = ContentShop3[FieldManager.CorrectField].GetComponent<RectTransform>();
+            ContentShop3[FieldManager.CorrectField].SetActive(true);
+            for (int h = 0; h < ContentShop1.Length; h++)
+            {
+                if (h != FieldManager.CorrectField)
+                    ContentShop3[h].SetActive(false);
+            }
             if (Shop6.activeSelf)
                 Button6();
             else if (Shop2.activeSelf)
@@ -937,82 +1322,33 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         pointSum.text = NormalSum(GameManager.PointSum);
     }
 
-    public void ResetAll()
-    {
-        if (Teleport.i < 5 && PointSum >= CostReset && QuestManager.QuestsCompleate[0] && QuestManager.QuestsCompleate[1] && QuestManager.QuestsCompleate[2]
-            && QuestManager.QuestsCompleate[3] && QuestManager.QuestsCompleate[4])
-        {
-            if (Teleport.i < 4)
-            {
-                CostReset += 50000;
-                CostResetText.text = NormalSum(CostReset);
-            }
-            else
-            {
-                CostReset = int.MaxValue;
-                CostResetText.text = "Max";
-
-            }
-
-            Teleport.i++;
-            for (int j = 0; j <  Teleport.i; j++)
-            {
-                QuestManager.QuestsCompleate[j] = false;
-            }
-            //Teleport.Ressed();
-            StandartBuff.pointOnBit = 1;
-            AfkBuff.pointOnBit = 1;
-            StandartBuff.CostOnGrade = 100;
-            AfkBuff.CostOnGrade = 100;
-            StandartCost.text = NormalSum(StandartBuff.CostOnGrade);
-            StandartAfkCost.text = NormalSum(AfkBuff.CostOnGrade);
-            Point = 0;
-            PointSum = 0;
-            pointSum.text = NormalSum(GameManager.PointSum);
-            point.text = "" + 0;
-            QuestManager.Quest0Challenge += 25;
-            Auto_flipper_text.text = "Buy auto-flippers";
-            Automod_slider.SetActive(false);
-            buttonBuyAutomod.SetActive(true);
-            automod = false;
-            PointBuffText.text = StandartBuff.pointOnBit + "→" + (StandartBuff.pointOnBit + 1);
-            PointBuffAfkText.text = AfkBuff.pointOnBit + "→" + (AfkBuff.pointOnBit + 1);
-        }
-        else if (PointSum < CostReset)
-        {
-            textError.SetActive(true);
-            StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
-        }
-        else if (!(QuestManager.QuestsCompleate[0] && QuestManager.QuestsCompleate[1] && QuestManager.QuestsCompleate[2]
-            && QuestManager.QuestsCompleate[3] && QuestManager.QuestsCompleate[4] && QuestManager.QuestsCompleate[5] && QuestManager.QuestsCompleate[6]
-            && QuestManager.QuestsCompleate[7] && QuestManager.QuestsCompleate[8] && QuestManager.QuestsCompleate[9]))
-        {
-            textError2.SetActive(true);
-            StartCoroutine(ViewText(textError2));
-            StopCoroutine(ViewText(textError2));
-        }
-    }
 
     public void NewGame()
     {
         Attention.SetActive(true);
     }
 
- 
-    
 
-    
+
+
+
     public void AcceptNewGame()
     {
-       
+        for (int h = 0; h < PointsNow.Length; h++)
+        {
+            PointsNow[h] = 0;
+        }
         gems += lvl;
         Gems.text = $"{gems} ";
-        lvl = 0;
+        lvl = 1;
+        LetsScript.hitneeded = 500;
         LvlUpGems();
-      
-        Teleport.i = 0;
-        StandartBuff.pointOnBit = 1;
+        lvlBuff.text = $" level - {lvl}";
+        lvlbuff.text = $"x{lvl}";
+        Teleport.i[0] = 0;
+        Teleport.i[1] = 0;
+        StandartBuff.pointOnBit[0] = 1;
+        StandartBuff.pointOnBit[1] = 1;
         AfkBuff.pointOnBit = 1;
         maximumPoint = 0;
         MaxPoint.text = $"Record:    0";
@@ -1022,7 +1358,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Checker.TimeStoppers = 3;
         Checker.costOnGrade = 1000;
         Checker.costOnCooldown = 1000;
-        StandartBuff.CostOnGrade = 100;
+        StandartBuff.CostOnGrade[0] = 100;
+        StandartBuff.CostOnGrade[1] = 1000;
+
         StopperText.text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers + 0.75);
         StopperCooldownText.text = Checker.coldownStopper - 3 + "→" + (Checker.coldownStopper - 3 - 0.75);
         StopperCost.text = NormalSum(Checker.costOnGrade);
@@ -1033,29 +1371,79 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         stopperPanelCooldown.SetActive(false);
         Checkers.SetActive(false);
         AfkBuff.CostOnGrade = 100;
-        QuestManager.Quest0Challenge = 35;
-        NumberOfBall.text = $"Number of extra ball  0\\5";
-        StandartCost.text = NormalSum(StandartBuff.CostOnGrade);
+        NumberOfBall.text = $"Number of extra ball  0\\10";
+        StandartCost.text = NormalSum(StandartBuff.CostOnGrade[0]);
+        StandartCostF2.text = NormalSum(StandartBuff.CostOnGrade[1]);
         StandartAfkCost.text = NormalSum(AfkBuff.CostOnGrade);
         Point = 0;
+        PointsNow[0] = 0;
+        PointsNow[1] = 0;
+        PointField2 = 0;
         PointSum = 0;
         pointSum.text = NormalSum(GameManager.PointSum);
         point.text = "" + 0;
-        Auto_flipper_text.text = "Buy auto-flippers";
-        Automod_slider.SetActive(false);
-        buttonBuyAutomod.SetActive(true);
-        automod = false;
-        PointBuffText.text = StandartBuff.pointOnBit + "→" + (StandartBuff.pointOnBit + 1);
+        Auto_flipper_text[0].text = "Buy auto-flippers";
+        Auto_flipper_text[1].text = "Buy auto-flippers";
+        Automod_slider[0].SetActive(false);
+        Automod_slider[1].SetActive(false);
+        buttonBuyAutomod[0].SetActive(true);
+        buttonBuyAutomod[1].SetActive(true);
+        automod[0] = false;
+        automod[1] = false;
+        PointBuffText.text = StandartBuff.pointOnBit[0] + "→" + (StandartBuff.pointOnBit[0] + 1);
+        PointBuffTextF2.text = StandartBuff.pointOnBit[1] + "→" + (StandartBuff.pointOnBit[1] + 1);
         PointBuffAfkText.text = AfkBuff.pointOnBit + "→" + (AfkBuff.pointOnBit + 1);
         for (int j = 1; j < 6; j++)
             Teleport.mainballsstatic[j].SetActive(false);
-        for (int j = 0; j < 5; j++)
+        for (int j = 0; j < 10; j++)
         {
             QuestManager.QuestsCompleate[j] = false;
             PanelQuest[j].SetActive(true);
             BuyBallButtons[j].SetActive(false);
             Lock[j].GetComponent<Image>().sprite = DefaultLock;
         }
+        if (x2Areas[x2Areas.Length - 1].activeSelf)
+        {
+            TextUp(x2AreasCostText.gameObject);
+            x2areasBuyButton.GetComponent<Button>().enabled = true;
+            x2areasBuyButton.GetComponent<Image>().sprite = ButtonBuy;
+        }
+        for (int i = 0; i < x2Areas.Length; i++)
+        {
+            x2Areas[i].SetActive(false);
+        }
+        x2AreasCostText.text = NormalSum(x2AreasCost[0]);
+        CircleBuffPanel.SetActive(false);
+        Cirlce.PointNeed = Cirlce.MaxPointNeed = 10;
+        CircleF2.text = "Buy Safe Circle";
+        buttonBuyCirlce.SetActive(true);
+        RombBuy.text = "Buy Strong Romb";
+        RombButton.SetActive(true);
+        StrongRomb.SetActive(false);
+        RombBaff.SetActive(false);
+        if (StopperCooldown.sprite == MaxBuff)
+        {
+            TextUp(StopperCooldownCost.gameObject);
+            StopperCooldown.sprite = ButtonBuy;
+        }
+        if (StopperTime.sprite == MaxBuff)
+        {
+            TextUp(StopperCost.gameObject);
+            StopperTime.sprite = ButtonBuy;
+        }
+        Romb.PointLet = 1;
+        RombCost = 1000;
+        RombCostBuff.text = NormalSum(RombCost);
+        PointBuffTextRomb.text = Romb.PointLet + "→" + (Romb.PointLet + 1);
+        if(CirleBuffCost == 0)
+        {
+            TextUp(CircleTextBuffCost.gameObject);
+            CircleBuffButton.GetComponent<Button>().enabled = true;
+            CircleBuffButton.GetComponent<Image>().sprite = ButtonBuy;
+        }
+        CirleBuffCost =5000;
+        CircleTextBuffCost.text = NormalSum(CirleBuffCost);
+        CircleBuffText.text = Cirlce.MaxPointNeed + "→" + (Cirlce.MaxPointNeed - 1);
     }
     
 
@@ -1064,9 +1452,21 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         QuestPanel.SetActive(true);
         QuestsText.text = textQuest;
         Button3();
+        pointField2.gameObject.SetActive(false);
         x2bonus.SetActive(false);
-      
+        if(Arrows.Length > FieldManager.CorrectField * 2)
+        Arrows[FieldManager.CorrectField*2].SetActive(false);
+        if (FieldManager.CorrectField != 0)
+        Arrows[FieldManager.CorrectField*2-1].SetActive(false);
         StartCoroutine(ShowButton());
+        let.PointsNow[FieldManager.CorrectField].gameObject.SetActive(false);
+        for(int h = 0; h < Fm.FieldsAll.Length; h++)
+        {
+            if (h != FieldManager.CorrectField)
+            {
+                Fm.FieldsAll[h].SetActive(false);
+            }
+        }
     }
       public void BuyStopper()
     {
@@ -1122,7 +1522,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             }
         }
     }
-    IEnumerator TimeBuff(int were)
+    IEnumerator TimeBuff(int[] were)
     {
 
         for (int i = 30; i > 0; i--)
@@ -1131,7 +1531,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             yield return new WaitForSeconds(1f);
         }
         time.text = "";
-        StandartBuff.pointOnBit -= were;
+        StandartBuff.pointOnBit[0] -= were[0];
+        StandartBuff.pointOnBit[1] -= were[1];
         lvlbuff.text = $"x{lvl}";
         if (!DarkTheme)
             lvlbuff.color = Color.black;
@@ -1173,8 +1574,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             POintSpent += CostBall;
             SumSent.text = $"Total points spent:     {POintSpent}";
             pointSum.text = NormalSum(GameManager.PointSum);
-            Teleport.i++;
-            NumberOfBall.text = $"Number of extra ball  {Teleport.i}\\5";
+            Teleport.i[FieldManager.CorrectField]++;
+            NumberOfBall.text = $"Number of extra ball  {Teleport.i[0]+Teleport.i[1]}\\10";
             BuyBallButtons[i].SetActive(false);
         }
         else
@@ -1190,9 +1591,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     {
         BlockCanvas.SetActive(true);
         Button3();
-        QuestManager.QuestsCompleate[NumberQuest] = true;
-        ButtonQuests[NumberQuest].GetComponent<Image>().sprite = CompleatedImage;
-        StartCoroutine(BackScreen(PanelQuest[NumberQuest]));
+        QuestManager.QuestsCompleate[NumberQuest + FieldManager.CorrectField * 5] = true;
+        ButtonQuests[NumberQuest+FieldManager.CorrectField*5].GetComponent<Image>().sprite = CompleatedImage;
+        StartCoroutine(BackScreen(PanelQuest[NumberQuest + FieldManager.CorrectField * 5]));
         
 
     }
@@ -1269,14 +1670,29 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     }
     public void Stop()
     {
+        let.PointsNow[FieldManager.CorrectField].gameObject.SetActive(true);
         isQuestStarted = false;
         point.gameObject.SetActive(true);
         lvlTextPanel.SetActive(true);
+        pointField2.gameObject.SetActive(true);
         pointSum.gameObject.SetActive(true);
         BottonPanel.SetActive(true);
         ProgressBarGM.SetActive(true);
         StopButton.SetActive(false);
         ProgressBar.gameObject.SetActive(true);
+ 
+            if (Arrows.Length > FieldManager.CorrectField * 2 && FieldManager.Fields[FieldManager.CorrectField+1])
+                Arrows[FieldManager.CorrectField * 2].SetActive(true);
+            if (FieldManager.CorrectField != 0)
+                Arrows[FieldManager.CorrectField * 2 - 1].SetActive(true);
+        
+        for (int h = 0; h < Fm.FieldsAll.Length; h++)
+        {
+            if (h != FieldManager.CorrectField && FieldManager.Fields[h])
+            {
+                Fm.FieldsAll[h].SetActive(true);
+            }
+        }
         if (NumberQuest == 0)
             PointQuest1.gameObject.SetActive(false);
         else if (NumberQuest == 1)
@@ -1287,8 +1703,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         else if(NumberQuest == 2)
         {
+            Fm.FieldsAll[FieldManager.CorrectField].transform.localScale *= 5;
             MainCamera.orthographicSize = 5;
-           
             PointQuest1.gameObject.SetActive(false);
         }
         else if(NumberQuest == 3)
@@ -1296,14 +1712,17 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointQuest1.gameObject.SetActive(false);
             StopCoroutine(CameraRotation());
             MainCamera.transform.rotation = new Quaternion(MainCamera.transform.rotation.x, MainCamera.transform.rotation.y, 0, 0);
-         
-           
-           
+            Fm.FieldsAll[FieldManager.CorrectField].transform.rotation = new Quaternion(Fm.FieldsAll[FieldManager.CorrectField].transform.rotation.x, Fm.FieldsAll[FieldManager.CorrectField].transform.rotation.y, 0, 0);
+
+
         }
         else if(NumberQuest == 4)
         {
+
             PointQuest1.gameObject.SetActive(false);
             MainCamera.orthographicSize = 5;
+            Fm.FieldsAll[FieldManager.CorrectField].transform.localScale /= 5;
+            Fm.FieldsAll[FieldManager.CorrectField].transform.localPosition = new Vector3(0, 4.2f, 1);
             MainCamera.transform.position = new Vector3(0f, 0f, MainCamera.transform.position.z);
            
         }
@@ -1333,7 +1752,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 PointQuest1.text = "0\\20";
                 PointQuest1.gameObject.SetActive(true);
                 MainCamera.orthographicSize = 25;
-                EndPointBottonPanel.transform.position = new Vector2(EndPointBottonPanel.transform.position.x , EndPointBottonPanel.transform.position.y - 50f);
+                Fm.FieldsAll[FieldManager.CorrectField].transform.localScale /= 5;
+                
                 break;
             case 3:
                 PointQuest1.text = "0\\20";
@@ -1344,13 +1764,16 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             case 4:
                 PointQuest1.text = "0\\20";
                 PointQuest1.gameObject.SetActive(true);
+                Fm.FieldsAll[FieldManager.CorrectField].transform.localScale *= 5;
                 MainCamera.orthographicSize = 1;
                 break;
             default:
                 break;
 
         }
+       
     }
+
     public void ReklamaOnStop()
     {
         Advertisement.Show("Interstitial_Android");
@@ -1361,7 +1784,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         while (quest1point<20 && !BottonPanel.activeSelf)
         {
             MainCamera.transform.Rotate(new Vector3(0, 0, 1), Space.World);
-           
+            Fm.FieldsAll[FieldManager.CorrectField].transform.Rotate(new Vector3(0, 0, -1), Space.Self);
             // MainCamera.transform.rotation =Quaternion.AngleAxis(90, new Vector3( 0,0,1));
             yield return new WaitForFixedUpdate();
         }
@@ -1369,12 +1792,13 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         if (quest1point >= 20)
         {
             Stop();
-            QuestManager.QuestsCompleate[3] = true;
+            QuestManager.QuestsCompleate[3+FieldManager.CorrectField*5] = true;
             QuestCompeate.SetActive(true);
             
         }
         else
         {
+            Fm.FieldsAll[FieldManager.CorrectField].transform.rotation = new Quaternion(Fm.FieldsAll[FieldManager.CorrectField].transform.rotation.x, Fm.FieldsAll[FieldManager.CorrectField].transform.rotation.y, 0, 0);
             MainCamera.transform.rotation = new Quaternion(MainCamera.transform.rotation.x, MainCamera.transform.rotation.y, 0, 0);
             //BottonPanel.transform.position = new Vector2(0, -7);
         }
@@ -1391,7 +1815,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Stop();
         if (timeQuest <= 0)
         {
-            QuestManager.QuestsCompleate[0] = true;
+            QuestManager.QuestsCompleate[0+FieldManager.CorrectField*5] = true;
             QuestCompeate.SetActive(true);
         }
        
@@ -1437,8 +1861,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 lvlbuff.text = $"x{lvl*2}";
                 lvlbuff.color = Color.yellow;
                 x2bonus.SetActive(false);
-                int variabled = StandartBuff.pointOnBit;
-                StandartBuff.pointOnBit *= 2;
+                int[] variabled =new int[] { StandartBuff.pointOnBit[0], StandartBuff.pointOnBit[1] };
+                StandartBuff.pointOnBit[0] *= 2;
+                StandartBuff.pointOnBit[1] *= 2;
                 StartCoroutine(TimeBuff(variabled));
                 StartCoroutine(ShowButton());
                 PlayerPrefs.SetString("Reward", Reward.ToString());
@@ -1472,7 +1897,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
        
         if (DarkTheme)
         {
+            MiniField[0].sprite = MiniFieldDark[0];
             spawnPoint.sprite = spawnPointDark;
+            spawnPointF2.sprite = spawnPointDark;
             ColorBlock cb = button1.GetComponent<Button>().colors;
             cb.normalColor = Color.white;// new Color32(0x16, 0x71, 0x99, 0xFF);
             cb.pressedColor = new Color32(0x0E, 0x43, 0x60, 0xFF);
@@ -1498,19 +1925,20 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         else
         {
             spawnPoint.sprite = spawnPointDefault;
-           
+            spawnPointF2.sprite = spawnPointDefault;
+            MiniField[0].sprite = MiniFieldLight[0];
             button1.GetComponent<Button>().colors = colorB;
             button2.GetComponent<Button>().colors = colorB;
             button3.GetComponent<Button>().colors = colorB;
             button4.GetComponent<Button>().colors = colorB;
             button5.GetComponent<Button>().colors = colorB;
             button6.GetComponent<Button>().colors = colorB;
-            button1.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
-            button2.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
-            button3.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
-            button4.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
-            button5.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
-            button6.GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF);
+            button1.GetComponent<Image>().color  =Color.white;
+            button2.GetComponent<Image>().color = Color.white;//new Color32(0xE6, 0xE6, 0xE6, 0xFF);
+            button3.GetComponent<Image>().color = Color.white; //new Color32(0xE6, 0xE6, 0xE6, 0xFF);
+            button4.GetComponent<Image>().color = Color.white; //new Color32(0xE6, 0xE6, 0xE6, 0xFF);
+            button5.GetComponent<Image>().color = Color.white; //new Color32(0xE6, 0xE6, 0xE6, 0xFF);
+            button6.GetComponent<Image>().color = Color.white;// new Color32(0xE6, 0xE6, 0xE6, 0xFF);
             if (Shop6.activeSelf)
                 button6.GetComponent<Image>().color = mycolor;
         }
@@ -1524,12 +1952,18 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Shop5.GetComponent<Image>().color= ChangeColor(Shop5.GetComponent<Image>().color, "Shop");
         Shop6.GetComponent<Image>().color= ChangeColor(Shop6.GetComponent<Image>().color, "Shop");
         spawnPointLine.GetComponent<SpriteRenderer>().color = ChangeColor(plaingField.GetComponent<SpriteRenderer>().color, "pointline");
+        spawnPointLineF2.GetComponent<SpriteRenderer>().color = ChangeColor(spawnPointLineF2.GetComponent<SpriteRenderer>().color, "pointline");
         MainCamera.backgroundColor = ChangeColor(MainCamera.backgroundColor);
         Splitters.GetComponent<Image>().color = ChangeColor(Splitters.GetComponent<Image>().color, "808080");
         plaingField.GetComponent<SpriteRenderer>().color= ChangeColor(plaingField.GetComponent<SpriteRenderer>().color);
+        Fm.FieldsAll[1].GetComponent<SpriteRenderer>().color= ChangeColor(Fm.FieldsAll[1].GetComponent<SpriteRenderer>().color);
         Phone.GetComponent<SpriteRenderer>().color = ChangeColor(Phone.GetComponent<SpriteRenderer>().color);
-        for(int h = 0; h<6; h++)
+        PhoneF2.GetComponent<SpriteRenderer>().color = ChangeColor(PhoneF2.GetComponent<SpriteRenderer>().color);
+        for (int h = 0; h < 6; h++)
+        {
             Balls[h].GetComponent<SpriteRenderer>().color = ChangeColor(Balls[h].GetComponent<SpriteRenderer>().color);
+            BallsF2[h].GetComponent<SpriteRenderer>().color = ChangeColor(BallsF2[h].GetComponent<SpriteRenderer>().color);
+        }
         for(int h =0; h<2;h++)
             Stoppers[h].GetComponent<SpriteRenderer>().color = ChangeColor(Stoppers[h].GetComponent<SpriteRenderer>().color);
         for(int h=0; h < AllPanel.Length; h++)
@@ -1635,11 +2069,15 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     public void TextDown(GameObject tx)
     {
-        tx.transform.position -= new Vector3( 0, 0.08f,0);
+        if (tx.GetComponent<Text>() == null || tx.GetComponent<Text>().text != "MAX")
+        {
+            tx.transform.position -= new Vector3(0, 0.08f, 0);
+        }
     }
 
     public void TextUp(GameObject tx)
     {
+        if(tx.GetComponent<Text>()==null || tx.GetComponent<Text>().text!="MAX")
         tx.transform.position += new Vector3(0, 0.08f, 0);
     }
 
@@ -1657,6 +2095,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             LevelNeedToReliveText.SetActive(true) ;
         }
         ReliveText.text = $"Reset all progress and get {lvl} gems";
+        GemGet.text = $"{lvl} ";
     }
 }
 

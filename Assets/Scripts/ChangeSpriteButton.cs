@@ -12,7 +12,7 @@ public class ChangeSpriteButton : MonoBehaviour
     }
     public void ChangeSprite()
     {
-        if(Teleport.i==5&&ResetBall)
+        if(Teleport.i[0]==5&&ResetBall)
         gameObject.GetComponent<Image>().sprite = TargetSprite;
     }
 }

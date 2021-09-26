@@ -6,7 +6,7 @@ using System;
 
 public class LetsScript : MonoBehaviour
 {
-    
+    public GameObject SafeCircle;
     public Text MaxPoint;
     public Text lvltext;
     public Text lvlbuff;
@@ -14,10 +14,11 @@ public class LetsScript : MonoBehaviour
     public Text lvlupbuff;
     public GameObject lvlupPanel;
     public GameManager Gm;
+    public Text[] PointsNow;
     public Text PointQuest1;
     public int force;
     public Text point;
-    public Text pointSum;
+    public int PointLet = 1;
     Color defaultColor;
     public GameObject text;
     public AudioSource As;
@@ -31,18 +32,41 @@ public class LetsScript : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-       // Handheld.Vibrate();
+        // Handheld.Vibrate();
         As.PlayOneShot(Ac);
-        if (!GameManager.isQuestStarted)
+        if (!GameManager.isQuestStarted && PointLet>0)
         {
-            point.text = "" + (++GameManager.Point);
+            if (GameManager.ExNum)
+                ExperemetNumber(collision.contacts[0]);
+            if (collision.gameObject.tag == "PlayerF2")
+            {
+                if(!Gm.buttonBuyCirlce.activeSelf)
+                Cirlce.PointNeed--;
+                if(Cirlce.PointNeed == 0)
+                {
+                    SafeCircle.SetActive(true);
+                }
+                Gm.pointField2.text = "" + (++GameManager.PointField2);
+                GameManager.PointsNow[1] += StandartBuff.pointOnBit[1]* GameManager.lvl * PointLet;
+                PointsNow[1].text ="+"+ GameManager.NormalSum(GameManager.PointsNow[1]);
+            }
+            else if (collision.gameObject.tag == "Player")
+            {
+                point.text = "" + (++GameManager.Point);
+                GameManager.PointsNow[0] += StandartBuff.pointOnBit[0] * GameManager.lvl * PointLet;
+                PointsNow[0].text = "+"+GameManager.NormalSum(GameManager.PointsNow[0]);
+            }
             if (GameManager.Point > GameManager.maximumPoint)
             {
                 MaxPoint.text = $"Record:   {GameManager.Point}";
                 GameManager.maximumPoint = GameManager.Point;
             }
-            GameManager.PointSum += StandartBuff.pointOnBit*GameManager.lvl;
-            pointSum.text = GameManager.NormalSum(GameManager.PointSum);
+            else if(GameManager.PointField2 > GameManager.maximumPoint)
+            {
+
+                MaxPoint.text = $"Record:   {GameManager.PointField2}";
+                GameManager.maximumPoint = GameManager.PointField2;
+            }
             hitneeded--;
             ProgressBar.fillAmount =(500f* GameManager.lvl- hitneeded) / 500f / GameManager.lvl;
             if (hitneeded==0)
@@ -61,6 +85,8 @@ public class LetsScript : MonoBehaviour
         }
         else if(GameManager.NumberQuest == 0||GameManager.NumberQuest == 2|| GameManager.NumberQuest == 3 || GameManager.NumberQuest == 4)
         {
+            if (GameManager.ExNum)
+                ExperemetNumber(collision.contacts[0]);
             int qch = 0;
             if (GameManager.NumberQuest == 0)
                 qch = 30;
@@ -70,14 +96,12 @@ public class LetsScript : MonoBehaviour
             if (GameManager.quest1point == qch)
             {
                 Gm.Stop();
-                QuestManager.QuestsCompleate[GameManager.NumberQuest] = true;
+                QuestManager.QuestsCompleate[GameManager.NumberQuest+FieldManager.CorrectField*5] = true;
                 QuestCompeate.SetActive(true);
             }
         }
         
         //Вернуться и удалить если хуйня
-        if(GameManager.ExNum)
-        ExperemetNumber(collision.contacts[0]);
        GetComponent<SpriteRenderer>().color = Color.white;
         
         StartCoroutine(ChangeColor());

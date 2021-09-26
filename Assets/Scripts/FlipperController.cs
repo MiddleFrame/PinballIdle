@@ -3,27 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class FlipperController : MonoBehaviour
 {
-    public bool IsFlipper { get; set; }
-    HingeJoint2D hj;
-    BoxCollider2D cc2d;
+    public static bool[] IsFlipper { get; set; } = new bool[] { false, false };
+    HingeJoint2D hjright;
+    public HingeJoint2D hjleft;
+    BoxCollider2D cc2dright;
+    public static bool rightorleft;
     int flag = 1;
     public AudioSource As;
     public AudioClip Ac;
-
-
+    public int Field = 0;
+    public static bool AllFieldTogether { get; set; } = false;
     private void Start()
     {
 
-        hj = GetComponent<HingeJoint2D>();
-        cc2d = GetComponent<BoxCollider2D>();
+        hjright = GetComponent<HingeJoint2D>();
+        cc2dright = GetComponent<BoxCollider2D>();
       
        
     }
 
     public void Audio()
     {
+
         As.PlayOneShot(Ac);
     }
 
@@ -31,45 +35,46 @@ public class FlipperController : MonoBehaviour
     void Update()
     {
         
+        if(Field == FieldManager.CorrectField || GameManager.automod[Field] || AllFieldTogether)
+            if (IsFlipper[Field] || AllFieldTogether)
+            {
 
-        if (IsFlipper)
-        {
-            hj.useMotor = true;
-           
-            /* var motor = hj.motor;
-              motor.motorSpeed = 2000f;
-              hj.motor = motor;*/
-        }
+
+                if (rightorleft)
+                    hjright.useMotor = true;
+                else
+                    hjleft.useMotor = true;
+
+             }
         else
         {
-            hj.useMotor = false;
+                hjright.useMotor = false;
 
-            
-              /* var motor = hj.motor;
-               motor.motorSpeed = -2000f;
-               hj.motor = motor;*/
+                hjleft.useMotor = false;
+             
         }
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (GameManager.automod && other.tag == "Player")
+        if (GameManager.automod[Field] && (other.tag == "Player"|| other.tag == "PlayerF2"))
         {
-            
-            IsFlipper = true;
-            cc2d.size = new Vector2(cc2d.size.x - flag * 0.4f, cc2d.size.y) ;
-            cc2d.offset = new Vector2(cc2d.offset.x - flag * 0.4f, cc2d.offset.y) ;
+            int stopp = Checker.isAllChecked ? 1 : 0;
+            Audio();
+            rightorleft = true;
+            IsFlipper[Field] = true;
+            cc2dright.size = new Vector2(cc2dright.size.x - flag * 0.4f, cc2dright.size.y);
+            cc2dright.offset = new Vector2(cc2dright.offset.x - flag * 0.4f + 0.3f * stopp, cc2dright.offset.y);
             flag = -flag;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (GameManager.automod && collision.tag == "Player")
+        if (GameManager.automod[Field] && (collision.tag == "Player"|| collision.tag == "PlayerF2"))
         {
-            IsFlipper = false;
+            IsFlipper[Field] = false;
         }
     }
 
-
-    
+  
 }

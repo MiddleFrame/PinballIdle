@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class FieldManager : MonoBehaviour
 {
-    public static int[] CostFields = new int[] { 10 };
+    public static int[] CostFields = new int[] { 5 };
+    public static int CorrectField=0;
     public GameManager Gm;
     public GameObject textError;
     public GameObject NewFieldPanel;
     public GameObject[] ButtonsToBuy;
-    public static bool[] Fields = new bool[] { false, false,false };
+    public GameObject[] FieldsAll;
+    public static bool[] Fields = new bool[] { true, false, false,false };
+
+
     // Start is called before the first frame update
     void Start()
     {
-
+       
     }
 
     // Update is called once per frame
@@ -25,8 +29,10 @@ public class FieldManager : MonoBehaviour
 
     public void BuyNewField(int NumbeField)
     {
+        
         if (GameManager.gems >= CostFields[NumbeField])
         {
+            Gm.Button4();
             _buyNewField(NumbeField);
             GameManager.gems -= CostFields[NumbeField];
             NewFieldPanel.SetActive(true);
@@ -43,8 +49,9 @@ public class FieldManager : MonoBehaviour
     }
     public void _buyNewField(int NumbeField)
     {
+        FieldsAll[NumbeField + 1].SetActive(true);
         ButtonsToBuy[NumbeField].SetActive(false);
-        Fields[NumbeField] = true;
+        Fields[NumbeField+1] = true;
         if (!Gm.Arrows[0].activeSelf)
         {
             Gm.Arrows[0].SetActive(true);
