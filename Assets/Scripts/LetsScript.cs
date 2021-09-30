@@ -6,6 +6,7 @@ using System;
 
 public class LetsScript : MonoBehaviour
 {
+    public static int exp = 1;
     public GameObject SafeCircle;
     public Text MaxPoint;
     public Text lvltext;
@@ -67,9 +68,9 @@ public class LetsScript : MonoBehaviour
                 MaxPoint.text = $"Record:   {GameManager.PointField2}";
                 GameManager.maximumPoint = GameManager.PointField2;
             }
-            hitneeded--;
+            hitneeded-= exp;
             ProgressBar.fillAmount =(500f* GameManager.lvl- hitneeded) / 500f / GameManager.lvl;
-            if (hitneeded==0)
+            if (hitneeded<=0 && !lvlupPanel.activeSelf)
             {
                 GameManager.lvl++;
                 Gm.LvlUpGems();
@@ -100,20 +101,26 @@ public class LetsScript : MonoBehaviour
                 QuestCompeate.SetActive(true);
             }
         }
-        
-        //Вернуться и удалить если хуйня
-       GetComponent<SpriteRenderer>().color = Color.white;
-        
-        StartCoroutine(ChangeColor());
+        if (PointLet > 0)
+        {
+            //Вернуться и удалить если хуйня
+            GetComponent<SpriteRenderer>().color = Color.white;
+
+            StartCoroutine(ChangeColor());
+        }
         collision.rigidbody.AddForce(-collision.contacts[0].normal * force, ForceMode2D.Impulse);
 
      
 
         
     }
- 
-    
-   public  IEnumerator ChangeColor()
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.GetComponent<Mainball>())
+            collision.isTrigger = false;
+    }
+
+    public  IEnumerator ChangeColor()
     {
         
         yield return new WaitForSeconds(0.02f);

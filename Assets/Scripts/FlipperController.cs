@@ -58,12 +58,12 @@ public class FlipperController : MonoBehaviour
     {
         if (GameManager.automod[Field] && (other.tag == "Player"|| other.tag == "PlayerF2"))
         {
-            int stopp = Checker.isAllChecked ? 1 : 0;
+           
             Audio();
             rightorleft = true;
             IsFlipper[Field] = true;
             cc2dright.size = new Vector2(cc2dright.size.x - flag * 0.4f, cc2dright.size.y);
-            cc2dright.offset = new Vector2(cc2dright.offset.x - flag * 0.4f + 0.3f * stopp, cc2dright.offset.y);
+            cc2dright.offset = new Vector2(cc2dright.offset.x - flag * 0.4f , cc2dright.offset.y);
             flag = -flag;
         }
     }
@@ -76,5 +76,16 @@ public class FlipperController : MonoBehaviour
         }
     }
 
-  
+
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "PlayerF2")
+        {
+            if (GameManager.choosenBall == 1 && collision.gameObject.GetComponent<Mainball>())
+            {
+                collision.collider.isTrigger = true;
+            }
+        }
+    }
 }

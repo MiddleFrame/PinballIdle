@@ -13,7 +13,7 @@ public class SwipeMenu : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public GameObject[] PointsNow;
     public AudioSource[] LetSourse;
     public AudioSource Checker;
-
+    public ChooseBall Cb;
     public void OnPointerDown(PointerEventData eventData)
     {
         if (!GameManager.automod[FieldManager.CorrectField])
@@ -162,6 +162,15 @@ public class SwipeMenu : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     bool isSwapped=false;
     IEnumerator Swiped(bool left)
     {
+        var child = Cb.Gm.Balls[0].GetComponentsInChildren<TrailRenderer>();
+        var childF2 = Cb.Gm.BallsF2[0].GetComponentsInChildren<TrailRenderer>();
+        for(int i = 0; i < child.Length; i++)
+        {
+            child[i].enabled = false;
+            childF2[i].enabled = false;
+            child[i].Clear();
+            childF2[i].Clear();
+        }
         isSwapped = true;
         var x = Fields[0].transform.localPosition.x;
         if(left)
@@ -185,5 +194,11 @@ public class SwipeMenu : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 yield return new WaitForEndOfFrame();
             }
         isSwapped = false;
+        for (int i = 0; i < Fields.Length; i++)
+        {
+            Fields[i].transform.localPosition = new Vector3((i-FieldManager.CorrectField)*720f, Fields[0].transform.localPosition.y, Fields[0].transform.localPosition.z);
+        }
+        child[GameManager.choosenBall].enabled = true;
+        childF2[GameManager.choosenBall].enabled = true;
     }
 }

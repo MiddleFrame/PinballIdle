@@ -9,6 +9,11 @@ using UnityEditor;
 public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListener, IUnityAdsLoadListener
 {
     //\
+    public GameObject[] PanelTriggerBalls;
+    public static int choosenBall = 0;
+    public Color32[] colorsBall = new Color32[] {Color.black, new Color32(0xB3,0xB3,0xB3,0xFF), new Color32(0xFF,0x89,0x12,0xFF), new Color32(0xFC,0xDE,0x3A,0xFF) };
+    public Text timeExpReward;
+    public GameObject x2expbonus;
     public Sprite ButtonBuy;
     public ScrollRect[] Scroll;
     public GameObject CircleBuffPanel;
@@ -199,7 +204,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     }
 
 
-    enum reward {x2reward, x3reward }
+    enum reward {x2reward, x3reward, x2expreward}
     reward MyReward;
     class SaveQuest
     {
@@ -239,6 +244,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             StopperCooldownText.text = Checker.coldownStopper - 3 + "";
         PointBuffAfkText.text = AfkBuff.pointOnBit + "→" + (AfkBuff.pointOnBit + 1);
         PointBuffTextRomb.text = Romb.PointLet + "→" + (Romb.PointLet + 1);
+        isQuestStarted = false;
     }
 
     void SaveGame()
@@ -266,7 +272,13 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         PlayerPrefs.SetString("PointSent", POintSpent.ToString());
         PlayerPrefs.SetInt("HitNeeded",LetsScript.hitneeded);
         PlayerPrefs.SetInt("lvl",lvl);
+        PlayerPrefs.SetInt("LostBall", BallsManager.ballsLost);
+        PlayerPrefs.SetInt("questCompleted", BallsManager.questCompleted);
         PlayerPrefs.SetString("TextView", lvlTextPanel.activeSelf.ToString());
+        for (int j = 0; j <4; j++)
+        {
+            PlayerPrefs.SetString($"BallsOpen[{j}]", BallsManager.isOpenBall[j].ToString());
+        }
         for (int j=0; j < 10; j++)
         {
             PlayerPrefs.SetString($"QuestNewCompleate[{j}]", QuestManager.QuestsCompleate[j].ToString());
@@ -313,8 +325,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         if (PlayerPrefs.HasKey("Gems"))
         {
             gems = PlayerPrefs.GetInt("Gems");
-            if (gems < 10)
-                gems = 10;
+           
             Gems.text = $"{gems} ";
             LvlUpGems();
         }
@@ -416,7 +427,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (PlayerPrefs.HasKey("CountBallF2"))
         {
-            Teleport.i[1] = PlayerPrefs.GetInt("CountBall");
+            Teleport.i[1] = PlayerPrefs.GetInt("CountBallF2");
             if (Teleport.i[1] > 0)
             {
                 if (Teleport.i[1] > 5)
@@ -460,6 +471,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         if (PlayerPrefs.HasKey("PointSent"))
         {
             POintSpent = long.Parse(PlayerPrefs.GetString("PointSent"));
+            if (POintSpent > 1000000)
+                UnlockFoughtBall();
             SumSent.text = $"Total points spent:     {POintSpent}";
         }
         else
@@ -486,7 +499,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         if (PlayerPrefs.HasKey("BuyBallButtons[0]"))
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 10; j++)
             {
                BuyBallButtons[j].SetActive(bool.Parse( PlayerPrefs.GetString($"BuyBallButtons[{j}]")));
             }
@@ -570,12 +583,29 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             if (flag)
                 _buySafeCircleF2();
         }
+        if(PlayerPrefs.HasKey("BallsOpen[0]"))
+            for(int j=0; j < 4; j++)
+            {
+                BallsManager.isOpenBall[j] = bool.Parse(PlayerPrefs.GetString($"BallsOpen[{j}]"));
+            }
+        if (PlayerPrefs.HasKey("LostBall"))
+        {
+            BallsManager.ballsLost = PlayerPrefs.GetInt("LostBall");
+            if (BallsManager.ballsLost > 1000)
+                UnlockThirdBall();
+        }
 
+        if (PlayerPrefs.HasKey("questCompleted"))
+        {
+            BallsManager.questCompleted = PlayerPrefs.GetInt("questCompleted");
+            if (BallsManager.questCompleted >= 10)
+                UnlockSecondBall();
+        }
         if (PlayerPrefs.HasKey("x2Areas[0]")) {
             for (int j = 0; j < x2Areas.Length; j++)
             {
                 x2Areas[j].SetActive(bool.Parse(PlayerPrefs.GetString($"x2Areas[{j}]")));
-                if (j!= x2Areas.Length && x2Areas[j].activeSelf)
+                if (j!= x2Areas.Length-1 && x2Areas[j].activeSelf)
                 {
                     x2AreasCostText.text = NormalSum(x2AreasCost[j + 1]);
                 }
@@ -644,6 +674,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= StandartBuff.CostOnGrade[0];
             POintSpent += StandartBuff.CostOnGrade[0];
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             StandartBuff.pointOnBit[0] += 1;
             StandartBuff.CostOnGrade[0] = (int)(StandartBuff.CostOnGrade[0] * 1.2f);
@@ -667,6 +702,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= StandartBuff.CostOnGrade[1];
             POintSpent += StandartBuff.CostOnGrade[1];
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             StandartBuff.pointOnBit[1] += 1;
             StandartBuff.CostOnGrade[1] = (int)(StandartBuff.CostOnGrade[1] * 1.2f);
@@ -689,6 +729,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= RombCost;
             POintSpent += RombCost;
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             Romb.PointLet += 1;
             RombCost = (int)(RombCost * 1.2f);
@@ -713,6 +758,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 PointSum -= CirleBuffCost;
                 POintSpent += CirleBuffCost;
                 SumSent.text = $"Total points spent:     {POintSpent}";
+                if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+                {
+                    BallsManager.isOpenBall[3] = true;
+                    UnlockFoughtBall();
+                }
                 pointSum.text = NormalSum(GameManager.PointSum);
 
                 Cirlce.MaxPointNeed--;
@@ -764,6 +814,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 PointSum -= Checker.costOnGrade;
                 POintSpent += Checker.costOnGrade;
                 SumSent.text = $"Total points spent:     {POintSpent}";
+                if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+                {
+                    BallsManager.isOpenBall[3] = true;
+                    UnlockFoughtBall();
+                }
                 pointSum.text = NormalSum(GameManager.PointSum);
                 Checker.TimeStoppers += 0.75f;
                 Checker.costOnGrade = (long)(Checker.costOnGrade * 1.2f);
@@ -806,6 +861,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 PointSum -= cost;
                 POintSpent += cost;
                 SumSent.text = $"Total points spent:     {POintSpent}";
+                if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+                {
+                    BallsManager.isOpenBall[3] = true;
+                    UnlockFoughtBall();
+                }
                 pointSum.text = NormalSum(GameManager.PointSum);
 
                 x2Areas[g].SetActive(true);
@@ -842,6 +902,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 PointSum -= Checker.costOnCooldown;
                 POintSpent += Checker.costOnCooldown;
                 SumSent.text = $"Total points spent:     {POintSpent}";
+                if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+                {
+                    BallsManager.isOpenBall[3] = true;
+                    UnlockFoughtBall();
+                }
                 pointSum.text = NormalSum(GameManager.PointSum);
 
                 Checker.coldownStopper -= 0.75f;
@@ -875,6 +940,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= AfkBuff.CostOnGrade;
             POintSpent += AfkBuff.CostOnGrade;
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             AfkBuff.pointOnBit += 1;
             AfkBuff.CostOnGrade = (int)(AfkBuff.CostOnGrade * 1.2f);
@@ -895,6 +965,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= 100000;
             POintSpent += 100000;
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             Auto_flipper_text[0].text = "Auto-flippers";
             Automod_slider[0].SetActive(true);
@@ -915,6 +990,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= 100000;
             POintSpent += 100000;
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             Auto_flipper_text[1].text = "Auto-flippers";
             Automod_slider[1].SetActive(true);
@@ -935,6 +1015,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= 20000;
             POintSpent += 20000;
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             _buyStrongRombF2();
         }
@@ -961,6 +1046,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= 20000;
             POintSpent += 20000;
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             _buySafeCircleF2();
         }
@@ -1352,8 +1442,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         AfkBuff.pointOnBit = 1;
         maximumPoint = 0;
         MaxPoint.text = $"Record:    0";
-        POintSpent = 0;
-        SumSent.text = $"Total points spent:     {POintSpent}";
+       
         Checker.coldownStopper = 12;
         Checker.TimeStoppers = 3;
         Checker.costOnGrade = 1000;
@@ -1454,11 +1543,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Button3();
         pointField2.gameObject.SetActive(false);
         x2bonus.SetActive(false);
-        if(Arrows.Length > FieldManager.CorrectField * 2)
+        x2expbonus.SetActive(false);
+        if (Arrows.Length > FieldManager.CorrectField * 2)
         Arrows[FieldManager.CorrectField*2].SetActive(false);
         if (FieldManager.CorrectField != 0)
         Arrows[FieldManager.CorrectField*2-1].SetActive(false);
         StartCoroutine(ShowButton());
+        if (FieldManager.CorrectField > 0)
+            Checker.isAllChecked = false;
         let.PointsNow[FieldManager.CorrectField].gameObject.SetActive(false);
         for(int h = 0; h < Fm.FieldsAll.Length; h++)
         {
@@ -1475,6 +1567,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= 20000;
             POintSpent += 20000;
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }
             pointSum.text = NormalSum(GameManager.PointSum);
             _buyStopper();
         }
@@ -1504,6 +1601,15 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             Advertisement.Show("Rewarded_Android");
         }
         
+    }
+    public void DorewardExp()
+    {
+        if (Advertisement.IsReady())
+        {
+
+            MyReward = reward.x2expreward;
+            Advertisement.Show("Rewarded_Android");
+        }
     }
     IEnumerator ShowButton()
     {
@@ -1573,10 +1679,15 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PointSum -= CostBall;
             POintSpent += CostBall;
             SumSent.text = $"Total points spent:     {POintSpent}";
+            if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
+            {
+                BallsManager.isOpenBall[3] = true;
+                UnlockFoughtBall();
+            }               
             pointSum.text = NormalSum(GameManager.PointSum);
             Teleport.i[FieldManager.CorrectField]++;
             NumberOfBall.text = $"Number of extra ball  {Teleport.i[0]+Teleport.i[1]}\\10";
-            BuyBallButtons[i].SetActive(false);
+            BuyBallButtons[i+FieldManager.CorrectField*5].SetActive(false);
         }
         else
         {
@@ -1589,6 +1700,12 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     public void CompleatedQuest()
     {
+        BallsManager.questCompleted++;
+        if (BallsManager.questCompleted == 10 && !BallsManager.isOpenBall[1])
+        {
+            BallsManager.isOpenBall[1] = true;
+            UnlockSecondBall();
+        }
         BlockCanvas.SetActive(true);
         Button3();
         QuestManager.QuestsCompleate[NumberQuest + FieldManager.CorrectField * 5] = true;
@@ -1600,7 +1717,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     IEnumerator BackScreen(GameObject Go)
     {
-        Lock[NumberQuest].GetComponent<Image>().sprite=CompleatedImageLock;
+        Lock[NumberQuest + FieldManager.CorrectField * 5].GetComponent<Image>().sprite=CompleatedImageLock;
         while (Go.transform.position.x<QuestBlock.transform.position.x)
         {
             Go.transform.position = new Vector2(Go.transform.position.x+ 1f * Time.deltaTime,Go.transform.position.y);
@@ -1608,7 +1725,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         BlockCanvas.SetActive(false);
         isQuestStarted = false;
-        BuyBallButtons[NumberQuest].SetActive(true);
+        BuyBallButtons[NumberQuest + FieldManager.CorrectField * 5].SetActive(true);
         Go.SetActive(false);
       
     }
@@ -1672,15 +1789,17 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     {
         let.PointsNow[FieldManager.CorrectField].gameObject.SetActive(true);
         isQuestStarted = false;
+        if(FieldManager.CorrectField==0)
         point.gameObject.SetActive(true);
         lvlTextPanel.SetActive(true);
-        pointField2.gameObject.SetActive(true);
+        if (FieldManager.CorrectField == 1)
+            pointField2.gameObject.SetActive(true);
         pointSum.gameObject.SetActive(true);
         BottonPanel.SetActive(true);
         ProgressBarGM.SetActive(true);
         StopButton.SetActive(false);
         ProgressBar.gameObject.SetActive(true);
- 
+        NumberQuest = -1;
             if (Arrows.Length > FieldManager.CorrectField * 2 && FieldManager.Fields[FieldManager.CorrectField+1])
                 Arrows[FieldManager.CorrectField * 2].SetActive(true);
             if (FieldManager.CorrectField != 0)
@@ -1735,9 +1854,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         lvlTextPanel.SetActive(false);
         ProgressBarGM.SetActive(false);
         StopButton.SetActive(true);
-        
         quest1point = 0;
         ProgressBar.gameObject.SetActive(false);
+        StartCoroutine(Expx2());
         switch (NumberQuest)
         {
             case 0:
@@ -1868,6 +1987,16 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 StartCoroutine(ShowButton());
                 PlayerPrefs.SetString("Reward", Reward.ToString());
             }
+            else if (MyReward == reward.x2expreward)
+            {
+                
+                Reward = false;
+                lvlBuff.color = Color.yellow;
+                x2expbonus.SetActive(false);
+                LetsScript.exp = 2;
+                StartCoroutine(Expx2());
+                PlayerPrefs.SetString("Reward", Reward.ToString());
+            }
         }
         else if (showResult == ShowResult.Skipped && placementId != "Interstitial_Android")
         {
@@ -1882,7 +2011,30 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         Reward = false;
         PlayerPrefs.SetString("Reward", Reward.ToString());
     }
+    IEnumerator Expx2()
+    {
+        if(!isQuestStarted)
+        for(int i = 60; i>0; i--)
+        {
+            timeExpReward.text = i + "";
+            yield return new WaitForSeconds(1f);
+        }
+        LetsScript.exp = 1;
+        timeExpReward.text = "";
+        lvlBuff.color = Color.white;
+        int g = 1;
+        while(g>0)
+        if (!isQuestStarted)
+        {
+            x2expbonus.SetActive(true);
+            g--;
+        }
+        else
+        {
+            yield return new WaitForSeconds(60f);
+        }
 
+    }
     public void EnableDisableDark()
     {
         DarkTheme = !DarkTheme;
@@ -1961,8 +2113,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         PhoneF2.GetComponent<SpriteRenderer>().color = ChangeColor(PhoneF2.GetComponent<SpriteRenderer>().color);
         for (int h = 0; h < 6; h++)
         {
+            if (h == 0 && choosenBall != 0)
+                continue;
             Balls[h].GetComponent<SpriteRenderer>().color = ChangeColor(Balls[h].GetComponent<SpriteRenderer>().color);
             BallsF2[h].GetComponent<SpriteRenderer>().color = ChangeColor(BallsF2[h].GetComponent<SpriteRenderer>().color);
+        }
+        for(int h = 6; h < BallsF2.Length; h++)
+        {
+            BallsF2[h].GetComponent<Image>().color = ChangeColor(BallsF2[h].GetComponent<Image>().color);
         }
         for(int h =0; h<2;h++)
             Stoppers[h].GetComponent<SpriteRenderer>().color = ChangeColor(Stoppers[h].GetComponent<SpriteRenderer>().color);
@@ -1988,7 +2146,10 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         for (int h = 0; h < PanelBackGround.Length; h++)
         {
+            if(h<10)
             PanelBackGround[h].GetComponent<Image>().color = ChangeColor(PanelBackGround[h].GetComponent<Image>().color, "Background");
+           else
+                PanelBackGround[h].GetComponent<Image>().color = ChangeColor(PanelBackGround[h].GetComponent<Image>().color, "white");
         }
         for (int h = 0; h < Handlles.Length; h++)
         {
@@ -2043,8 +2204,10 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 return new Color32(0x4D, 0x4D, 0x4D, 0xFF);
             else if (tag == "Background")
                 return new Color32(0x99, 0x99, 0x99, 0xFF);
-            else if(tag == "8080")
+            else if (tag == "8080")
                 return new Color32(0x80, 0x80, 0x80, 0xFF);
+            else if (tag == "white")
+                return Color.white;
             if (gr == Color.white)
                 return Color.black;
             else if (gr == new Color32(0x0E, 0x43, 0x60, 0xFF))
@@ -2065,7 +2228,21 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
     }
     
-
+    public void UnlockSecondBall()
+    {
+        PanelTriggerBalls[1].SetActive(true);
+        Lock[12].SetActive(false);
+    }
+    public void UnlockThirdBall()
+    {
+        PanelTriggerBalls[2].SetActive(true);
+        Lock[11].SetActive(false);
+    }
+    public void UnlockFoughtBall()
+    {
+        PanelTriggerBalls[3].SetActive(true);
+        Lock[10].SetActive(false);
+    }
 
     public void TextDown(GameObject tx)
     {

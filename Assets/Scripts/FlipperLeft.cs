@@ -9,11 +9,11 @@ public class FlipperLeft : MonoBehaviour
     {
         if (GameManager.automod[Field] && (other.tag == "Player" || other.tag == "PlayerF2"))
         {
-            int stopp = Checker.isAllChecked?1 : 0;
+           
             As.PlayOneShot(Ac);
             FlipperController.rightorleft = false;
            FlipperController.IsFlipper[Field] = true;
-            cc2dright.size = new Vector2(cc2dright.size.x - flag * 0.4f + 0.3f* stopp, cc2dright.size.y);
+            cc2dright.size = new Vector2(cc2dright.size.x - flag * 0.4f , cc2dright.size.y);
             cc2dright.offset = new Vector2(cc2dright.offset.x - flag * 0.4f, cc2dright.offset.y);
             flag = -flag;
         }
@@ -40,5 +40,18 @@ public class FlipperLeft : MonoBehaviour
         cc2dright = GetComponent<BoxCollider2D>();
 
 
+    }
+
+
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "PlayerF2")
+        {
+            if (GameManager.choosenBall == 1 && collision.gameObject.GetComponent<Mainball>())
+            {
+                collision.collider.isTrigger = true;
+            }
+        }
     }
 }

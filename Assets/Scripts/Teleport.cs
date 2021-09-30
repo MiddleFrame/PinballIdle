@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Teleport : MonoBehaviour
 {
+    public BallsManager Bm;
     public x2area[] x2Areas;
     public GameObject centerSpawn;
     public GameObject spawnPoint;
@@ -44,7 +45,25 @@ public class Teleport : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        collision.gameObject.SetActive(false);
+        if (collision.gameObject.GetComponent<SpriteRenderer>().color != new Color32(0xFF, 0x89, 0x12, 0xFF))
+        {
+            collision.gameObject.SetActive(false);
+            BallsManager.ballsLost++;
+            if (BallsManager.ballsLost == 1000 && !BallsManager.isOpenBall[2])
+            {
+                BallsManager.isOpenBall[2] = true;
+                Bm.Gm.UnlockSecondBall();
+            }
+            if (GameManager.choosenBall == 2 && collision.gameObject.GetComponent<Mainball>())
+                collision.gameObject.GetComponent<SpriteRenderer>().color = new Color32(0xFF, 0x89, 0x12, 0xFF);
+        }
+        else
+        {
+            collision.collider.enabled = false;
+            StartCoroutine(Phenix(collision.gameObject));
+            Mainball.isPhenix = false;
+            
+        }
         for (int j = 0; j < 6; j++)
         {
             if (mainballs[j].activeSelf)
@@ -93,22 +112,53 @@ public class Teleport : MonoBehaviour
         }
     }
 
+    IEnumerator Phenix(GameObject Go)
+    {
+        Go.GetComponent<Rigidbody2D>().gravityScale = 0;
+        while (Go.transform.position.y < spawnPoint.transform.position.y-0.1f)
+        {
+                Go.transform.position = Vector3.MoveTowards(Go.transform.position, spawnPoint.transform.position, 10f * Time.deltaTime);
+            yield return new WaitForFixedUpdate();
+        }
+        if (GameManager.DarkTheme)
+           Go.GetComponent<SpriteRenderer>().color = Color.white;
+        else
+           Go.GetComponent<SpriteRenderer>().color = Color.black;
+        Go.GetComponent<CircleCollider2D>().enabled = true;
+        Go.GetComponent<Rigidbody2D>().gravityScale = 1;
+     
+    }
     IEnumerator Spawn()
     {
+        var child = mainballs[0].GetComponentsInChildren<TrailRenderer>();
+        var childF2 = mainballs[0].GetComponentsInChildren<TrailRenderer>();
         for (int j = 0; j <= i[field]; j++)
         {
+            if (j == 0)
+                for (int h = 0; h < child.Length; h++)
+                {
+                    child[h].GetComponent<TrailRenderer>().Clear();
+                    childF2[h].GetComponent<TrailRenderer>().Clear();
+                }
+            mainballs[j].SetActive(false);
             mainballs[j].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             mainballs[j].GetComponent<Rigidbody2D>().angularVelocity = 0f;
             mainballs[j].transform.localPosition = spawnPoint.transform.localPosition;
             mainballs[j].SetActive(true);
+            
             yield return new WaitForSeconds(0.8f);
         }
     }
 
-   /* static public void Ressed()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        mainballsstatic[i].transform.position = SpawnPoint.transform.position;
-        mainballsstatic[i].SetActive(true);
+        collision.isTrigger = false;
+      // OnCollisionEnter2D(collision.gameObject.GetComponent<Collision2D>());
     }
- */
+    /* static public void Ressed()
+     {
+         mainballsstatic[i].transform.position = SpawnPoint.transform.position;
+         mainballsstatic[i].SetActive(true);
+     }
+  */
 }
