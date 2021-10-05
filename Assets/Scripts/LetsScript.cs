@@ -69,6 +69,7 @@ public class LetsScript : MonoBehaviour
                 GameManager.maximumPoint = GameManager.PointField2;
             }
             hitneeded-= exp;
+            
             ProgressBar.fillAmount =(500f* GameManager.lvl- hitneeded) / 500f / GameManager.lvl;
             if (hitneeded<=0 && !lvlupPanel.activeSelf)
             {
@@ -109,17 +110,17 @@ public class LetsScript : MonoBehaviour
             StartCoroutine(ChangeColor());
         }
         collision.rigidbody.AddForce(-collision.contacts[0].normal * force, ForceMode2D.Impulse);
-
+        
      
 
         
     }
-    private void OnTriggerExit2D(Collider2D collision)
+   /* private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.GetComponent<Mainball>())
             collision.isTrigger = false;
     }
-
+   */
     public  IEnumerator ChangeColor()
     {
         
@@ -134,5 +135,5 @@ public class LetsScript : MonoBehaviour
         
     }
 
-   
+  
 }

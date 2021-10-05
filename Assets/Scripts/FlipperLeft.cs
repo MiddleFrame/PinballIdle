@@ -50,7 +50,7 @@ public class FlipperLeft : MonoBehaviour
         {
             if (GameManager.choosenBall == 1 && collision.gameObject.GetComponent<Mainball>())
             {
-                collision.collider.isTrigger = true;
+                collision.gameObject.layer = 9;
             }
         }
     }

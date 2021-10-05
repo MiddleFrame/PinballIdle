@@ -77,14 +77,14 @@ public class FlipperController : MonoBehaviour
     }
 
 
-
+   
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "PlayerF2")
         {
             if (GameManager.choosenBall == 1 && collision.gameObject.GetComponent<Mainball>())
             {
-                collision.collider.isTrigger = true;
+                collision.gameObject.layer = 9;
             }
         }
     }

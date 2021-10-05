@@ -16,8 +16,8 @@ TagManager:
   - Stopper
   - ball
   - text
-  - 
-  - 
+  - Ghost
+  - Let
   - 
   - 
   - 
@@ -45,4 +45,7 @@ TagManager:
     locked: 0
   - name: trailLayer
     uniqueID: 1656913955
+    locked: 0
+  - name: Ghost
+    uniqueID: 4161766017
     locked: 0

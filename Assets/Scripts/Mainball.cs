@@ -14,6 +14,6 @@ public class Mainball : MonoBehaviour
             gameObject.GetComponent<Collider2D>().isTrigger = false;
         }
     }
-
+   
     // Update is called once per frame
 }

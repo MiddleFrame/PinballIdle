@@ -45,6 +45,8 @@ public class Teleport : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.layer == 9)
+            collision.gameObject.layer = 7;
         if (collision.gameObject.GetComponent<SpriteRenderer>().color != new Color32(0xFF, 0x89, 0x12, 0xFF))
         {
             collision.gameObject.SetActive(false);

@@ -249,6 +249,8 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     void SaveGame()
     {
+        
+        PlayerPrefs.SetString("x2reward", (time.text != "").ToString());
         PlayerPrefs.SetInt("Gems", gems);
         PlayerPrefs.SetString("LeaveDate", DateTime.Now.ToString());
         PlayerPrefs.SetString("DarkTheme", DarkTheme.ToString());
@@ -298,7 +300,9 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             PlayerPrefs.SetString($"FieldOpen[{j}]", FieldManager.Fields[j].ToString());
         }
         PlayerPrefs.SetInt("CostOfGradeF2", StandartBuff.CostOnGrade[1]);
-        PlayerPrefs.SetInt("PointOnBitF2", StandartBuff.pointOnBit[1]);
+        
+            PlayerPrefs.SetInt("PointOnBitF2", StandartBuff.pointOnBit[1]);
+       
         PlayerPrefs.SetString("Romb", StrongRomb.activeSelf.ToString());
         PlayerPrefs.SetInt("RombBuff", Romb.PointLet);
         PlayerPrefs.SetInt("RombCostBuff", RombCost);
@@ -309,7 +313,14 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             PlayerPrefs.SetString($"x2Areas[{j}]", x2Areas[j].activeSelf.ToString());
         }
-
+        StopAllCoroutines();
+        x2expbonus.SetActive(true);
+        LetsScript.exp = 1;
+        timeExpReward.text = "";
+        if (DarkTheme)
+            lvlBuff.color = Color.white;
+        else
+            lvlBuff.color = Color.black;
     }
     private void Update()
     {
@@ -616,6 +627,19 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 Buyx2Areas();
             }
         }
+        if (PlayerPrefs.HasKey("x2reward"))
+            if (bool.Parse(PlayerPrefs.GetString("x2reward")))
+            {
+                lvlbuff.text = $"x{lvl * 2}";
+                lvlbuff.color = Color.yellow;
+                x2bonus.SetActive(false);
+
+  
+                StartCoroutine(TimeBuff());
+                StartCoroutine(ShowButton());
+            }
+        StartCoroutine(ShowButton());
+
     }
     private void OnApplicationQuit()
     {
@@ -680,16 +704,22 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 UnlockFoughtBall();
             }
             pointSum.text = NormalSum(GameManager.PointSum);
-            StandartBuff.pointOnBit[0] += 1;
+            if (time.text == "")
+                StandartBuff.pointOnBit[0] += 1;
+            else
+                StandartBuff.pointOnBit[0] += 2;
             StandartBuff.CostOnGrade[0] = (int)(StandartBuff.CostOnGrade[0] * 1.2f);
             StandartCost.text =NormalSum(StandartBuff.CostOnGrade[0]);
+            if(time.text == "")
             PointBuffText.text = StandartBuff.pointOnBit[0] + "→" + (StandartBuff.pointOnBit[0] + 1);
+            else
+                PointBuffText.text = (StandartBuff.pointOnBit[0]-1)/2 +1 + "→" + ((StandartBuff.pointOnBit[0] + 1)/2);
         }
         else
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+            
         }
 
     }
@@ -708,16 +738,22 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 UnlockFoughtBall();
             }
             pointSum.text = NormalSum(GameManager.PointSum);
-            StandartBuff.pointOnBit[1] += 1;
+            if (time.text == "")
+                StandartBuff.pointOnBit[1] += 1;
+            else
+                StandartBuff.pointOnBit[1] += 2;
             StandartBuff.CostOnGrade[1] = (int)(StandartBuff.CostOnGrade[1] * 1.2f);
             StandartCostF2.text = NormalSum(StandartBuff.CostOnGrade[1]);
-            PointBuffTextF2.text = StandartBuff.pointOnBit[1] + "→" + (StandartBuff.pointOnBit[1] + 1);
+            if (time.text == "")
+                PointBuffTextF2.text = StandartBuff.pointOnBit[1] + "→" + (StandartBuff.pointOnBit[1] + 1);
+            else
+                PointBuffTextF2.text = (StandartBuff.pointOnBit[1]) / 2  + "→" + ((StandartBuff.pointOnBit[1] + 2) / 2);
         }
         else
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+         
         }
 
     }
@@ -744,7 +780,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+            
         }
 
     }
@@ -784,7 +820,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+           
         }
 
     }
@@ -840,7 +876,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             textError.SetActive(true);
             Checker.costOnGrade = 0;
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+           
         }
 
     }
@@ -881,7 +917,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             {
                 textError.SetActive(true);
                 StartCoroutine(ViewText(textError));
-                StopCoroutine(ViewText(textError));
+               
             }
         }
         else
@@ -928,7 +964,6 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
         }
 
     }
@@ -955,7 +990,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+          
         }
     }
     public void BuyAutomod()
@@ -979,7 +1014,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
            StartCoroutine(ViewText(textError));
-           StopCoroutine(ViewText(textError));
+           
         }
     }
 
@@ -1004,7 +1039,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
            StartCoroutine(ViewText(textError));
-           StopCoroutine(ViewText(textError));
+           
         }
     }
 
@@ -1027,7 +1062,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+           
         }
     }
 
@@ -1058,7 +1093,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+           
         }
     }
 
@@ -1403,7 +1438,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             RewardError.SetActive(true);
             StartCoroutine(ViewText(RewardError));
-            StopCoroutine(ViewText(RewardError));
+          
         }
     }
     public void ScoreTest()
@@ -1579,7 +1614,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+            
         }
     }
 
@@ -1628,17 +1663,17 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             }
         }
     }
-    IEnumerator TimeBuff(int[] were)
+    IEnumerator TimeBuff()
     {
-
+        if((time).text =="")
         for (int i = 30; i > 0; i--)
         {
             (time).text = i.ToString();
             yield return new WaitForSeconds(1f);
         }
         time.text = "";
-        StandartBuff.pointOnBit[0] -= were[0];
-        StandartBuff.pointOnBit[1] -= were[1];
+        StandartBuff.pointOnBit[0] /= 2;
+        StandartBuff.pointOnBit[1] /= 2;
         lvlbuff.text = $"x{lvl}";
         if (!DarkTheme)
             lvlbuff.color = Color.black;
@@ -1674,10 +1709,10 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     }
     public void BuyBall(int i)
     {
-        if (PointSum >= CostBall)
+        if (PointSum >= CostBall * (1+FieldManager.CorrectField))
         {
-            PointSum -= CostBall;
-            POintSpent += CostBall;
+            PointSum -= CostBall*(1 + FieldManager.CorrectField);
+            POintSpent += CostBall* (1 + FieldManager.CorrectField);
             SumSent.text = $"Total points spent:     {POintSpent}";
             if (POintSpent >= 1000000 && !BallsManager.isOpenBall[3])
             {
@@ -1693,7 +1728,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         {
             textError.SetActive(true);
             StartCoroutine(ViewText(textError));
-            StopCoroutine(ViewText(textError));
+           
         }
 
     }
@@ -1799,7 +1834,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         ProgressBarGM.SetActive(true);
         StopButton.SetActive(false);
         ProgressBar.gameObject.SetActive(true);
-        NumberQuest = -1;
+        
             if (Arrows.Length > FieldManager.CorrectField * 2 && FieldManager.Fields[FieldManager.CorrectField+1])
                 Arrows[FieldManager.CorrectField * 2].SetActive(true);
             if (FieldManager.CorrectField != 0)
@@ -1817,7 +1852,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         else if (NumberQuest == 1)
         {
             TimeQuest2.gameObject.SetActive(false);
-            StopCoroutine(Quest2());
+            
           
         }
         else if(NumberQuest == 2)
@@ -1829,7 +1864,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         else if(NumberQuest == 3)
         {
             PointQuest1.gameObject.SetActive(false);
-            StopCoroutine(CameraRotation());
+            
             MainCamera.transform.rotation = new Quaternion(MainCamera.transform.rotation.x, MainCamera.transform.rotation.y, 0, 0);
             Fm.FieldsAll[FieldManager.CorrectField].transform.rotation = new Quaternion(Fm.FieldsAll[FieldManager.CorrectField].transform.rotation.x, Fm.FieldsAll[FieldManager.CorrectField].transform.rotation.y, 0, 0);
 
@@ -1837,7 +1872,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         else if(NumberQuest == 4)
         {
-
+            
             PointQuest1.gameObject.SetActive(false);
             MainCamera.orthographicSize = 5;
             Fm.FieldsAll[FieldManager.CorrectField].transform.localScale /= 5;
@@ -1845,6 +1880,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             MainCamera.transform.position = new Vector3(0f, 0f, MainCamera.transform.position.z);
            
         }
+       
     }
    
     public void StartQuest()
@@ -1921,6 +1957,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
             MainCamera.transform.rotation = new Quaternion(MainCamera.transform.rotation.x, MainCamera.transform.rotation.y, 0, 0);
             //BottonPanel.transform.position = new Vector2(0, -7);
         }
+
     }
     IEnumerator Quest2()
     {
@@ -1955,6 +1992,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         
     }
+  
     public void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
     {
        
@@ -1980,11 +2018,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
                 lvlbuff.text = $"x{lvl*2}";
                 lvlbuff.color = Color.yellow;
                 x2bonus.SetActive(false);
-                int[] variabled =new int[] { StandartBuff.pointOnBit[0], StandartBuff.pointOnBit[1] };
+                
                 StandartBuff.pointOnBit[0] *= 2;
                 StandartBuff.pointOnBit[1] *= 2;
-                StartCoroutine(TimeBuff(variabled));
-                StartCoroutine(ShowButton());
+                StartCoroutine(TimeBuff());
+               StartCoroutine(ShowButton());
                 PlayerPrefs.SetString("Reward", Reward.ToString());
             }
             else if (MyReward == reward.x2expreward)
@@ -2021,7 +2059,10 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         }
         LetsScript.exp = 1;
         timeExpReward.text = "";
-        lvlBuff.color = Color.white;
+        if (DarkTheme)
+            lvlBuff.color = Color.white;
+        else
+            lvlBuff.color = Color.black;
         int g = 1;
         while(g>0)
         if (!isQuestStarted)
