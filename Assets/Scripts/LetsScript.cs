@@ -6,6 +6,7 @@ using System;
 
 public class LetsScript : MonoBehaviour
 {
+    public GameObject MoneyAbility;
     public static int exp = 1;
     public GameObject SafeCircle;
     public Text MaxPoint;
@@ -37,6 +38,8 @@ public class LetsScript : MonoBehaviour
         As.PlayOneShot(Ac);
         if (!GameManager.isQuestStarted && PointLet>0)
         {
+            if (GameManager.choosenBall == 3 && MoneyAbility && collision.gameObject.GetComponent<Mainball>())
+                MoneyAbility.SetActive(true);
             if (GameManager.ExNum)
                 ExperemetNumber(collision.contacts[0]);
             if (collision.gameObject.tag == "PlayerF2")

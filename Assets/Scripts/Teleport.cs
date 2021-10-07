@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Teleport : MonoBehaviour
 {
+    public GameObject[] MoneyAbility;
     public BallsManager Bm;
     public x2area[] x2Areas;
     public GameObject centerSpawn;
@@ -34,6 +35,19 @@ public class Teleport : MonoBehaviour
     }
     private void Update()
     {
+        for(int i = 0; i < MoneyAbility.Length; i++)
+        {
+            if (!MoneyAbility[i].activeSelf)
+                break;
+            else if (i == MoneyAbility.Length - 1)
+            {
+                GameManager.PointSum += 50000;
+                for (int j = 0;j < MoneyAbility.Length; j++)
+                {
+                    MoneyAbility[j].SetActive(false);
+                }
+            }
+        }
         angle += a*Time.deltaTime; 
 
         var x = Mathf.Cos(angle * speed) * radius+centerSpawn.transform.position.x;
@@ -134,6 +148,10 @@ public class Teleport : MonoBehaviour
     {
         var child = mainballs[0].GetComponentsInChildren<TrailRenderer>();
         var childF2 = mainballs[0].GetComponentsInChildren<TrailRenderer>();
+        for (int i = 0; i < MoneyAbility.Length; i++)
+        {
+            MoneyAbility[i].SetActive(false);
+        }
         for (int j = 0; j <= i[field]; j++)
         {
             if (j == 0)
@@ -150,6 +168,7 @@ public class Teleport : MonoBehaviour
             
             yield return new WaitForSeconds(0.8f);
         }
+      
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

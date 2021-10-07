@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 {
     //\
     public GameObject[] PanelTriggerBalls;
+    public GameObject[] MoneyAbility;
     public static int choosenBall = 0;
     public Color32[] colorsBall = new Color32[] {Color.black, new Color32(0xB3,0xB3,0xB3,0xFF), new Color32(0xFF,0x89,0x12,0xFF), new Color32(0xFC,0xDE,0x3A,0xFF) };
     public Text timeExpReward;
@@ -1893,6 +1894,10 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
         quest1point = 0;
         ProgressBar.gameObject.SetActive(false);
         StartCoroutine(Expx2());
+        for (int j = 0; j < MoneyAbility.Length; j++)
+        {
+            MoneyAbility[j].SetActive(false);
+        }
         switch (NumberQuest)
         {
             case 0:
