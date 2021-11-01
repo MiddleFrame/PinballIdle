@@ -12,9 +12,11 @@ public class Rewardx2 : MonoBehaviour
     [System.Obsolete]
     void Start()
     {
-        if (Advertisement.isSupported)
-            Advertisement.Initialize("4265503", false);
-      
+        if (!GameManager.premium)
+        {
+            if (Advertisement.isSupported)
+                Advertisement.Initialize("4265503", false);
+        }
     }
 
     

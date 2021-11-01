@@ -34,6 +34,7 @@ public class LetsScript : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
+       GameManager.score++;
         // Handheld.Vibrate();
         As.PlayOneShot(Ac);
         if (!GameManager.isQuestStarted && PointLet>0)
