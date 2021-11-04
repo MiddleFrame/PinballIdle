@@ -189,7 +189,7 @@ namespace GameAnalyticsSDK.Wrapper
             }
         }
 
-        private static void addAdEventWithDuration(int adAction, int adType, string adSdkName, string adPlacement, long duration, string fields)
+        private static void addAdEventWithDuration(int adAction, int adType, string adSdkName, string adPlacement, long duration)
         {
             if (GameAnalytics.SettingsGA.InfoLogEditor)
             {
@@ -197,7 +197,7 @@ namespace GameAnalyticsSDK.Wrapper
             }
         }
 
-        private static void addAdEventWithReason(int adAction, int adType, string adSdkName, string adPlacement, int noAdReason, string fields)
+        private static void addAdEventWithReason(int adAction, int adType, string adSdkName, string adPlacement, int noAdReason)
         {
             if (GameAnalytics.SettingsGA.InfoLogEditor)
             {
@@ -205,7 +205,7 @@ namespace GameAnalyticsSDK.Wrapper
             }
         }
 
-        private static void addAdEvent(int adAction, int adType, string adSdkName, string adPlacement, string fields)
+        private static void addAdEvent(int adAction, int adType, string adSdkName, string adPlacement)
         {
             if (GameAnalytics.SettingsGA.InfoLogEditor)
             {
@@ -324,6 +324,21 @@ namespace GameAnalyticsSDK.Wrapper
         {
             Debug.Log("stopTimer(" + key + ")");
             return 0;
+        }
+
+        private static void subscribeMoPubImpressions()
+        {
+            Debug.Log("subscribeMoPubImpressions()");
+        }
+
+        private static void subscribeFyberImpressions()
+        {
+            Debug.Log("subscribeFyberImpressions()");
+        }
+
+        private static void subscribeIronSourceImpressions()
+        {
+            Debug.Log("subscribeIronSourceImpressions()");
         }
 
 #endif
@@ -553,42 +568,39 @@ namespace GameAnalyticsSDK.Wrapper
 #endif
         }
 
-        public static void AddAdEventWithDuration(GAAdAction adAction, GAAdType adType, string adSdkName, string adPlacement, long duration, IDictionary<string, object> fields)
+        public static void AddAdEventWithDuration(GAAdAction adAction, GAAdType adType, string adSdkName, string adPlacement, long duration)
         {
-            string fieldsAsString = DictionaryToJsonString(fields);
 #if UNITY_EDITOR
             if (GAValidator.ValidateAdEvent(adAction, adType, adSdkName, adPlacement))
             {
-                addAdEventWithDuration((int)adAction, (int)adType, adSdkName, adPlacement, duration, fieldsAsString);
+                addAdEventWithDuration((int)adAction, (int)adType, adSdkName, adPlacement, duration);
             }
 #elif UNITY_IOS || UNITY_ANDROID
-                addAdEventWithDuration((int)adAction, (int)adType, adSdkName, adPlacement, duration, fieldsAsString);
+                addAdEventWithDuration((int)adAction, (int)adType, adSdkName, adPlacement, duration);
 #endif
         }
 
-        public static void AddAdEventWithReason(GAAdAction adAction, GAAdType adType, string adSdkName, string adPlacement, GAAdError noAdReason, IDictionary<string, object> fields)
+        public static void AddAdEventWithReason(GAAdAction adAction, GAAdType adType, string adSdkName, string adPlacement, GAAdError noAdReason)
         {
-            string fieldsAsString = DictionaryToJsonString(fields);
 #if UNITY_EDITOR
             if (GAValidator.ValidateAdEvent(adAction, adType, adSdkName, adPlacement))
             {
-                addAdEventWithReason((int)adAction, (int)adType, adSdkName, adPlacement, (int)noAdReason, fieldsAsString);
+                addAdEventWithReason((int)adAction, (int)adType, adSdkName, adPlacement, (int)noAdReason);
             }
 #elif UNITY_IOS || UNITY_ANDROID
-                addAdEventWithReason((int)adAction, (int)adType, adSdkName, adPlacement, (int)noAdReason, fieldsAsString);
+                addAdEventWithReason((int)adAction, (int)adType, adSdkName, adPlacement, (int)noAdReason);
 #endif
         }
 
-        public static void AddAdEvent(GAAdAction adAction, GAAdType adType, string adSdkName, string adPlacement, IDictionary<string, object> fields)
+        public static void AddAdEvent(GAAdAction adAction, GAAdType adType, string adSdkName, string adPlacement)
         {
-            string fieldsAsString = DictionaryToJsonString(fields);
 #if UNITY_EDITOR
             if (GAValidator.ValidateAdEvent(adAction, adType, adSdkName, adPlacement))
             {
-                addAdEvent((int)adAction, (int)adType, adSdkName, adPlacement, fieldsAsString);
+                addAdEvent((int)adAction, (int)adType, adSdkName, adPlacement);
             }
 #elif UNITY_IOS || UNITY_ANDROID
-                addAdEvent((int)adAction, (int)adType, adSdkName, adPlacement, fieldsAsString);
+                addAdEvent((int)adAction, (int)adType, adSdkName, adPlacement);
 #endif
         }
 
@@ -681,6 +693,33 @@ namespace GameAnalyticsSDK.Wrapper
             return stopTimer(key);
 #else
             return 0;
+#endif
+        }
+
+        public static void SubscribeMoPubImpressions()
+        {
+#if UNITY_EDITOR
+            subscribeMoPubImpressions();
+#elif UNITY_IOS || UNITY_ANDROID
+            subscribeMoPubImpressions();
+#endif
+        }
+
+        public static void SubscribeFyberImpressions()
+        {
+#if UNITY_EDITOR
+            subscribeFyberImpressions();
+#elif UNITY_IOS || UNITY_ANDROID
+            subscribeFyberImpressions();
+#endif
+        }
+
+        public static void SubscribeIronSourceImpressions()
+        {
+#if UNITY_EDITOR
+            subscribeIronSourceImpressions();
+#elif UNITY_IOS || UNITY_ANDROID
+            subscribeIronSourceImpressions();
 #endif
         }
     }

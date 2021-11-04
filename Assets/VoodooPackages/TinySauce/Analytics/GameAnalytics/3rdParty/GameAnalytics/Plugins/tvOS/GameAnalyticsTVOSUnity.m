@@ -104,14 +104,14 @@ void configureAutoDetectAppVersion(BOOL flag) {
     [GameAnalytics configureAutoDetectAppVersion:flag];
 }
 
-void gaInitialize(const char *gameKey, const char *gameSecret, BOOL nativeErrorReporting) {
+void initialize(const char *gameKey, const char *gameSecret) {
     NSString *gameKeyString = gameKey != NULL ? [NSString stringWithUTF8String:gameKey] : nil;
     NSString *gameSecretString = gameSecret != NULL ? [NSString stringWithUTF8String:gameSecret] : nil;
 
     ga_rc_delegate = [[GARemoteConfigsUnityDelegate alloc] init];
     [GameAnalytics setRemoteConfigsDelegate:ga_rc_delegate];
 
-    [GameAnalytics setEnabledErrorReporting:nativeErrorReporting];
+    [GameAnalytics setEnabledErrorReporting:NO];
     [GameAnalytics initializeWithGameKey:gameKeyString gameSecret:gameSecretString];
 }
 
