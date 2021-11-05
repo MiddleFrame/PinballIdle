@@ -9,6 +9,8 @@ using UnityEditor;
 public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListener, IUnityAdsLoadListener
 {
     //\
+    static public bool premium=true;
+    static public int score=0;
     public GameObject[] PanelTriggerBalls;
     public GameObject[] MoneyAbility;
     public static int choosenBall = 0;
@@ -214,14 +216,17 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
    private void Awake()
     {
-        
+        if(!premium)
         if (Advertisement.isSupported)
             Advertisement.Initialize("4265503", false);
     }
     private void Start()
     {
-        Advertisement.AddListener(this);
-        Advertisement.Load("4265503", this);
+        if (!premium)
+        {
+            Advertisement.AddListener(this);
+            Advertisement.Load("4265503", this);
+        }
         ScorePoint();
         pointSum.text = NormalSum(PointSum);
         StandartCost.text = NormalSum(StandartBuff.CostOnGrade[0]);
@@ -655,9 +660,11 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     {
         if (pause) {
             SaveGame();
+            TinySauce.OnGameFinished(score);
         }
         else
         {
+            TinySauce.OnGameStarted();
             LoadGame();
             ScorePoint();
             pointSum.text = NormalSum(PointSum);
@@ -1430,16 +1437,24 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
     }
    public void ThxForWatching()
     {
-        if (Advertisement.IsReady())
+        if (!premium)
         {
-            MyReward = reward.x3reward;
-            Advertisement.Show("Rewarded_Android");
+            if (Advertisement.IsReady())
+            {
+                MyReward = reward.x3reward;
+                Advertisement.Show("Rewarded_Android");
+            }
+            else
+            {
+                RewardError.SetActive(true);
+                StartCoroutine(ViewText(RewardError));
+
+            }
         }
         else
         {
-            RewardError.SetActive(true);
-            StartCoroutine(ViewText(RewardError));
-          
+            MyReward = reward.x3reward;
+            OnUnityAdsDidFinish("", ShowResult.Finished);
         }
     }
     public void ScoreTest()
@@ -1630,22 +1645,39 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     public void Doreward()
     {
-        if (Advertisement.IsReady())
+        if (!premium)
         {
+            if (Advertisement.IsReady())
+            {
 
+                MyReward = reward.x2reward;
+                Advertisement.Show("Rewarded_Android");
+            }
+        }
+        else
+        {
             MyReward = reward.x2reward;
-            Advertisement.Show("Rewarded_Android");
+            OnUnityAdsDidFinish("", ShowResult.Finished);
         }
         
     }
     public void DorewardExp()
     {
-        if (Advertisement.IsReady())
+        if (!premium)
         {
+            if (Advertisement.IsReady())
+            {
 
-            MyReward = reward.x2expreward;
-            Advertisement.Show("Rewarded_Android");
+                MyReward = reward.x2expreward;
+                Advertisement.Show("Rewarded_Android");
+            }
         }
+        else
+        {
+            MyReward = reward.x2expreward;
+            OnUnityAdsDidFinish("", ShowResult.Finished);
+        }
+
     }
     IEnumerator ShowButton()
     {
@@ -1936,6 +1968,7 @@ public class GameManager : MonoBehaviour, IUnityAdsListener, IUnityAdsShowListen
 
     public void ReklamaOnStop()
     {
+        if(!premium)
         Advertisement.Show("Interstitial_Android");
     }
     IEnumerator CameraRotation()
