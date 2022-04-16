@@ -7,7 +7,6 @@ public class Teleport : MonoBehaviour
 {
     public GameObject[] MoneyAbility;
     public BallsManager Bm;
-    public x2area[] x2Areas;
     public GameObject centerSpawn;
     public GameObject spawnPoint;
     public static GameObject SpawnPoint;
@@ -22,6 +21,8 @@ public class Teleport : MonoBehaviour
     public float angle=0.2f;
     public float speed;
     public float radius;
+    public int fieldMulty =1;
+    public float restrictions = 1.35f;
     static public int[] i = new int[] { 0, 0 }; //Кол-во шаров
     int a=1;
     public int field = 0;
@@ -35,40 +36,28 @@ public class Teleport : MonoBehaviour
     }
     private void Update()
     {
-        for(int i = 0; i < MoneyAbility.Length; i++)
-        {
-            if (!MoneyAbility[i].activeSelf)
-                break;
-            else if (i == MoneyAbility.Length - 1)
-            {
-                GameManager.PointSum += 50000;
-                for (int j = 0;j < MoneyAbility.Length; j++)
-                {
-                    MoneyAbility[j].SetActive(false);
-                }
-            }
-        }
         angle += a*Time.deltaTime; 
 
         var x = Mathf.Cos(angle * speed) * radius+centerSpawn.transform.position.x;
-        var y = Mathf.Sin(angle * speed) * radius+centerSpawn.transform.position.y;
+        var y = fieldMulty*Mathf.Sin(angle * speed) * radius+centerSpawn.transform.position.y;
         spawnPoint.transform.position = new Vector3(x, y,spawnPoint.transform.position.z);
-        if ((x < centerSpawn.transform.position.x - 1.35f && a>0)|| (x> centerSpawn.transform.position.x+1.35f && a<0))
+        if ((x < centerSpawn.transform.position.x - restrictions && a>0)|| (x> centerSpawn.transform.position.x+ restrictions && a<0))
             a = -a;
       
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
+
+        collision.gameObject.SetActive(false);
         if (collision.gameObject.layer == 9)
             collision.gameObject.layer = 7;
         if (collision.gameObject.GetComponent<SpriteRenderer>().color != new Color32(0xFF, 0x89, 0x12, 0xFF))
         {
-            collision.gameObject.SetActive(false);
-            BallsManager.ballsLost++;
-            if (BallsManager.ballsLost == 1000 && !BallsManager.isOpenBall[2])
+            Statistics.stats.lostBalls++;
+            if (Statistics.stats.lostBalls == 1000 && !BallsManager.isOpenBall[2])
             {
                 BallsManager.isOpenBall[2] = true;
-                Bm.Gm.UnlockSecondBall();
+                
             }
             if (GameManager.choosenBall == 2 && collision.gameObject.GetComponent<Mainball>())
                 collision.gameObject.GetComponent<SpriteRenderer>().color = new Color32(0xFF, 0x89, 0x12, 0xFF);
@@ -80,52 +69,9 @@ public class Teleport : MonoBehaviour
             Mainball.isPhenix = false;
             
         }
-        for (int j = 0; j < 6; j++)
-        {
-            if (mainballs[j].activeSelf)
-                break;
-            else if (j == 5)
-            {
-                if (!GameManager.isQuestStarted)
-                {
-                    GameManager.PointSum+= GameManager.PointsNow[field];
-                    GameManager.PointsNow[field] = 0;
-                    PointsNow[field].text = "+0";
-                    PointSum.text = GameManager.NormalSum(GameManager.PointSum);
-                    if (field == 0)
-                    {
-                        GameManager.Point = 0;
-                        point.text = "" + 0;
-                    }
-                    else if(field == 1)
-                    {
-                        for (int i = 0; i < x2Areas.Length; i++)
-                        {
-                            x2Areas[i].image.color = Color.white;
-                            x2Areas[i].x2isWork = false;
-                        }
-                        GameManager.PointField2 = 0;
-                        pointField2.text = "" + 0;
-                    }
-                }
-                else if (GameManager.NumberQuest == 0)
-                {
-                    PointQuest1.text = 0 + "\\30";
-                    GameManager.quest1point = 0;
-                }
-                else if (GameManager.NumberQuest == 1)
-                {
-                    TimeQuest2.text = "30";
-                    GameManager.timeQuest = 30;
-                }
-                else if (GameManager.NumberQuest == 2 || GameManager.NumberQuest == 3|| GameManager.NumberQuest == 4)
-                {
-                    PointQuest1.text = 0 + "\\20";
-                    GameManager.quest1point = 0;
-                }
-                StartCoroutine(Spawn());
-            }
-        }
+
+        StartCoroutine(Spawn());
+        
     }
 
     IEnumerator Phenix(GameObject Go)
@@ -136,9 +82,6 @@ public class Teleport : MonoBehaviour
                 Go.transform.position = Vector3.MoveTowards(Go.transform.position, spawnPoint.transform.position, 10f * Time.deltaTime);
             yield return new WaitForFixedUpdate();
         }
-        if (GameManager.DarkTheme)
-           Go.GetComponent<SpriteRenderer>().color = Color.white;
-        else
            Go.GetComponent<SpriteRenderer>().color = Color.black;
         Go.GetComponent<CircleCollider2D>().enabled = true;
         Go.GetComponent<Rigidbody2D>().gravityScale = 1;
@@ -147,26 +90,23 @@ public class Teleport : MonoBehaviour
     IEnumerator Spawn()
     {
         var child = mainballs[0].GetComponentsInChildren<TrailRenderer>();
-        var childF2 = mainballs[0].GetComponentsInChildren<TrailRenderer>();
-        for (int i = 0; i < MoneyAbility.Length; i++)
-        {
-            MoneyAbility[i].SetActive(false);
-        }
+      
         for (int j = 0; j <= i[field]; j++)
         {
-            if (j == 0)
-                for (int h = 0; h < child.Length; h++)
-                {
-                    child[h].GetComponent<TrailRenderer>().Clear();
-                    childF2[h].GetComponent<TrailRenderer>().Clear();
-                }
-            mainballs[j].SetActive(false);
-            mainballs[j].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            mainballs[j].GetComponent<Rigidbody2D>().angularVelocity = 0f;
-            mainballs[j].transform.localPosition = spawnPoint.transform.localPosition;
-            mainballs[j].SetActive(true);
-            
-            yield return new WaitForSeconds(0.8f);
+            if (!mainballs[j].activeSelf)
+            {
+                if (j == 0)
+                    for (int h = 0; h < child.Length; h++)
+                    {
+                        child[h].GetComponent<TrailRenderer>().Clear();
+                    }
+                mainballs[j].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                mainballs[j].GetComponent<Rigidbody2D>().angularVelocity = 0f;
+                mainballs[j].transform.localPosition = spawnPoint.transform.localPosition;
+                mainballs[j].SetActive(true);
+
+                yield return new WaitForSeconds(0.8f);
+            }
         }
       
     }

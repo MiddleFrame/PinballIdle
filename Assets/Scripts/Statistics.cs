@@ -1,34 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Statistics : MonoBehaviour
 {
+    public static Stats stats;
+    [SerializeField]
+    Text _pointSpentText;
+    [SerializeField]
+    Text _questCompletedText;
+    [SerializeField]
+    Text _maxPointText;
+    [SerializeField]
+    Text _countOfBallsText;
+    [SerializeField]
+    Text _lostBallsText;
 
-    public bool Statictics=false;
-    private Transform EndPoint;
-    public Transform StartPoint;
-    public GameObject StatisticPanel;
-
-    private void Start()
+    private void OnEnable()
     {
-        EndPoint = transform.parent.transform;
-        
-        
-
-    }
-    void Update()
-    {
-        if(!Statictics)
-            transform.position = Vector3.MoveTowards(transform.position, StartPoint.position, 5f * Time.deltaTime);
-        else
-            transform.position = Vector3.MoveTowards(transform.position, EndPoint.position, 5f * Time.deltaTime);
-       
+        _pointSpentText.text = stats.pointSpent.ToString();
+        _questCompletedText.text = stats.questCompleted.ToString();
+        _maxPointText.text = stats.maxPoint.ToString();
+        _countOfBallsText.text = stats.countOfBalls.ToString();
+        _lostBallsText.text = stats.lostBalls.ToString();
     }
 
+}
 
-    public void Stat(bool Stat)
-    {
-        Statictics = Stat;
-    }
+
+public class Stats
+{
+    public long pointSpent =0;
+    public int questCompleted = 0;
+    public int maxPoint = 0;
+    public int countOfBalls = 0;
+    public int lostBalls = 0;
 }

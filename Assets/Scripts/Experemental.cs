@@ -1,23 +1,22 @@
-﻿using System.Collections;
+﻿
 using UnityEngine;
 
 public class Experemental : MonoBehaviour
 {
-    // Start is called before the first frame update
-    private SpriteRenderer sr;
-    float  alpha = 1f;
+    private TextMesh _tm;
+    float  _alpha = 1f;
     void Start()
     {
        
-        sr = GetComponent<SpriteRenderer>();
+        _tm = GetComponent<TextMesh>();
     }
 
     private void FixedUpdate()
     {
-        alpha -= Time.deltaTime;
+        _alpha -= Time.deltaTime;
         transform.position += new Vector3(0, Time.deltaTime, 0);
-        sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, alpha);
-        if (sr.color.a <= 0)
+        _tm.color = new Color(_tm.color.r, _tm.color.g, _tm.color.b, _alpha);
+        if (_tm.color.a <= 0)
             Destroy(gameObject);
     }
     
