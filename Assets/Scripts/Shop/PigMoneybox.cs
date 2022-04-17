@@ -1,6 +1,7 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 public class PigMoneybox : MonoBehaviour
 {
     public static AfkGrade grades;
@@ -13,6 +14,8 @@ public class PigMoneybox : MonoBehaviour
     private Image _buttonImage;
     private bool _isOpen = true;
     private int costOnGrade = 100;
+    [SerializeField]
+    private GameObject _signal;
 
     private int points = 0;
     private int _maxPoints = 1000;
@@ -72,6 +75,22 @@ public class PigMoneybox : MonoBehaviour
                 _buttonImage.raycastTarget = true;
                 GameManager.instance.TextUp(_standartCost.gameObject);
 
+            }
+        }
+    }
+
+    IEnumerator checkSignal()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            if(_maxPoints==points && !_signal.activeSelf)
+            {
+                _signal.SetActive(true);
+            }
+            else if(_maxPoints != points && _signal.activeSelf)
+            {
+                _signal.SetActive(false);
             }
         }
     }
