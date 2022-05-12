@@ -1,65 +1,78 @@
-using UnityEngine.SceneManagement;
+using Controllers;
+using Shop;
 using UnityEngine;
 
-public class SaveManager : MonoBehaviour
+namespace Managers
 {
-    [SerializeField]
-    private UnlockCircles[] unlockCircles;
-    private void OnApplicationFocus(bool focus)
+    public class SaveManager : MonoBehaviour
     {
-        OnApplicationPause(!focus);
-
-    }
-    private void OnApplicationPause(bool pause)
-    {
-        if (pause)
-        {
-            SaveGame();
-        }
-        else
+        private void Awake()
         {
             LoadGame();
         }
-    }
 
-
-
-    void SaveGame()
-    {
-        PlayerPrefs.SetString("StandartBuff", JsonUtility.ToJson(StandartBuff.grade));
-        PlayerPrefs.SetString("StoppersBuff", JsonUtility.ToJson(BuyStopper.grades));
-        PlayerPrefs.SetString("Statistic", JsonUtility.ToJson(Statistics.stats));
-        PlayerPrefs.SetString("PlayerStats", JsonUtility.ToJson(PlayerDataController.playerStats));
-        PlayerPrefs.SetString("Settings", JsonUtility.ToJson(Setting.settings));
-        PlayerPrefs.SetString("Moneybox", JsonUtility.ToJson(PigMoneybox.grades));
-        for (int i = 0; i < unlockCircles.Length; i++)
+        private void OnApplicationQuit()
         {
-            PlayerPrefs.SetString($"UpgradeCircle {unlockCircles[i].field}", JsonUtility.ToJson(unlockCircles[i].upgrade));
-        }
-    }
-
-    public void DeleteAll()
-    {
-        PlayerPrefs.DeleteAll();
-        SceneManager.LoadScene(0);
-    }
-
-    void LoadGame()
-    {
-        StandartBuff.grade = JsonUtility.FromJson<CostAndGrade>(PlayerPrefs.GetString("StandartBuff", JsonUtility.ToJson(new CostAndGrade())));
-        BuyStopper.grades = JsonUtility.FromJson<StopperGrades>(PlayerPrefs.GetString("StoppersBuff", JsonUtility.ToJson(new StopperGrades(16))));
-        Statistics.stats = JsonUtility.FromJson<Stats>(PlayerPrefs.GetString("Statistic", JsonUtility.ToJson(new Stats())));
-        PlayerDataController.playerStats = JsonUtility.FromJson<PlayerStats>(PlayerPrefs.GetString("PlayerStats", JsonUtility.ToJson(new PlayerStats())));
-        Setting.settings = JsonUtility.FromJson<PlayerSettings>(PlayerPrefs.GetString("Settings", JsonUtility.ToJson(new PlayerSettings())));
-        PigMoneybox.grades = JsonUtility.FromJson<AfkGrade>(PlayerPrefs.GetString("Moneybox", JsonUtility.ToJson(new AfkGrade())));
-        for (int i = 0; i < unlockCircles.Length; i++)
-        {
-        unlockCircles[i].upgrade = JsonUtility.FromJson<UpgradeCircle>(PlayerPrefs.GetString($"UpgradeCircle {unlockCircles[i].field}", JsonUtility.ToJson(new UpgradeCircle(unlockCircles[i].circles.Length))));
-            if(unlockCircles[i].upgrade == null)
-            {
-                unlockCircles[i].upgrade = new UpgradeCircle(unlockCircles[i].circles.Length);
-            }
+            SaveGame();
         }
 
+        /*  private void OnApplicationFocus(bool focus)
+          {
+              OnApplicationPause(!focus);
+          }
+  
+          private void OnApplicationPause(bool pause)
+          {
+              if (pause)
+              {
+                  SaveGame();
+              }
+              else
+              {
+                  LoadGame();
+              }
+          }*/
+
+
+        private static void SaveGame()
+        {
+            PlayerPrefs.SetString("DefaultBuff", JsonUtility.ToJson(DefaultBuff.grade));
+            PlayerPrefs.SetString("StoppersBuff", JsonUtility.ToJson(BuyStopper.grades));
+            PlayerPrefs.SetString("Statistic", JsonUtility.ToJson(Statistics.stats));
+            PlayerPrefs.SetString("PlayerStats", JsonUtility.ToJson(PlayerDataController.playerStats));
+            PlayerPrefs.SetString("Settings", JsonUtility.ToJson(Setting.settings));
+            PlayerPrefs.SetString("Fields", JsonUtility.ToJson(FieldManager.fields));
+            PlayerPrefs.SetString("UpgradeCircle", JsonUtility.ToJson(UnlockCircles.upgrade));
+            PlayerPrefs.SetString("Challenge", JsonUtility.ToJson(ChallengeManager.progress));
+        }
+
+
+        private static void LoadGame()
+        {
+            Debug.Log("Loading player data.");
+            if (PlayerPrefs.HasKey("x2reward"))
+                PlayerPrefs.DeleteAll();
+            DefaultBuff.grade =
+                JsonUtility.FromJson<CostAndGrade>(PlayerPrefs.GetString("DefaultBuff",
+                    JsonUtility.ToJson(new CostAndGrade())));
+            BuyStopper.grades =
+                JsonUtility.FromJson<StopperGrades>(PlayerPrefs.GetString("StoppersBuff",
+                    JsonUtility.ToJson(new StopperGrades(9))));
+            Statistics.stats =
+                JsonUtility.FromJson<Stats>(PlayerPrefs.GetString("Statistic", JsonUtility.ToJson(new Stats())));
+            PlayerDataController.playerStats =
+                JsonUtility.FromJson<PlayerStats>(PlayerPrefs.GetString("PlayerStats",
+                    JsonUtility.ToJson(new PlayerStats())));
+            Setting.settings =
+                JsonUtility.FromJson<MyPlayerSettings>(PlayerPrefs.GetString("Settings",
+                    JsonUtility.ToJson(new MyPlayerSettings())));
+            FieldManager.fields =
+                JsonUtility.FromJson<Fields>(PlayerPrefs.GetString("Fields", JsonUtility.ToJson(new Fields())));
+            UnlockCircles.upgrade = JsonUtility.FromJson<UpgradeCircle>(
+                PlayerPrefs.GetString("UpgradeCircle", JsonUtility.ToJson(new UpgradeCircle())));
+            ChallengeManager.progress = JsonUtility.FromJson<ChallengeProgress>(
+                PlayerPrefs.GetString("Challenge", JsonUtility.ToJson(new ChallengeProgress())));
+            Debug.Log("Player data complete loading.");
+        }
     }
 }

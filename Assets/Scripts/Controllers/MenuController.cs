@@ -1,54 +1,74 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
+    private const int ALL_FIELD = -2;
     public static int currentMenu = -1;
-    [SerializeField]
-    private GameObject[] _shops;
+
+    public static MenuController instance;
+    
+    public GameObject[] _shops;
+
     [SerializeField]
     private GameObject[] _buttons;
+
     [SerializeField]
     private GameObject _backPanel;
+
     [SerializeField]
     private GameObject _stats;
-    public void OpenShop(int i)
+
+    public static Action[] shopOpen = new Action[6];
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    public void OpenShop(int shop)
     {
         currentMenu = -1;
-        for (int j = 0; j < _shops.Length; j++)
+        for (int _j = 0; _j < _shops.Length; _j++)
         {
-            if (i != j && _shops[j].activeSelf)
+            if (shop != _j && _shops[_j].activeSelf)
             {
-                OpenShop(j);
+                OpenShop(_j);
             }
         }
 
-        if (!_shops[i].activeSelf)
+        if (shop == ALL_FIELD)
         {
-            currentMenu = i;
-            //TODO
-            _buttons[i].GetComponent<Image>().color = Color.white;// mycolor;
+            return;
+        }
+
+        if (!_shops[shop].activeSelf)
+        {
+            shopOpen[shop]?.Invoke();
+            currentMenu = shop;
+            _buttons[shop].GetComponent<Image>().color = ThemeManager.instance.themes[ThemeManager.currentTheme].lightGray;
             _backPanel.SetActive(true);
         }
         else
         {
-            if (i == _shops.Length - 1)
+            if (shop == _shops.Length - 1)
                 _stats.SetActive(false);
-            _buttons[i].GetComponent<Image>().color = new Color(0xE6, 0xE6, 0xE6, 0xFF); ;
+            _buttons[shop].GetComponent<Image>().color =
+                ThemeManager.instance.themes[ThemeManager.currentTheme].fieldColor;
             _backPanel.SetActive(false);
         }
 
-        _shops[i].SetActive(!_shops[i].activeSelf);
-
+        _shops[shop].SetActive(!_shops[shop].activeSelf);
     }
 
     public void BackPanelClick()
     {
-        for (int j = 0; j < _shops.Length; j++)
+        for (int _j = 0; _j < _shops.Length; _j++)
         {
-            if (_shops[j].activeSelf)
+            if (_shops[_j].activeSelf)
             {
-                OpenShop(j);
+                OpenShop(_j);
             }
         }
     }

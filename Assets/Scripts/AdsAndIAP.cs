@@ -1,40 +1,58 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AdsAndIAP : MonoBehaviour
 {
-    public static bool isRemoveADS;
-    
+    public static bool isRemoveAds;
+
     public static AdsAndIAP instance;
 
     [SerializeField]
-    GameObject[] hided;
+    private GameObject[] hided;
 
     private void Awake()
     {
         instance = this;
-       
     }
 
     private void Start()
     {
-        IAPurchase iAPurchase = new IAPurchase();
-        iAPurchase.IapInitializate();
-        StartCoroutine(IAPurchase.CheckSubscription());
+        IaPurchase _iAPurchase = new IaPurchase();
+        _iAPurchase.IapInitialize();
+        StartCoroutine(IaPurchase.CheckSubscription());
     }
 
     public void HideAds()
     {
-        foreach(var hide in hided)
+        foreach (var _hide in hided)
         {
-            hide.SetActive(false);
+            _hide.SetActive(false);
         }
     }
 
 
-    public void BuyRemoveADS()
+    public void BuyRemoveAds()
     {
-        IAPurchase.BuyProductID(IAPurchase._removeADS);
+        IaPurchase.BuyProductID(IaPurchase.RemoveAds);
+    }
+    
+    public void BuyCoffee()
+    {
+        IaPurchase.BuyProductID(IaPurchase.Coffee);
+    }
+
+    public void BuyDiamond(int pack)
+    {
+        switch (pack)
+        {
+            case 0:
+                IaPurchase.BuyProductID(IaPurchase.LittlePack);
+                break;
+            case 1:
+                IaPurchase.BuyProductID(IaPurchase.MediumPack);
+                break;
+            case 2:
+                IaPurchase.BuyProductID(IaPurchase.BigPack);
+                break;
+        }
     }
 }

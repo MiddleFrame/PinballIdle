@@ -1,211 +1,109 @@
-﻿using UnityEngine;
+﻿using Controllers;
+using Managers;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class BuyStopper : MonoBehaviour
+namespace Shop
 {
-    
-    public static StopperGrades grades;
-
-    private int _costStoppers = 40000;
-    private long _costBuffStoppers = 1000;
-    private long _costCooldownStoppers = 1000;
-    [SerializeField]
-    private Image[] _buyStoppers;
-    [SerializeField]
-    private GameObject[] _upgradeTimeStopper;
-    [SerializeField]
-    private GameObject[] _upgradeCooldownStopper;
-    [SerializeField]
-    private GameObject[] _checkers;
-    [SerializeField]
-    private Text[] _costStoppersText;
-    [SerializeField]
-    private Text[] _buyStoppersText;
-    /*[SerializeField]
-    private Text[] _costBuffStoppersText;
-    [SerializeField]
-    private Text[] _countBuffStoppersText;
-    [SerializeField]
-    private Image[] _costBuffStoppersImage;
-    [SerializeField]
-    private Text[] _costCooldownStoppersText;
-    [SerializeField]
-    private Text[] _countCooldownStoppersText;
-    [SerializeField]
-    private Image[] _costCooldownStoppersImage;*/
-
-    private bool _isStopperOpen=true;
-   // private bool _isStopperBuffOpen=true;
-   // private bool _isStopperCooldownOpen=true;
-   //private bool _stopperMax = true;
-   // private bool _stopperCooldownMax=true;
-    // Start is called before the first frame update
-    void Start()
+    public class BuyStopper : MonoBehaviour
     {
-        for(int i = 0; i < _buyStoppers.Length; i++)
+        public static StopperGrades grades;
+
+        private const int COST_STOPPERS = 40000;
+
+        [SerializeField]
+        private Image _buyStoppers;
+
+        [SerializeField]
+        private GameObject[] _stoppers;
+
+        [SerializeField]
+        private Text _costStoppersText;
+
+        [SerializeField]
+        private Text _buyStoppersText;
+
+        private bool _isStopperOpen = true;
+
+        private void Awake()
         {
-            if(grades.isStopper[i])
-            buyStoppers(i);
-       // stopperBuff(grades.buffTimeStoppers[i],i);
-        //    stopperBuffCooldown(grades.buffCooldownStoppers[i],i);
+            MenuController.shopOpen[1] += changeText;
         }
-    }
 
-    private void Update()
-    {
-        if (!grades.isStopper[FieldManager.currentField] && MenuController.currentMenu == 1)
+        private void Start()
         {
-            if (_isStopperOpen && PlayerDataController.PointSum < _costStoppers)
+            for (int _i = 0; _i < FieldManager.fields.isOpen.Length; _i++)
             {
-                _isStopperOpen = false;
-                _buyStoppers[FieldManager.currentField].raycastTarget = false;
-                _buyStoppers[FieldManager.currentField].sprite = GameManager.instance._lockedSprite;
-                GameManager.instance.TextDown(_costStoppersText[FieldManager.currentField].gameObject);
+                if (!FieldManager.fields.isOpen[_i]) continue;
+                if (grades.isStopper[_i])
+                    openStoppers(_i);
+            }
+        }
 
-            }
-            else if (!_isStopperOpen && PlayerDataController.PointSum >= _costStoppers)
-            {
-                _isStopperOpen = true;
-                _buyStoppers[FieldManager.currentField].sprite = GameManager.instance._unlockedSprite;
-                _buyStoppers[FieldManager.currentField].raycastTarget = true;
-                GameManager.instance.TextUp(_costStoppersText[FieldManager.currentField].gameObject);
-            }
-        }/*
-        else if (grades.isStopper[FieldManager.currentField] && MenuController.currentMenu == 0)
+        private void Update()
         {
-            if (!_stopperMax && _isStopperBuffOpen && PlayerDataController.PointSum < _costBuffStoppers)
+            if (FieldManager.currentField == -1)
             {
-                _isStopperBuffOpen = false;
-                _costBuffStoppersImage[FieldManager.currentField].raycastTarget = false;
-                _costBuffStoppersImage[FieldManager.currentField].sprite = GameManager.instance._lockedSprite;
-                GameManager.instance.TextDown(_costBuffStoppersText[FieldManager.currentField].gameObject);
+                return;
+            }
 
+            if (MenuController.currentMenu == 1 && !grades.isStopper[FieldManager.currentField])
+            {
+                if (_isStopperOpen && PlayerDataController.PointSum < COST_STOPPERS)
+                {
+                    _isStopperOpen = false;
+                    _buyStoppers.raycastTarget = false;
+                    _buyStoppers.sprite = GameManager.instance._lockedSprite;
+                    GameManager.TextDown(_costStoppersText.gameObject);
+                }
+                else if (!_isStopperOpen && PlayerDataController.PointSum >= COST_STOPPERS)
+                {
+                    _isStopperOpen = true;
+                    _buyStoppers.sprite = GameManager.instance._unlockedSprite;
+                    _buyStoppers.raycastTarget = true;
+                    GameManager.TextUp(_costStoppersText.gameObject);
+                }
             }
-            else if (!_stopperMax && !_isStopperBuffOpen && PlayerDataController.PointSum >= _costBuffStoppers)
-            {
-                _isStopperBuffOpen = true;
-                _costBuffStoppersImage[FieldManager.currentField].sprite = GameManager.instance._unlockedSprite;
-                _costBuffStoppersImage[FieldManager.currentField].raycastTarget = true;
-                GameManager.instance.TextUp(_costBuffStoppersText[FieldManager.currentField].gameObject);
-            }   
-            if (!_stopperCooldownMax && _isStopperCooldownOpen && PlayerDataController.PointSum < _costCooldownStoppers)
-            {
-                _isStopperCooldownOpen = false;
-                _costCooldownStoppersImage[FieldManager.currentField].raycastTarget = false;
-                _costCooldownStoppersImage[FieldManager.currentField].sprite = GameManager.instance._lockedSprite;
-                GameManager.instance.TextDown(_costCooldownStoppersText[FieldManager.currentField].gameObject);
+        }
 
-            }
-            else if (!_stopperCooldownMax && !_isStopperCooldownOpen && PlayerDataController.PointSum >= _costCooldownStoppers)
-            {
-                _isStopperCooldownOpen = true;
-                _costCooldownStoppersImage[FieldManager.currentField].sprite = GameManager.instance._unlockedSprite;
-                _costCooldownStoppersImage[FieldManager.currentField].raycastTarget = true;
-                GameManager.instance.TextUp(_costCooldownStoppersText[FieldManager.currentField].gameObject);
-            }
-        }*/
-    }
-    /*
-    public void StopperBuff()
-    {
-        if (PlayerDataController.PointSum >= _costBuffStoppers)
+        public void BuyStoppers()
         {
-            if (Checker.TimeStoppers < 5)
+            if (PlayerDataController.PointSum < COST_STOPPERS) return;
+            PlayerDataController.PointSum -= COST_STOPPERS;
+            Statistics.stats.pointSpent += COST_STOPPERS;
+
+            openStoppers(FieldManager.currentField);
+            changeText();
+        }
+
+        private void openStoppers(int i)
+        {
+            _stoppers[i].SetActive(true);
+        }
+
+        private void changeText()
+        {
+            if (!grades.isStopper[FieldManager.currentField])
             {
-                PlayerDataController.PointSum -= _costBuffStoppers;
-                Statistics.stats.pointSpent += _costBuffStoppers;
-                // SumSent.text = $"Total points spent:     {PointSpent}";
-                stopperBuff(1, FieldManager.currentField);
+                _buyStoppersText.text = "Stoppers";
+                _buyStoppers.gameObject.SetActive(false);
+            }
+            else
+            {
+                _buyStoppersText.text = "Buy stoppers";
+                _buyStoppers.gameObject.SetActive(true);
             }
         }
     }
-    
-    private void stopperBuff(int i,int g)
+
+
+    public class StopperGrades
     {
-        for (int j = 0; j < i; j++)
+        public bool[] isStopper;
+
+        public StopperGrades(int length)
         {
-            Checker.TimeStoppers += 0.75f ;
-            _costBuffStoppers = (long)(_costBuffStoppers * 1.1f);
+            isStopper = new bool[length];
         }
-        _costBuffStoppersText[g].text = GameManager.NormalSum(_costBuffStoppers);
-        _countBuffStoppersText[g].text = Checker.TimeStoppers + "→" + (Checker.TimeStoppers + 0.75);
-        if (Checker.TimeStoppers >= 5)
-        {
-            _stopperMax = true;
-            GameManager.instance.TextDown(_costBuffStoppersText[g].gameObject);
-            _costCooldownStoppersImage[g].raycastTarget = false;
-            _costCooldownStoppersImage[g].sprite = GameManager.instance._lockedSprite ;
-            _countBuffStoppersText[g].text = Checker.TimeStoppers + "";
-            _costBuffStoppersText[g].text = "MAX";
-        }
-    }
-
-    public void StopperBuffCooldown()
-    {
-        if (PlayerDataController.PointSum >= _costCooldownStoppers)
-        {
-            if (Checker.coldownStopper > 6)
-            {
-                PlayerDataController.PointSum -= _costCooldownStoppers;
-                Statistics.stats.pointSpent += _costCooldownStoppers;
-                stopperBuffCooldown(1, FieldManager.currentField);
-           }
-        }
-
-    }
-
-    private void stopperBuffCooldown(int i, int j)
-    {
-        for (int g= 0; g < i; g++)
-        {
-            Checker.coldownStopper -= 0.75f;
-            _costCooldownStoppers = (long)(_costCooldownStoppers * 1.1f);
-        }
-        _costCooldownStoppersText[j].text = GameManager.NormalSum(_costCooldownStoppers);
-        _countCooldownStoppersText[j].text = Checker.coldownStopper + "→" + (Checker.coldownStopper - 0.75);
-        
-        if (Checker.coldownStopper <= 6)
-        {
-            _stopperCooldownMax = true;
-            GameManager.instance.TextDown(_costCooldownStoppersText[j].gameObject);
-            _costCooldownStoppersImage[j].raycastTarget = false;
-            _costCooldownStoppersImage[j].sprite = GameManager.instance._lockedSprite;
-            _countCooldownStoppersText[j].text = Checker.coldownStopper + "";
-            _costCooldownStoppersText[j].text = "MAX";
-        }
-    }*/
-
-    public void BuyStoppers()
-    {
-        if (PlayerDataController.PointSum >= _costStoppers)
-        {
-            PlayerDataController.PointSum -= _costStoppers;
-            Statistics.stats.pointSpent += _costStoppers;
-            
-            buyStoppers(FieldManager.currentField);
-        }
-    }
-
-    private void buyStoppers(int i)
-    {
-        _buyStoppersText[i].text = "Stoppers";
-        _buyStoppers[i].gameObject.SetActive(false);
-        _upgradeTimeStopper[i].SetActive(true);
-        _upgradeCooldownStopper[i].SetActive(true);
-        _checkers[i].SetActive(true);
-    }
-}
-
-
-public class StopperGrades
-{
-    public bool[] isStopper;
-   // public int[] buffTimeStoppers;
-   // public int[] buffCooldownStoppers;
-    public StopperGrades(int length)
-    {
-        isStopper = new bool[length];
-       // buffTimeStoppers = new int[length];
-        //buffCooldownStoppers = new int[length];
     }
 }

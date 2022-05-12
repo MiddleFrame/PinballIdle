@@ -374,5 +374,34 @@
             }
             return null;
         }
+
+        public static XmlNode FindLauncherActivityNode(XmlNode applicaiton)
+        {
+            XmlNode acNode = applicaiton.FirstChild;
+            while (acNode != null)
+            {
+                if(acNode.Name.Equals("activity"))
+                {
+                    XmlNode intentFilterNode = acNode.FirstChild;
+                    while(intentFilterNode != null)
+                    {
+                        if(intentFilterNode.Name.Equals("intent-filter"))
+                        {
+                            XmlNode launcherCategeryNode = FindChildNodeWithAttribute(intentFilterNode, "category", "android:name", "android.intent.category.LAUNCHER");
+                            if(launcherCategeryNode != null)
+                            {
+                                return acNode;
+                            }
+                        }
+
+                        intentFilterNode = intentFilterNode.NextSibling;
+                    }
+                    
+                }
+               
+                acNode = acNode.NextSibling;
+            }
+            return null;
+        }
     }
 }

@@ -3,35 +3,47 @@ using UnityEngine.UI;
 
 public class Setting : MonoBehaviour
 {
-    public static PlayerSettings settings;
+    public static MyPlayerSettings settings;
+
     [SerializeField]
     private Image _soundImage;
+
     [SerializeField]
     private Sprite _soundOn;
+
     [SerializeField]
     private Sprite _soundOff;
+
     [SerializeField]
     private Image _numberImage;
+
     [SerializeField]
     private Sprite _numberOn;
+
     [SerializeField]
     private Sprite _numberOff;
+
     [SerializeField]
     private GameObject _levelText;
 
     [SerializeField]
     private Image _levelTextImage;
+
     [SerializeField]
     private Sprite _levelTextOn;
+
     [SerializeField]
     private Sprite _levelTextOff;
 
     [SerializeField]
-    private Image _vibroImage;
+    private Image _vibrationImage;
+
     [SerializeField]
-    private Sprite _vibroOn;
+    private Sprite _vibrationOn;
+
     [SerializeField]
-    private Sprite _vibroOff;
+    private Sprite _vibrationOff;
+
     private void Start()
     {
         if (!settings.exNum)
@@ -39,41 +51,36 @@ public class Setting : MonoBehaviour
             settings.exNum = !settings.exNum;
             ChangeNum();
         }
+
         if (!settings.sound)
         {
             settings.sound = !settings.sound;
             ChangeSound();
         }
+
         if (!settings.levelText)
         {
             settings.levelText = !settings.levelText;
             ViewLevelText();
         }
-        if (!settings.vibro)
+
+        if (!settings.vibration)
         {
-            settings.vibro = !settings.vibro;
-            ChangeVibro();
+            settings.vibration = !settings.vibration;
+            ChangeVibration();
         }
     }
+
     public void ChangeNum()
     {
-       
-            settings.exNum = !settings.exNum;
-        if (settings.exNum)
-        {
-            _numberImage.sprite = _numberOn;
-        }
-        else
-        {
-            _numberImage.sprite = _numberOff;
-        }
+        settings.exNum = !settings.exNum;
+        _numberImage.sprite = settings.exNum ? _numberOn : _numberOff;
     }
 
     public void ChangeSound()
     {
-       
-            settings.sound= !settings.sound;
-        
+        settings.sound = !settings.sound;
+
         if (!settings.sound)
         {
             AudioListener.volume = 0;
@@ -81,31 +88,20 @@ public class Setting : MonoBehaviour
         }
         else
         {
-
             _soundImage.sprite = _soundOn;
             AudioListener.volume = 1;
         }
     }
-    public void ChangeVibro()
-    {
-       
-            settings.vibro= !settings.vibro;
-        
-        if (!settings.vibro)
-        {
-            _vibroImage.sprite = _vibroOff;
-        }
-        else
-        {
 
-            _vibroImage.sprite = _vibroOn;
-            
-        }
+    public void ChangeVibration()
+    {
+        settings.vibration = !settings.vibration;
+
+        _vibrationImage.sprite = !settings.vibration ? _vibrationOff : _vibrationOn;
     }
 
     public void ViewLevelText()
     {
-
         settings.levelText = !settings.levelText;
         if (settings.levelText)
         {
@@ -118,15 +114,13 @@ public class Setting : MonoBehaviour
             _levelText.SetActive(false);
         }
     }
-
 }
 
 
-public class PlayerSettings
+public class MyPlayerSettings
 {
     public bool exNum = true;
     public bool sound = true;
     public bool levelText = true;
-    public bool vibro = true;
-    public int theme = 0;
+    public bool vibration = true;
 }

@@ -1,110 +1,130 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Controllers;
+using Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnlockCircles : MonoBehaviour
+namespace Shop
 {
-    public int field=0;
-    public GameObject[] circles;
-    private bool _isOpen = true;
-    private bool _isMax = false;
-    public UpgradeCircle upgrade;
-    [SerializeField]
-    private Text _cost;  
-    [SerializeField]
-    private Text _count;
-    [SerializeField]
-    private Image _imageCost;
-    [SerializeField]
-    private int _startCost;
-    [SerializeField]
-    private int _multiCost;
-    [SerializeField]
-    private Sprite _maxSprite;
-
-    private void Start()
+    public class UnlockCircles : MonoBehaviour
     {
-       
-        for(int i=0; i < upgrade.Upgrades; i++)
+        public static UpgradeCircle upgrade;
+
+        private bool _isOpen = true;
+
+        private bool _isMax;
+        private const int MAX_UPGRADE = 12;
+
+        [SerializeField]
+        private Text _costText;
+
+        [SerializeField]
+        private Text _count;
+
+        [SerializeField]
+        private Image _imageCost;
+
+        private const int START_COST = 10;
+        private const int MULTI_COST = 10;
+
+        private readonly int[] _cost = {10, 10, 10, 10, 10, 10, 10, 10, 10};
+
+        private void Awake()
         {
-            OpenCircle(i);
+            MenuController.shopOpen[1] += UpdateText;
         }
-        UpdateText();
-    }
 
-    private void Update()
-    {
-        if (MenuController.currentMenu == 1)
+        private void Start()
         {
+            if (MAX_UPGRADE != GameManager.instance.fields[0].circles.Length-1)
+            {
+                Debug.LogError(
+                    $"Max unlock circle ({MAX_UPGRADE}) not equal current circle on field ({GameManager.instance.fields[0].circles.Length-1})");
+            }
+
+            for (int _field = 0; _field < FieldManager.fields.isOpen.Length; _field++)
+            {
+                if (!FieldManager.fields.isOpen[_field]) continue;
+                _cost[_field] = START_COST + MULTI_COST * upgrade.upgrades[_field];
+                for (int _i = 0; _i < upgrade.upgrades[_field]; _i++)
+                {
+                    OpenCircle(_field, _i);
+                }
+            }
+        }
+
+        private void Update()
+        {
+            if (MenuController.currentMenu != 1) return;
             if (_isMax)
                 return;
-            if (_isOpen && PlayerDataController.PointSum < cost)
+            switch (_isOpen)
             {
-                _isOpen = false;
-                _imageCost.raycastTarget = false;
-                _imageCost.sprite = GameManager.instance._lockedSprite;
-                GameManager.instance.TextDown(_cost.gameObject);
-
-            }
-            else if (!_isOpen && PlayerDataController.PointSum >= cost)
-            {
-                _isOpen = true;
-                _imageCost.sprite = GameManager.instance._unlockedSprite;
-                _imageCost.raycastTarget = true;
-                GameManager.instance.TextUp(_cost.gameObject);
+                case true when PlayerDataController.PointSum < _cost[FieldManager.currentField]:
+                    _isOpen = false;
+                    _imageCost.raycastTarget = false;
+                    _imageCost.sprite = GameManager.instance._lockedSprite;
+                    GameManager.TextDown(_costText.gameObject);
+                    break;
+                case false when PlayerDataController.PointSum >= _cost[FieldManager.currentField]:
+                    _isOpen = true;
+                    _imageCost.sprite = GameManager.instance._unlockedSprite;
+                    _imageCost.raycastTarget = true;
+                    GameManager.TextUp(_costText.gameObject);
+                    break;
             }
         }
-    }
 
-    private void OpenCircle(int i)
-    {
-        if(i<circles.Length)
-        circles[i].SetActive(true);
-    }
-    int cost = 10;
-  
-    public void BuyCircle()
-    {
-        cost = _startCost + _multiCost * upgrade.Upgrades;
-        if (PlayerDataController.PointSum >= cost)
+        private static void OpenCircle(int fieldNumber, int circle)
         {
-            PlayerDataController.PointSum -= cost;
-            Statistics.stats.pointSpent += cost;
-            
-            OpenCircle(upgrade.Upgrades);
-            upgrade.Upgrades++;
+            if (circle < GameManager.instance.fields[fieldNumber].circles.Length-1)
+                GameManager.instance.fields[fieldNumber].circles[circle].SetActive(true);
+        }
+
+        public void BuyCircle()
+        {
+            if (PlayerDataController.PointSum < _cost[FieldManager.currentField]) return;
+            PlayerDataController.PointSum -= _cost[FieldManager.currentField];
+            Statistics.stats.pointSpent += _cost[FieldManager.currentField];
+            OpenCircle(FieldManager.currentField, upgrade.upgrades[FieldManager.currentField]);
+            upgrade.upgrades[FieldManager.currentField]++;
+            _cost[FieldManager.currentField] = START_COST + MULTI_COST * upgrade.upgrades[FieldManager.currentField];
             UpdateText();
         }
+
+        private void UpdateText()
+        {
+            if (upgrade.upgrades[FieldManager.currentField] >= MAX_UPGRADE && _isMax)
+                return;
+            if (upgrade.upgrades[FieldManager.currentField] >= MAX_UPGRADE)
+            {
+                _isMax = true;
+                _costText.text = "MAX";
+                _count.text = (MAX_UPGRADE + 1).ToString();
+                if(!_isOpen) return;
+                GameManager.TextDown(_costText.gameObject);
+                _imageCost.sprite = GameManager.instance._lockedSprite;
+                _imageCost.gameObject.GetComponent<Button>().enabled = false;
+            }
+            else
+            {
+                if (_isMax)
+                {
+                    _isMax = false;
+                    GameManager.TextUp(_costText.gameObject);
+                    _imageCost.sprite = GameManager.instance._unlockedSprite;
+                    _imageCost.gameObject.GetComponent<Button>().enabled = true;
+                }
+
+                _costText.text = _cost[FieldManager.currentField].ToString();
+                _count.text = (upgrade.upgrades[FieldManager.currentField] + 1) + "→" +
+                              (upgrade.upgrades[FieldManager.currentField] + 2);
+            }
+        }
     }
 
-    private void UpdateText()
+
+    public class UpgradeCircle
     {
-        if (_isMax)
-            return;
-        if(upgrade.Upgrades == upgrade.MaxUpgrade)
-        {
-            _isMax = true;
-           GameManager.instance.TextDown(_cost.gameObject);
-            _cost.text = "MAX";
-            _imageCost.sprite = _maxSprite;
-            _count.text = (upgrade.MaxUpgrade+1).ToString();
-            _imageCost.gameObject.GetComponent<Button>().enabled = false;
-        }
-        else
-        {
-            cost = _startCost + _multiCost * upgrade.Upgrades;
-            _cost.text = (cost).ToString();
-            _count.text = (upgrade.Upgrades+1).ToString() + "→" + (upgrade.Upgrades+2).ToString();
-        }
+        public int[] upgrades = new int[9];
     }
-}
-
-
-
-public class UpgradeCircle
-{
-    public int MaxUpgrade;
-    public int Upgrades = 0;
-    public UpgradeCircle(int MaxCircle) { this.MaxUpgrade = MaxCircle; }
 }

@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 //using NotificationSamples;
 using System;
+using Shop;
 using Unity.Notifications.Android;
 
 public class Notification : MonoBehaviour
@@ -11,44 +10,43 @@ public class Notification : MonoBehaviour
     // Start is called before the first frame update
     // [SerializeField] GameObject _rewardPanel; 
 
-    void Start()
+    private void Start()
     {
-        var notificationID = 10000;
+        const int notificationID = 10000;
 
-        var notification = new AndroidNotification();
-        var notificationStatus = AndroidNotificationCenter.CheckScheduledNotificationStatus(notificationID);
+        var _notification = new AndroidNotification();
+        var _notificationStatus = AndroidNotificationCenter.CheckScheduledNotificationStatus(notificationID);
 
-        var channel = new AndroidNotificationChannel()
+        var _channel = new AndroidNotificationChannel()
         {
             Id = "channel_id",
             Name = "Default Channel",
             Importance = Importance.Default,
             Description = "Generic notifications",
         };
-        AndroidNotificationCenter.RegisterNotificationChannel(channel);
+        AndroidNotificationCenter.RegisterNotificationChannel(_channel);
 
-        notification.Title = "Your reward is ready!";
-        notification.Text = "Log into the game NOW and get your coins!";
-        if ((PigMoneybox.nextClaim - DateTime.Now).TotalMinutes > 15)
-            notification.FireTime = PigMoneybox.nextClaim;
-        else
-            notification.FireTime = DateTime.Now.AddMinutes(15);
-        if (notificationStatus == NotificationStatus.Scheduled)
+        _notification.Title = "Your reward is ready!";
+        _notification.Text = "Log into the game NOW and get your coins!";
+        _notification.FireTime = (PigMoneybox.NextClaim - DateTime.Now).TotalMinutes > 15 ? PigMoneybox.NextClaim : DateTime.Now.AddMinutes(15);
+        switch (_notificationStatus)
         {
-            // Replace the scheduled notification with a new notification.
-            AndroidNotificationCenter.UpdateScheduledNotification(notificationID, notification, "channel_id");
+            case NotificationStatus.Scheduled:
+                // Replace the scheduled notification with a new notification.
+                AndroidNotificationCenter.UpdateScheduledNotification(notificationID, _notification, "channel_id");
+                break;
+            case NotificationStatus.Delivered:
+                // Remove the previously shown notification from the status bar.
+                AndroidNotificationCenter.CancelNotification(notificationID);
+                // _rewardPanel.SetActive(true);
+                AndroidNotificationCenter.SendNotificationWithExplicitID(_notification, "channel_id", notificationID);
+                break;
+            case NotificationStatus.Unavailable:
+            case NotificationStatus.Unknown:
+            default:
+                AndroidNotificationCenter.SendNotificationWithExplicitID(_notification, "channel_id", notificationID);
+                break;
         }
-        else if (notificationStatus == NotificationStatus.Delivered)
-        {
-            // Remove the previously shown notification from the status bar.
-            AndroidNotificationCenter.CancelNotification(notificationID);
-            // _rewardPanel.SetActive(true);
-            AndroidNotificationCenter.SendNotificationWithExplicitID(notification, "channel_id", notificationID);
-        }
-        else
-        {
-            AndroidNotificationCenter.SendNotificationWithExplicitID(notification, "channel_id", notificationID);
-        }
-        Debug.Log(notificationStatus);
+        Debug.Log(_notificationStatus);
     }
 }

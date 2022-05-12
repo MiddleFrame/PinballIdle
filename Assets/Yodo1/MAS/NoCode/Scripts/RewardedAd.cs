@@ -46,6 +46,12 @@ public class RewardedAd : MonoBehaviour
 
     void TaskOnClick()
     {
+        if (AdsAndIAP.isRemoveAds)
+        {
+            Yodo1U3dMasCallback.ForwardEvent("onRewardedAdReceivedRewardEvent");
+            return;
+        }
+
         if (Yodo1U3dMas.IsRewardedAdLoaded())
         {
             if (string.IsNullOrEmpty(placementID))

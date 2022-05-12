@@ -1,5 +1,6 @@
 ﻿#if UNITY_ANDROID
 using UnityEngine;
+using UnityEditor;
 using UnityEditor.Android;
 using System.IO;
 using System.Xml;
@@ -34,6 +35,7 @@ namespace Yodo1.MAS
         static void Yodo1ValidateManifest(string path)
         {
             var mainfestPath = Path.Combine(path, "src/main/AndroidManifest.xml");
+            ValidateManifestForSupportAndroid12(mainfestPath, getProjectGradlePath(path));
 
             if (mainfestPath.Contains("unityLibrary"))
             {
@@ -48,6 +50,45 @@ namespace Yodo1.MAS
                     ValidateManifest(mainfestPath, settings);
                 }
             }
+        }
+
+        private static void ValidateManifestForSupportAndroid12(string manifestFile, string projectGradlePath)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(manifestFile);
+
+            if (doc == null)
+            {
+                Debug.LogError(Yodo1U3dMas.TAG + "Couldn't load " + manifestFile);
+                return;
+            }
+
+            XmlNode manNode = Yodo1PostProcessAndroid.FindChildNode(doc, "manifest");
+            string ns = manNode.GetNamespaceOfPrefix("android");
+
+            XmlNode app = Yodo1PostProcessAndroid.FindChildNode(manNode, "application");
+
+            if (app == null)
+            {
+                Debug.LogError(Yodo1U3dMas.TAG + "Error parsing " + manifestFile + ", tag for application not found.");
+                return;
+            }
+
+            // supprted android 12
+            int targetSDKVersion = getTargetSDKVersion(projectGradlePath);
+            if (targetSDKVersion <= 30) // support android 12
+            {
+                return;
+            }
+
+            XmlNode launcherActivityNode = Yodo1PostProcessAndroid.FindLauncherActivityNode(app);
+            if (launcherActivityNode != null)
+            {
+                XmlElement actvitiyElement = (XmlElement)launcherActivityNode;
+                actvitiyElement.SetAttribute("exported", ns, "true");
+            }
+
+            doc.Save(manifestFile);
         }
 
         static void ValidateManifest(string manifestFile, Yodo1AdSettings settings)
@@ -184,17 +225,23 @@ namespace Yodo1.MAS
 
         static void ValidateGradlePluginVersion(string path)
         {
-            if(path.Contains("unityLibrary"))
+            string projectGradlePath = getProjectGradlePath(path);
+            ValidateGradlePluginVersion_(projectGradlePath);
+        }
+
+        private static string getProjectGradlePath(string path)
+        {
+            var projectGradlePath = "";
+            if (path.Contains("unityLibrary"))
             {
                 var projectPath = path.Replace("unityLibrary", "");
-                var projectGradlePath = Path.Combine(projectPath, "build.gradle");
-                ValidateGradlePluginVersion_(projectGradlePath);
+                projectGradlePath = Path.Combine(projectPath, "build.gradle");
             }
             else
             {
-                var projectGradlePath = Path.Combine(path, "build.gradle");
-                ValidateGradlePluginVersion_(projectGradlePath);
+                projectGradlePath = Path.Combine(path, "build.gradle");
             }
+            return projectGradlePath;
         }
 
         private static void ValidateGradlePluginVersion_(string projectGradlePath)
@@ -225,7 +272,7 @@ namespace Yodo1.MAS
                 if(tempArray != null && tempArray.Length > 0)
                 {
                     var oldPluginVersion = tempArray[tempArray.Length - 1]; // such as 3.4.0
-                    string resultPluginVersion = ValidatePluginVersionStr_(oldPluginVersion);
+                    string resultPluginVersion = ValidatePluginVersionStr_(oldPluginVersion, projectGradlePath);
                     if(resultPluginVersion != null && !oldPluginVersion.Equals(resultPluginVersion))
                     {
                         newLineStr = oldLineStr.Replace(oldPluginVersion, resultPluginVersion);
@@ -245,7 +292,7 @@ namespace Yodo1.MAS
             }
         }
 
-        private static string ValidatePluginVersionStr_(string oldPluginVersion)
+        private static string ValidatePluginVersionStr_(string oldPluginVersion, string projectGradlePath)
         {
             if(!oldPluginVersion.Contains("."))
             {
@@ -262,11 +309,16 @@ namespace Yodo1.MAS
                 return null;
             }
 
-            if(oldVerionNum > 410)
+            if(oldVerionNum >= 410)
             {
                 return null;
             }
 
+            int targetSDKVersion = getTargetSDKVersion(projectGradlePath);
+            if (targetSDKVersion > 30) // support android 12
+            {
+                return "4.0.1";
+            }
 
             string[] resultArray = { "3.3.3", "3.4.3", "3.5.4", "3.6.4", "4.0.1"};
             string subOldPluginVersion = oldPluginVersion.Substring(0, oldPluginVersion.LastIndexOf("."));
@@ -280,6 +332,52 @@ namespace Yodo1.MAS
             }
 
             return null;
+        }
+
+        private static int getTargetSDKVersion(string projectGradlePath)
+        {
+            int targetSDKVersion = (int)PlayerSettings.Android.targetSdkVersion;
+            Debug.Log(Yodo1U3dMas.TAG + "current targetSDKVersion is : " + targetSDKVersion);
+            if (targetSDKVersion > 0)
+            {
+                return targetSDKVersion;
+            }
+
+            StreamReader streamReader1 = new StreamReader(projectGradlePath);
+            string text_all = streamReader1.ReadToEnd();
+            streamReader1.Close();
+                       
+            string targetLineStr = string.Empty;
+
+            string[] array = text_all.Split(System.Environment.NewLine.ToCharArray());
+            for (int i = 0; i < array.Length; i++)
+            {
+                string str = array[i];
+                if (str.Contains("targetSdkVersion"))
+                {
+                    targetLineStr = str.Trim().Replace(" ", "");
+                    break;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(targetLineStr))
+            {
+                string temp = targetLineStr.Replace("targetSdkVersion", "");
+                if (!string.IsNullOrEmpty(temp))
+                {
+                    try
+                    {
+                        Debug.Log(Yodo1U3dMas.TAG + "get targetSDKVersion from gradle is : " + temp);
+                        return int.Parse(temp);
+                    }
+                    catch
+                    {
+                        return 0;
+                    }
+                }
+
+            }
+            return 0;
         }
 
         static bool WriteBelow(string filePath, string below, string text)

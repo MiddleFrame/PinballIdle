@@ -1,167 +1,180 @@
-﻿using UnityEngine.UI;
+﻿using System;
+using System.Collections;
+using System.Globalization;
+using Controllers;
+using Managers;
 using UnityEngine;
-using System;
-using System.Collections.Generic;
-public class PigMoneybox : MonoBehaviour
+using UnityEngine.UI;
+using Yodo1.MAS;
+
+namespace Shop
 {
-    public static AfkGrade grades;
-
-    [SerializeField]
-    private Text _standartCost;
-    [SerializeField]
-    private Text _pointBuffText;
-    [SerializeField]
-    private Image _buttonImage;
-    private bool _isOpen = true;
-    private int costOnGrade = 100;
-    [SerializeField]
-    private GameObject _signal;
-
-    private int points = 0;
-    private int _maxPoints = 1000;
-    public static DateTime nextClaim
+    public class PigMoneybox : MonoBehaviour
     {
-        get { return DateTime.Parse(PlayerPrefs.GetString("NextClaim", DateTime.MinValue.ToString())); }
-        set { PlayerPrefs.SetString("NextClaim", value.ToString()); }
-    }
-    [Header("Panel moneybox")]
-    [SerializeField]
-    private GameObject _moneyboxPanel;
-    [SerializeField]
-    private Text _buffText;
-    [SerializeField]
-    private Text _maxText;
-    [SerializeField]
-    private Text _getText;
-    [SerializeField]
-    private Text _getx2Text;
+        [SerializeField]
+        private GameObject _signal;
 
-    private void Start()
-    {
-        if (nextClaim != DateTime.MinValue)
+
+        private int _points;
+
+        public static int MaxPoints { get; set; } = 10000;
+
+        public static DateTime NextClaim
         {
-            if (nextClaim < DateTime.Now)
+            get => DateTime.Parse(PlayerPrefs.GetString("NextClaim",
+                DateTime.MinValue.ToString(CultureInfo.InvariantCulture)));
+            set => PlayerPrefs.SetString("NextClaim", value.ToString(CultureInfo.CurrentCulture));
+        }
+
+        [Header("Panel moneybox"), SerializeField]
+        private GameObject _moneyboxPanel;
+
+        [SerializeField]
+        private Text _nextClaimText;
+
+        [SerializeField]
+        private Text _buffText;
+
+        [SerializeField]
+        private Text _maxText;
+
+        [SerializeField]
+        private Text _getText;
+
+        [SerializeField]
+        private Text _getX2Text;
+
+        private void Start()
+        {
+            Debug.Log("Next claim: " + NextClaim);
+            if (NextClaim != DateTime.MinValue)
             {
-                points = _maxPoints;
-                openMoneybox();
+                if (NextClaim < DateTime.Now)
+                {
+                    _points = MaxPoints;
+                    openMoneybox();
+                }
+                else
+                {
+                    countPoints();
+                }
             }
             else
             {
-                points = (int)(_maxPoints - (nextClaim - DateTime.Now).TotalMinutes * (grades.countGrades + 1)*10);
+                NextClaim = DateTime.Now.AddMinutes((float) MaxPoints /
+                                                    (PlayerDataController.LevelSum * 15));
             }
+
+            StartCoroutine(checkSignal());
         }
-        else
+
+        private void DeleteReward()
         {
-            nextClaim = DateTime.Now.AddMinutes((_maxPoints - points) / ((grades.countGrades + 1) * 10));
+            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= ClaimX3;
         }
-        StandartBuffHit(grades.countGrades);
-    }
-    private void Update()
-    {
-        if (MenuController.currentMenu == 0)
+
+        private void DeleteReward(Yodo1U3dAdError adError)
         {
-            if (_isOpen && PlayerDataController.PointSum < costOnGrade)
+            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= ClaimX3;
+        }
+
+        public void InitializeRewardedAds()
+        {
+            Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent += DeleteReward;
+            Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent += DeleteReward;
+            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent += ClaimX3;
+        }
+
+
+        private IEnumerator checkSignal()
+        {
+            while (true)
             {
-                _isOpen = false;
-                _buttonImage.raycastTarget = false;
-                _buttonImage.sprite = GameManager.instance._lockedSprite;
-                GameManager.instance.TextDown(_standartCost.gameObject);
-
+                yield return new WaitForSeconds(1f);
+                if (MaxPoints == _points && !_signal.activeSelf)
+                {
+                    _signal.SetActive(true);
+                }
+                else if (MaxPoints != _points && _signal.activeSelf)
+                {
+                    _signal.SetActive(false);
+                }
             }
-            else if (!_isOpen && PlayerDataController.PointSum >= costOnGrade)
-            {
-                _isOpen = true;
-                _buttonImage.sprite = GameManager.instance._unlockedSprite;
-                _buttonImage.raycastTarget = true;
-                GameManager.instance.TextUp(_standartCost.gameObject);
-
-            }
+            // ReSharper disable once IteratorNeverReturns
         }
-    }
 
-    IEnumerator checkSignal()
-    {
-        while (true)
+        public void OpenMoneybox()
         {
-            yield return new WaitForSeconds(1f);
-            if(_maxPoints==points && !_signal.activeSelf)
-            {
-                _signal.SetActive(true);
-            }
-            else if(_maxPoints != points && _signal.activeSelf)
-            {
-                _signal.SetActive(false);
-            }
+            countPoints();
+            openMoneybox();
         }
-    }
 
-    private void StandartBuffHit(int countGrades = 1)
-    {
-        for (int i = 0; i < countGrades; i++)
+        private void openMoneybox()
         {
-            costOnGrade = (int)(costOnGrade * 1.1f);
+            Debug.Log("Total minutes: " + (NextClaim - DateTime.Now).TotalMinutes);
+            _moneyboxPanel.SetActive(true);
+
+            _nextClaim = TimeSpan.FromMinutes((float) (MaxPoints - _points) /
+                                              (PlayerDataController.LevelSum * 15));
+            _nextClaimText.text = _nextClaim.ToString("T");
+            if (_time == null)
+                _time = StartCoroutine(time());
+            else
+            {
+                StopCoroutine(_time);
+                _time = StartCoroutine(time());
+            }
+
+            _getText.text = _points.ToString();
+            _getX2Text.text = (3 * _points).ToString();
+            _buffText.text = $"You get: {PlayerDataController.LevelSum * 15} coin every min";
+            _maxText.text = $"Maximum: {GameManager.NormalSum(MaxPoints)} coins";
         }
-        _standartCost.text = GameManager.NormalSum(costOnGrade);
-        _pointBuffText.text = ((grades.countGrades + 1) * 10).ToString() + "→" + (grades.countGrades + 2) * 10;
-    }
 
+        private TimeSpan _nextClaim;
+        private Coroutine _time;
 
-    public void BuyStandartBuffHit()
-    {
-        if (PlayerDataController.PointSum >= costOnGrade)
+        private IEnumerator time()
         {
-            PlayerDataController.PointSum -= costOnGrade;
-            Statistics.stats.pointSpent += costOnGrade;
-            grades.countGrades += 1;
-            StandartBuffHit(1);
-            nextClaim = DateTime.Now.AddMinutes((_maxPoints-points) / ((grades.countGrades + 1) * 10));
+            while (true)
+            {
+                if (_nextClaim.TotalSeconds > 0)
+                {
+                    _nextClaim = _nextClaim.Add(new TimeSpan(0, 0, -1));
+                    _nextClaimText.text = _nextClaim.ToString(@"hh\:mm\:ss");
+                }
+
+                yield return new WaitForSeconds(1f);
+            }
+        }
+
+        private void countPoints()
+        {
+            _points = (int) (MaxPoints -
+                             Math.Ceiling((NextClaim - DateTime.Now).TotalMinutes * PlayerDataController.LevelSum *
+                                          15));
+        }
+
+        public void Claim()
+        {
+            _moneyboxPanel.SetActive(false);
+
+            NextClaim = DateTime.Now.AddMinutes((float) MaxPoints /
+                                                (PlayerDataController.LevelSum * 15));
+            PlayerDataController.PointSum += _points;
+            _points = 0;
+        }
+
+        private void ClaimX3()
+        {
+            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= ClaimX3;
+            Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent -= DeleteReward;
+            Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent -= DeleteReward;
+            _moneyboxPanel.SetActive(false);
+            NextClaim = DateTime.Now.AddMinutes((float) (MaxPoints) /
+                                                (PlayerDataController.LevelSum * 15));
+            PlayerDataController.PointSum += 3 * _points;
+            _points = 0;
         }
     }
-
-    public void OpenMoneybox()
-    {
-        countPoints();
-        openMoneybox();
-    }
-    private void openMoneybox()
-    {
-        Debug.Log("Total minutes: "+ (nextClaim - DateTime.Now).TotalMinutes);
-        _moneyboxPanel.SetActive(true);/*
-        _buffText.text = ((grades.countGrades + 1) * 10).ToString();
-        _maxText.text = _maxPoints.ToString();*/
-        _getText.text = points.ToString();
-        _getx2Text.text = (3 * points).ToString();
-        _buffText.text = $"You get: {(grades.countGrades+1)*10} coin every min";
-        _maxText.text = $"Maximum: {_maxPoints} coins";
-    }
-
-    private void countPoints()
-    {
-        points = (int)(_maxPoints - Math.Ceiling((nextClaim - DateTime.Now).TotalMinutes * (grades.countGrades + 1) * 10));
-    }
-
-    public void Claim()
-    {
-        _moneyboxPanel.SetActive(false);
-       
-        nextClaim = DateTime.Now.AddMinutes((float)_maxPoints / ((grades.countGrades + 1) * 10));
-        PlayerDataController.PointSum += points;
-        points = 0;
-
-    }
-    public void Claimx3()
-    {
-        _moneyboxPanel.SetActive(false);
-        InterstitialAndReward.timeOutReward = InterstitialAndReward.timeOutRewardMax;
-         nextClaim = DateTime.Now.AddMinutes((float)_maxPoints / ((grades.countGrades + 1) * 10));
-        PlayerDataController.PointSum += 3*points;
-        points = 0;
-
-    }
-
-}
-
-public class AfkGrade
-{
-    public int countGrades = 0;
 }
