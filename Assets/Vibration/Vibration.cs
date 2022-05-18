@@ -8,6 +8,7 @@
 
 using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
+using System;
 
 #if UNITY_IOS
 using System.Collections;
@@ -121,13 +122,27 @@ public static class Vibration
         if ( Application.isMobilePlatform ) {
 #if !UNITY_WEBGL
 #if UNITY_ANDROID
-
+            Debug.Log("Android version: " +AndroidVersion);
             if ( AndroidVersion >= 26 ) {
-                AndroidJavaObject createOneShot = vibrationEffect.CallStatic<AndroidJavaObject> ( "createOneShot", milliseconds, -1 );
-                vibrator.Call ( "vibrate", createOneShot );
-
+                try
+                {
+                    AndroidJavaObject createOneShot =
+                        vibrationEffect.CallStatic<AndroidJavaObject>("createOneShot", milliseconds, -1);
+                    vibrator.Call("vibrate", createOneShot);
+                }
+                catch (Exception _e)
+                {
+                    Debug.LogError(_e.Message);
+                }
             } else {
-                vibrator.Call ( "vibrate", milliseconds );
+                try
+                {
+                    vibrator.Call("vibrate", milliseconds);
+                }
+                catch (Exception _e)
+                {
+                    Debug.LogError(_e.Message);
+                }
             }
 #elif UNITY_IOS
         Handheld.Vibrate();

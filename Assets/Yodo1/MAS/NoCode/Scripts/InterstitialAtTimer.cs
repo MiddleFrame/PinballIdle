@@ -45,18 +45,9 @@ public class InterstitialAtTimer : MonoBehaviour
 
     void ShowInterstitialAd()
     {
-        if (AdsAndIAP.isRemoveAds)
-            return;
+        if (AdsAndIAP.isRemoveAds) return;
 #if UNITY_EDITOR
-        var myGO = new GameObject();
-        myGO.name = "TestCanvas";
-        myGO.AddComponent<Canvas>();
-
-        var myCanvas = myGO.GetComponent<Canvas>();
-        myCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        myGO.AddComponent<CanvasScaler>();
-        myGO.AddComponent<GraphicRaycaster>();
-        panel = Instantiate(adbreak, myGO.transform);
+        panel = Instantiate(adbreak, GameObject.FindObjectOfType<Canvas>().transform);
         btn = panel.GetComponentInChildren<Button>();
         btn.interactable = false;
         btn.onClick.AddListener(OnButtonClick);

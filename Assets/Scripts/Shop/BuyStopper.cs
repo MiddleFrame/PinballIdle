@@ -83,7 +83,7 @@ namespace Shop
 
         private void changeText()
         {
-            if (!grades.isStopper[FieldManager.currentField])
+            if (grades.isStopper[FieldManager.currentField])
             {
                 _buyStoppersText.text = "Stoppers";
                 _buyStoppers.gameObject.SetActive(false);

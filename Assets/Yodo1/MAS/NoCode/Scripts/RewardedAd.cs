@@ -28,32 +28,19 @@ public class RewardedAd : MonoBehaviour
         rvBtn.onClick.AddListener(TaskOnClick);
     }
 
-    private void OnEnable()
-    {
-        Yodo1U3dMasCallback.Rewarded.OnAdOpenedEvent += OnRewardedAdOpenedEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent += OnRewardedAdClosedEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent += OnAdReceivedRewardEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent += OnRewardedAdErorEvent;
-    }
-
-    private void OnDisable()
-    {
-        Yodo1U3dMasCallback.Rewarded.OnAdOpenedEvent -= OnRewardedAdOpenedEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent -= OnRewardedAdClosedEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent -= OnRewardedAdErorEvent;
-    }
-
     void TaskOnClick()
     {
         if (AdsAndIAP.isRemoveAds)
         {
-            Yodo1U3dMasCallback.ForwardEvent("onRewardedAdReceivedRewardEvent");
+            OnAdReceivedReward.Invoke();
             return;
         }
-
         if (Yodo1U3dMas.IsRewardedAdLoaded())
         {
+            Yodo1U3dMasCallback.Rewarded.OnAdOpenedEvent += OnRewardedAdOpenedEvent;
+            Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent += OnRewardedAdClosedEvent;
+            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent += OnAdReceivedRewardEvent;
+            Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent += OnRewardedAdErorEvent;
             if (string.IsNullOrEmpty(placementID))
             {
                 Yodo1U3dMas.ShowRewardedAd();
@@ -79,6 +66,10 @@ public class RewardedAd : MonoBehaviour
     {
         Debug.Log(Yodo1U3dMas.TAG + "NoCode Rewarded ad closed");
         OnRewardedAdClosed.Invoke();
+        Yodo1U3dMasCallback.Rewarded.OnAdOpenedEvent -= OnRewardedAdOpenedEvent;
+        Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent -= OnRewardedAdClosedEvent;
+        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
+        Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent -= OnRewardedAdErorEvent;
     }
 
     private void OnAdReceivedRewardEvent()

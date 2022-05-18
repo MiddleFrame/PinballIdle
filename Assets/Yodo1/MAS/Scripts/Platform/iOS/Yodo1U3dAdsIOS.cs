@@ -72,7 +72,7 @@ public class Yodo1U3dAdsIOS
         }
     }
 
-        [DllImport(LIB_NAME)]
+    [DllImport(LIB_NAME)]
     private static extern bool UnityMasIsDoNotSell();
     public static bool IsCCPADoNotSell()
     {
@@ -81,6 +81,28 @@ public class Yodo1U3dAdsIOS
             return UnityMasIsDoNotSell();
         }
         return false;
+    }
+
+    [DllImport(LIB_NAME)]
+    private static extern int UnityMasUserAge();
+    public static int GetUserAge()
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            return UnityMasUserAge();
+        }
+        return 0;
+    }
+
+    [DllImport(LIB_NAME)]
+    private static extern int UnityMasAttrackingStatus();
+    public static int GetAttrackingStatus()
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            return UnityMasAttrackingStatus();
+        }
+        return 0;
     }
 
     /// <summary>

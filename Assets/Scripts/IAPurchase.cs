@@ -22,6 +22,7 @@ public class IaPurchase : IStoreListener
         _builder.AddProduct(BigPack, ProductType.Consumable);
         _builder.AddProduct(LittlePack, ProductType.Consumable);
         _builder.AddProduct(MediumPack, ProductType.Consumable);
+        _builder.AddProduct(Coffee, ProductType.Consumable);
         UnityPurchasing.Initialize(this, _builder);
     }
 
@@ -98,15 +99,13 @@ public class IaPurchase : IStoreListener
 
     public static void BuyProductID(string productId)
     {
+        if (!IsIapInitialized()) return;
+        Product _product = _storeController.products.WithID(productId);
         Debug.Log("Try to buy: " + productId);
-        if (IsIapInitialized())
-        {
-            Product _product = _storeController.products.WithID(productId);
-            Debug.Log(_product);
-            Debug.Log(_product.availableToPurchase);
-            if (!_product.availableToPurchase) return;
-            Debug.Log("Start buy: " + productId);
-            _storeController.InitiatePurchase(_product);
-        }
+        Debug.Log(_product);
+        Debug.Log(_product.availableToPurchase);
+        if (!_product.availableToPurchase) return;
+        Debug.Log("Start buy: " + productId);
+        _storeController.InitiatePurchase(_product);
     }
 }

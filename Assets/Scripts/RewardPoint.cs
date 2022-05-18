@@ -21,43 +21,14 @@ public class RewardPoint : MonoBehaviour
     private static readonly bool[] reward = {false, false, false, false, false, false, false, false, false};
     public static int[] hitMultiply = {1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-    #region Reward video Ad Methods
+    
 
     private void Awake()
     {
         FieldManager.openOneField += openNewField;
     }
 
-    private void DeleteReward()
-    {
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
-    }
-
-    private void DeleteReward(Yodo1U3dAdError adError)
-    {
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
-    }
-
-    public void InitializeRewardedAds()
-    {
-        Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent += DeleteReward;
-        Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent += DeleteReward;
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent += OnAdReceivedRewardEvent;
-    }
-
-
-    private void OnAdReceivedRewardEvent()
-    {
-        Debug.Log("Receive Reward");
-        Debug.Log(Yodo1U3dMas.TAG + "Rewarded ad received reward");
-        OnAdReceivedRewardX2();
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
-
-        Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent -= DeleteReward;
-        Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent -= DeleteReward;
-    }
-
-    #endregion
+   
 
     private void openNewField()
     {
@@ -69,7 +40,7 @@ public class RewardPoint : MonoBehaviour
         _lvlBuffs.color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
     }
 
-    private void OnAdReceivedRewardX2()
+    public void OnAdReceivedRewardX2()
     {
         hitMultiply[FieldManager.currentField] *= 2;
         StartCoroutine(Timex2());

@@ -68,22 +68,7 @@ namespace Shop
             StartCoroutine(checkSignal());
         }
 
-        private void DeleteReward()
-        {
-            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= ClaimX3;
-        }
-
-        private void DeleteReward(Yodo1U3dAdError adError)
-        {
-            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= ClaimX3;
-        }
-
-        public void InitializeRewardedAds()
-        {
-            Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent += DeleteReward;
-            Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent += DeleteReward;
-            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent += ClaimX3;
-        }
+       
 
 
         private IEnumerator checkSignal()
@@ -165,11 +150,8 @@ namespace Shop
             _points = 0;
         }
 
-        private void ClaimX3()
+        public void ClaimX3()
         {
-            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= ClaimX3;
-            Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent -= DeleteReward;
-            Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent -= DeleteReward;
             _moneyboxPanel.SetActive(false);
             NextClaim = DateTime.Now.AddMinutes((float) (MaxPoints) /
                                                 (PlayerDataController.LevelSum * 15));

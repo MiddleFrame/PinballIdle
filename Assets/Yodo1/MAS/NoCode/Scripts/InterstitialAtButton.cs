@@ -26,24 +26,13 @@ public class InterstitialAtButton : MonoBehaviour
         btn.onClick.AddListener(TaskOnClick);
     }
 
-    private void OnEnable()
-    {
-        Yodo1U3dMasCallback.Interstitial.OnAdOpenedEvent += OnInterstitialAdOpenedEvent;
-        Yodo1U3dMasCallback.Interstitial.OnAdClosedEvent += OnInterstitialAdClosedEvent;
-        Yodo1U3dMasCallback.Interstitial.OnAdErrorEvent += OnInterstitialAdErorEvent;
-    }
-
-    private void OnDisable()
-    {
-        Yodo1U3dMasCallback.Interstitial.OnAdOpenedEvent -= OnInterstitialAdOpenedEvent;
-        Yodo1U3dMasCallback.Interstitial.OnAdClosedEvent -= OnInterstitialAdClosedEvent;
-        Yodo1U3dMasCallback.Interstitial.OnAdErrorEvent -= OnInterstitialAdErorEvent;
-    }
-
-    void TaskOnClick()
+     void TaskOnClick()
     {
         if (Yodo1U3dMas.IsInterstitialAdLoaded())
         {
+            Yodo1U3dMasCallback.Interstitial.OnAdOpenedEvent += OnInterstitialAdOpenedEvent;
+            Yodo1U3dMasCallback.Interstitial.OnAdClosedEvent += OnInterstitialAdClosedEvent;
+            Yodo1U3dMasCallback.Interstitial.OnAdErrorEvent += OnInterstitialAdErorEvent;
             if (string.IsNullOrEmpty(placementID))
             {
                 Yodo1U3dMas.ShowInterstitialAd();
@@ -69,6 +58,9 @@ public class InterstitialAtButton : MonoBehaviour
     {
         Debug.Log(Yodo1U3dMas.TAG + "NoCode Interstitial ad closed - buttons");
         OnInterstitialAdClosed.Invoke();
+        Yodo1U3dMasCallback.Interstitial.OnAdOpenedEvent -= OnInterstitialAdOpenedEvent;
+        Yodo1U3dMasCallback.Interstitial.OnAdClosedEvent -= OnInterstitialAdClosedEvent;
+        Yodo1U3dMasCallback.Interstitial.OnAdErrorEvent -= OnInterstitialAdErorEvent;
     }
 
     private void OnInterstitialAdErorEvent(Yodo1U3dAdError adError)

@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Yodo1.MAS;
 
 public class Yodo1AdsTest : MonoBehaviour
 {
     bool enableBannerApiV2 = true;
-
+    
     void Start()
     {
         Yodo1U3dMasCallback.OnSdkInitializedEvent += (success, error) =>
         {
 
             Debug.Log(Yodo1U3dMas.TAG + "OnSdkInitializedEvent, success:" + success + ", error: " + error.ToString());
+            Debug.Log(Yodo1U3dMas.TAG + "OnSdkInitializedEvent, age:" + Yodo1U3dMas.GetUserAge());
             if (success)
             {
                 InitializeBannerAds();
@@ -19,6 +19,7 @@ public class Yodo1AdsTest : MonoBehaviour
                 InitializeRewardedAds();
                 InitializeNativeAds();
             }
+
         };
 
         Yodo1MasUserPrivacyConfig userPrivacyConfig = new Yodo1MasUserPrivacyConfig()
@@ -36,42 +37,6 @@ public class Yodo1AdsTest : MonoBehaviour
         Yodo1U3dMas.SetAdBuildConfig(config);
 
         Yodo1U3dMas.InitializeSdk();
-
-
-    }
-
-    void OnGUI()
-    {
-        int buttonHeight = Screen.height / 13;
-        int buttonWidth = Screen.width / 2;
-        int buttonSpace = buttonHeight / 2;
-        int startHeight = buttonHeight / 2;
-
-#if UNITY_EDITOR
-        if (!Yodo1EditorAds.DisableGUI)
-#endif
-        {
-            if (GUI.Button(new Rect(Screen.width / 4, startHeight, buttonWidth, buttonHeight), "Show Banner Ad"))
-            {
-                ShowBannerAds();
-            }
-
-            if (GUI.Button(new Rect(Screen.width / 4, startHeight + buttonHeight + buttonSpace, buttonWidth, buttonHeight), "Dismiss Banner Ad"))
-            {
-                HideBannerAds();
-            }
-
-            if (GUI.Button(new Rect(Screen.width / 4, startHeight + buttonHeight * 2 + buttonSpace * 2, buttonWidth, buttonHeight), "Show Interstitial Ad"))
-            {
-                ShowInterstitialAds();
-            }
-
-            if (GUI.Button(new Rect(Screen.width / 4, startHeight + buttonHeight * 3 + buttonSpace * 3, buttonWidth, buttonHeight), "Show Rewarded Ad"))
-            {
-                ShowRewardedAds();
-            }
-        }
-
     }
 
     #region Banner Ad Methods
@@ -151,7 +116,7 @@ public class Yodo1AdsTest : MonoBehaviour
 
     #region Banner Ad Methods - V2
     Yodo1U3dBannerAdView bannerAdView = null;
-    Yodo1U3dBannerAdView bannerAdView2 = null;
+    //Yodo1U3dBannerAdView bannerAdView2 = null;
 
     /// <summary>
     /// The banner is displayed automatically after loaded
@@ -165,8 +130,8 @@ public class Yodo1AdsTest : MonoBehaviour
             bannerAdView = null;
         }
 
-        // Create a 320x50 banner at top of the screen
-        bannerAdView = new Yodo1U3dBannerAdView(Yodo1U3dBannerAdSize.Banner, Yodo1U3dBannerAdPosition.BannerTop | Yodo1U3dBannerAdPosition.BannerHorizontalCenter);
+        // Create a 320x50 banner at bottom of the screen
+        bannerAdView = new Yodo1U3dBannerAdView(Yodo1U3dBannerAdSize.Banner, Yodo1U3dBannerAdPosition.BannerBottom | Yodo1U3dBannerAdPosition.BannerHorizontalCenter);
 
         // Create a 320x50 banner ad at coordinate (0,50) on screen.
         //bannerAdView = new Yodo1U3dBannerAdView(Yodo1U3dBannerAdSize.Banner, 0, 50);
@@ -182,25 +147,6 @@ public class Yodo1AdsTest : MonoBehaviour
         bannerAdView.LoadAd();
 
 
-        // Clean up banner before reusing
-        if (bannerAdView2 != null)
-        {
-            bannerAdView2.Destroy();
-            bannerAdView2 = null;
-        }
-
-        // Create a adaptive banner at top of the screen
-        bannerAdView2 = new Yodo1U3dBannerAdView(Yodo1U3dBannerAdSize.AdaptiveBanner, Yodo1U3dBannerAdPosition.BannerBottom | Yodo1U3dBannerAdPosition.BannerHorizontalCenter);
-
-        // Add Events
-        bannerAdView2.OnAdLoadedEvent += OnBannerAdLoadedEvent;
-        bannerAdView2.OnAdFailedToLoadEvent += OnBannerAdFailedToLoadEvent;
-        bannerAdView2.OnAdOpenedEvent += OnBannerAdOpenedEvent;
-        bannerAdView2.OnAdFailedToOpenEvent += OnBannerAdFailedToOpenEvent;
-        bannerAdView2.OnAdClosedEvent += OnBannerAdClosedEvent;
-
-        // Load banner ads, the banner ad will be displayed automatically after loaded
-        bannerAdView2.LoadAd();
     }
 
     private void OnBannerAdLoadedEvent(Yodo1U3dBannerAdView adView)
@@ -232,7 +178,7 @@ public class Yodo1AdsTest : MonoBehaviour
     /// <summary>
     /// (Optional) Show banner ads
     /// </summary>
-    private void ShowBannerAdsV2()
+    public void ShowBannerAdsV2()
     {
         if (bannerAdView != null)
         {
@@ -243,7 +189,7 @@ public class Yodo1AdsTest : MonoBehaviour
     /// <summary>
     /// (Optional) Hide banner ads
     /// </summary>
-    private void HideBannerAdsV2()
+    public void HideBannerAdsV2()
     {
         if (bannerAdView != null)
         {
@@ -275,7 +221,7 @@ public class Yodo1AdsTest : MonoBehaviour
         Debug.Log(Yodo1U3dMas.TAG + "Interstitial ad error - " + adError.ToString());
     }
 
-    private void ShowInterstitialAds()
+    public void ShowInterstitialAds()
     {
         if (Yodo1U3dMas.IsInterstitialAdLoaded())
         {
@@ -317,7 +263,7 @@ public class Yodo1AdsTest : MonoBehaviour
         Debug.Log(Yodo1U3dMas.TAG + "Rewarded ad error - " + adError.ToString());
     }
 
-    private void ShowRewardedAds()
+    public void ShowRewardedAds()
     {
         if (Yodo1U3dMas.IsRewardedAdLoaded())
         {
@@ -346,7 +292,7 @@ public class Yodo1AdsTest : MonoBehaviour
             nativeAdView = null;
         }
 
-        nativeAdView = new Yodo1U3dNativeAdView(Yodo1U3dNativeAdPosition.NativeHorizontalCenter | Yodo1U3dNativeAdPosition.NativeBottom, 0, 0, 720, 600);
+        nativeAdView = new Yodo1U3dNativeAdView(Yodo1U3dNativeAdPosition.NativeTop | Yodo1U3dNativeAdPosition.NativeHorizontalCenter, 0, 0, 360, 300);
 
         nativeAdView.SetBackgroundColor(Color.grey);
         // Add Events

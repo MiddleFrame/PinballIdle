@@ -115,7 +115,7 @@ namespace Managers
             MenuController.shopOpen[2] += ChangeCostBallText;
             MenuController.shopOpen[2] += () =>
             {
-                _countBallsText.text = $"({progress.balls[FieldManager.currentField]}/6)";
+                _countBallsText.text = $"({progress.balls[FieldManager.currentField]+1}/{progress.countCompleteChallenge[FieldManager.currentField]+1})";
                 if (IsStartChallenge[FieldManager.currentField])
                 {
                     if (!_startChallengeImage.raycastTarget) return;

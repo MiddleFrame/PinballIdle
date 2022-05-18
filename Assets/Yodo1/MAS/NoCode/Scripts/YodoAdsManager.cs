@@ -146,9 +146,16 @@ public class YodoAdsManager : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         EventSystem sceneEventSystem = FindObjectOfType<EventSystem>();
-        if(sceneEventSystem == null)
+        if (GameObject.Find("Yodo1AdCanvas") == null)
         {
             Yodo1EditorAds.AdHolder = Instantiate(Resources.Load("SampleAds/AdHolder") as GameObject);
+            Yodo1EditorAds.AdHolder.name = "Yodo1AdCanvas";
+            Yodo1EditorAds.AdHolderCanvas = Yodo1EditorAds.AdHolder.transform.GetChild(0).GetComponent<Canvas>();
+            Yodo1EditorAds.AdHolderCanvas.sortingOrder = Yodo1EditorAds.HighestOrderCanvas();
+        }
+        if (sceneEventSystem == null)
+        {
+            var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
         }
         Yodo1EditorAds.InitializeAds();
 

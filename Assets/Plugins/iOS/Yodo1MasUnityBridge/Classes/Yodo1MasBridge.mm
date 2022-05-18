@@ -27,13 +27,11 @@ static NSString* kYodo1MasMethodName;
 
 + (id)JSONObjectWithString:(NSString*)str error:(NSError**)error;
 
-+ (NSString*)convertToInitJsonString:(int)success error:(NSString*)errorMsg;
-
 + (NSString*)getSendMessage:(int)flag data:(NSString*)data;
 
 + (Yodo1MasBridge *)sharedInstance;
 
-- (void)initWithAppId:(NSString *)appId successful:(Yodo1MasInitSuccessful)successful fail:(Yodo1MasInitFail)fail;
+- (void)initWithAppKey:(NSString *)appId successful:(Yodo1MasInitSuccessful)successful fail:(Yodo1MasInitFail)fail;
 
 #pragma mark - Reward
 - (BOOL)isRewardedAdLoaded;
@@ -59,8 +57,6 @@ static NSString* kYodo1MasMethodName;
 - (void)showBannerAdV2:(NSString *)param;
 - (void)hideBannerAdV2:(NSString *)param;
 - (void)destroyBannerAdV2:(NSString *)param;
-- (CGFloat)getBannerWidthInPixels;
-- (CGFloat)getBannerHeightInPixels;
 
 #pragma mark - Native
 - (void)loadNativeAd:(NSString *)param;
@@ -84,7 +80,7 @@ static NSString* kYodo1MasMethodName;
     return _instance;
 }
 
-- (void)initWithAppId:(NSString *)appId successful:(Yodo1MasInitSuccessful)successful fail:(Yodo1MasInitFail)fail {
+- (void)initWithAppKey:(NSString *)appKey successful:(Yodo1MasInitSuccessful)successful fail:(Yodo1MasInitFail)fail {
     [Yodo1Mas sharedInstance].rewardAdDelegate = self;
     [Yodo1Mas sharedInstance].interstitialAdDelegate = self;
     [Yodo1Mas sharedInstance].bannerAdDelegate = self;
@@ -92,7 +88,7 @@ static NSString* kYodo1MasMethodName;
     _bannerViews = [NSMutableDictionary dictionary];
     _nativeViews = [NSMutableDictionary dictionary];
     
-    [[Yodo1Mas sharedInstance] initWithAppKey:appId successful:successful fail:fail];
+    [[Yodo1Mas sharedInstance] initWithAppKey:appKey successful:successful fail:fail];
     
     if (![UIDevice currentDevice].generatesDeviceOrientationNotifications) {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -663,6 +659,16 @@ bool UnityMasIsDoNotSell()
     return [Yodo1Mas sharedInstance].isCCPADoNotSell;
 }
 
+int UnityMasUserAge()
+{
+    return (int)[Yodo1Mas sharedInstance].userAge;
+}
+
+int UnityMasAttrackingStatus()
+{
+    return (int)[Yodo1Mas sharedInstance].attrackingStatus;
+}
+
 #pragma mark - Initialize
 
 void UnityMasInitWithAppKey(const char* appKey,const char* gameObjectName, const char* callbackMethodName)
@@ -678,7 +684,7 @@ void UnityMasInitWithAppKey(const char* appKey,const char* gameObjectName, const
     NSCAssert(m_methodName != nil, @"Unity3d callback method isn't set!");
     kYodo1MasMethodName = m_methodName;
     
-    [[Yodo1MasBridge sharedInstance] initWithAppId:m_appKey successful:^{
+    [[Yodo1MasBridge sharedInstance] initWithAppKey:m_appKey successful:^{
         NSString* data = [Yodo1MasBridge convertToInitJsonString:1 masError:nil];
         NSString* msg = [Yodo1MasBridge getSendMessage:0 data:data];
         UnitySendMessage([kYodo1MasGameObject cStringUsingEncoding:NSUTF8StringEncoding], [kYodo1MasMethodName cStringUsingEncoding:NSUTF8StringEncoding], [msg cStringUsingEncoding:NSUTF8StringEncoding]);

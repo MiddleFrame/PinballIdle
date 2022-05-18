@@ -77,6 +77,10 @@ namespace Shop
                 BuffHit(_i, grade.pointOnBit[_i] - 1);
                 BuffBonusTime(_i, (grade.bonusTime[_i] - 30) / 5);
                 BuffExpBonusTime(_i, (grade.expTime[_i] - 30) / 5);
+                if (grade.autoFlippers[_i])
+                {
+                    AutoMod(_i);
+                }
             }
             if(grade.autoFlippers[0])
                 ChallengeManager.Instance.OpenChallenges();
@@ -281,27 +285,34 @@ namespace Shop
             Statistics.stats.pointSpent += COST_AUTO_FLIPPER;
             grade.autoFlippers[FieldManager.currentField] = true;
             OpenAutoMod();
+            AutoMod();
             ChallengeManager.Instance.OpenChallenges();
         }
-
-        public void AutoMod()
+        
+        public void AutoMod(int field = -1)
         {
-            autoMod[FieldManager.currentField] = !autoMod[FieldManager.currentField];
-
-            if (autoMod[FieldManager.currentField])
+            if (field == -1)
             {
-                var _localScale = _autoModSlider.transform.localScale;
-                _localScale = new Vector3(1, _localScale.y, _localScale.z);
-                _autoModSlider.transform.localScale = _localScale;
-                _autoModSlider.GetComponent<Image>().color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
+                autoMod[FieldManager.currentField] = !autoMod[FieldManager.currentField];
+                if (autoMod[FieldManager.currentField])
+                {
+                    var _localScale = _autoModSlider.transform.localScale;
+                    _localScale = new Vector3(1, _localScale.y, _localScale.z);
+                    _autoModSlider.transform.localScale = _localScale;
+                    _autoModSlider.GetComponent<Image>().color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
+                }
+                else
+                {
+                    var _localScale = _autoModSlider.transform.localScale;
+                    _localScale = new Vector3(-1, _localScale.y, _localScale.z);
+                    _autoModSlider.transform.localScale = _localScale;
+                    _autoModSlider.GetComponent<Image>().color = Color.red;
+                }
             }
             else
-            {
-                var _localScale = _autoModSlider.transform.localScale;
-                _localScale = new Vector3(-1, _localScale.y, _localScale.z);
-                _autoModSlider.transform.localScale = _localScale;
-                _autoModSlider.GetComponent<Image>().color = Color.red;
-            }
+                autoMod[field] = !autoMod[field];
+
+            
         }
     }
 

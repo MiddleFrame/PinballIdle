@@ -23,7 +23,6 @@ namespace Managers
         [SerializeField]
         private Vector3[] _fieldsPosition;
 
-        
 
         [SerializeField]
         private Canvas _allFieldCanvas;
@@ -104,7 +103,7 @@ namespace Managers
 
             var _progress = 0f;
             Debug.Log($"Start moving with progress {_progress}");
-            while (_progress < 1f)
+            while (_progress <= 0.99f)
             {
                 _camera.transform.position = Vector3.Lerp(_start, lastPos, _progress);
                 _progress += 2 * Time.deltaTime;
@@ -112,7 +111,7 @@ namespace Managers
             }
 
             _camera.transform.position = lastPos;
-            Debug.Log($"Position finish with progress {_progress}");
+            Debug.Log($"Position finish. progress: {_progress}");
         }
 
         private IEnumerator scaleCamera(bool isCenter)
@@ -120,13 +119,15 @@ namespace Managers
             Debug.Log($"Start scaling with scale {_mainCamera.orthographicSize}");
             var _scaler = isCenter ? 1 : -1;
             while (isCenter
-                       ? (_mainCamera.orthographicSize < CENTER_SIZE)
-                       : (_mainCamera.orthographicSize > DEFAULT_SIZE))
+                       ? _mainCamera.orthographicSize < CENTER_SIZE - 0.1f
+                       : _mainCamera.orthographicSize > DEFAULT_SIZE + 0.1f)
             {
-                _mainCamera.orthographicSize += _scaler * 22 * Time.deltaTime;
+                _mainCamera.orthographicSize += _scaler * 20f * Time.deltaTime;
                 yield return null;
             }
+            Debug.Log($"Finish scaling with scale {_mainCamera.orthographicSize}");
 
+            _mainCamera.orthographicSize = isCenter ? CENTER_SIZE : DEFAULT_SIZE;
             _allFieldCanvas.gameObject.SetActive(isCenter);
             if (isCenter)
             {
@@ -144,17 +145,21 @@ namespace Managers
                 {
                     GameManager.instance.bonusCanvas.SetActive(true);
                 }
+
                 GameManager.instance.oneFieldCanvas.SetActive(true);
             }
 
-            Debug.Log($"Finish scaling with scale {_mainCamera.orthographicSize}");
         }
 
 
         private void BuyFields(int field)
         {
             if (PlayerDataController.Gems < fieldCosts[field])
+            {
+                GameManager.instance.shop.SetActive(true);
                 return;
+            }
+
             PlayerDataController.Gems -= fieldCosts[field];
             fields.isOpen[field] = true;
             PlayerDataController.playerStats.lvl[field] = 1;

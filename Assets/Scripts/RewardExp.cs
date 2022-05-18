@@ -24,40 +24,10 @@ public class RewardExp : MonoBehaviour
     }
     
     
-    #region Reward video Ad Methods
-
-    private void DeleteReward()
-    {
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
-    }
-
-    private void DeleteReward(Yodo1U3dAdError adError)
-    {
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
-    }
-
-    public void InitializeRewardedAds()
-    {
-        Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent += DeleteReward;
-        Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent += DeleteReward;
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent += OnAdReceivedRewardEvent;
-    }
+   
 
 
-    private void OnAdReceivedRewardEvent()
-    {
-        Debug.Log(Yodo1U3dMas.TAG + "Rewarded ad received reward");
-        OnAdReceivedRewardExp();
-
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent -= DeleteReward;
-        Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent -= DeleteReward;
-    }
-
-    #endregion
-
-
-    private void OnAdReceivedRewardExp()
+    public void OnAdReceivedRewardExp()
     {
         LetsScript.exp *= 2;
         StartCoroutine(timeExp());

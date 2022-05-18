@@ -366,7 +366,7 @@
 
                 if (dataDic.ContainsKey("success"))
                 {
-                    success = int.Parse(dataDic["success"].ToString()) == EVENT_INITIALIZE_SUCCESS ? true : false;
+                    success = int.Parse(dataDic["success"].ToString()) == EVENT_INITIALIZE_SUCCESS;
                 }
                 if (dataDic.ContainsKey("error"))
                 {

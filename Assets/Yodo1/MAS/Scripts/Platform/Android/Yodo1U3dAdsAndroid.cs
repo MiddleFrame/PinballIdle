@@ -95,6 +95,16 @@ namespace Yodo1.MAS
             return false;
         }
 
+        public static int GetUserAge()
+        {
+            if (Application.platform == RuntimePlatform.Android && javaClass != null)
+            {
+                int value = javaClass.CallStatic<int>("getUserAge");
+                return value;
+            }
+            return 0;
+        }
+
         public static void ShowInterstitialAd()
         {
             if (Application.platform == RuntimePlatform.Android && javaClass != null)

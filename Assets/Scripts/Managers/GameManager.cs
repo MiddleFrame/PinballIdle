@@ -9,7 +9,7 @@ namespace Managers
         public static GameManager instance;
 
         public Field[] fields;
-
+        public GameObject shop;
 
         public Sprite _lockedSprite;
 

@@ -10,6 +10,7 @@ using Yodo1.MAS;
 public class Yodo1EditorAds : MonoBehaviour
 {
     public static GameObject AdHolder;
+    public static Canvas AdHolderCanvas;
     private static Dictionary<string, GameObject> BannerSampleAdEditor;
     private static Dictionary<string, GameObject> NativeSampleAdEditor;
     private static GameObject InterstitialSampleAdEditor;
@@ -28,54 +29,74 @@ public class Yodo1EditorAds : MonoBehaviour
         BannerSampleAdEditor = new Dictionary<string, GameObject>();
         NativeSampleAdEditor = new Dictionary<string, GameObject>();
         EventSystem sceneEventSystem = FindObjectOfType<EventSystem>();
-        if (sceneEventSystem == null)
+        if(AdHolder == null)
         {
             AdHolder = Instantiate(Resources.Load("SampleAds/AdHolder") as GameObject);
+            AdHolder.name = "Yodo1AdCanvas";
+            AdHolderCanvas = AdHolder.transform.GetChild(0).GetComponent<Canvas>();
+            AdHolderCanvas.sortingOrder = HighestOrderCanvas();
         }
-        Transform highestOrderCanvas = HighestOrderCanvas();
+        if (sceneEventSystem == null)
+        {
+            var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        }
+        
         if (InterstitialSampleAdEditor == null)
         {
-            InterstitialSampleAdEditor = Instantiate(Resources.Load("SampleAds/InterstitialSampleAdPanel") as GameObject, highestOrderCanvas);
-            InterstitialSampleAdEditor.transform.SetAsLastSibling();
+            if (AdHolderCanvas != null)
+            {
+                InterstitialSampleAdEditor = Instantiate(Resources.Load("SampleAds/InterstitialSampleAdPanel") as GameObject, AdHolderCanvas.transform);
+                InterstitialSampleAdEditor.transform.SetAsLastSibling();
+            }
         }
         if (RewardedVideoSampleAdEditor == null)
         {
-            RewardedVideoSampleAdEditor = Instantiate(Resources.Load("SampleAds/RewardedVideoSampleAdPanel") as GameObject, highestOrderCanvas);
-            RewardedVideoSampleAdEditor.transform.SetAsLastSibling();
+            if (AdHolderCanvas != null)
+            {
+                RewardedVideoSampleAdEditor = Instantiate(Resources.Load("SampleAds/RewardedVideoSampleAdPanel") as GameObject, AdHolderCanvas.transform);
+                RewardedVideoSampleAdEditor.transform.SetAsLastSibling();
+            }
         }
     }
 
-    private static Transform HighestOrderCanvas()
+    public static int HighestOrderCanvas()
     {
         Canvas[] canvases = GameObject.FindObjectsOfType<Canvas>();
         int length = canvases.Length;
-        Transform highestOrderCanvas = canvases[0].transform;
         int highestOrder = canvases[0].sortingOrder;
         for (int i = 1; i < length; i++)
         {
             if (highestOrder < canvases[i].sortingOrder)
             {
                 highestOrder = canvases[i].sortingOrder;
-                highestOrderCanvas = canvases[i].transform;
             }
         }
-        return highestOrderCanvas;
+        return highestOrder+1;
     }
     public static void ShowStamdardBannerAdsInEditor(string IndexId)
     {
+        if (AdHolder == null)
+        {
+            AdHolder = Instantiate(Resources.Load("SampleAds/AdHolder") as GameObject);
+            AdHolder.name = "Yodo1AdCanvas";
+            AdHolderCanvas = AdHolder.transform.GetChild(0).GetComponent<Canvas>();
+            AdHolderCanvas.sortingOrder = HighestOrderCanvas();
+        }
         GameObject BannerAd;
         if (!BannerSampleAdEditor.TryGetValue(IndexId, out BannerAd))
         {
-            Transform highestOrderTransform = HighestOrderCanvas();
-            BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/StandardBannerSampleAdPanel") as GameObject, highestOrderTransform);
+            if (AdHolderCanvas != null)
+            {
+                BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/StandardBannerSampleAdPanel") as GameObject, AdHolderCanvas.transform);
 
-            BannerSampleAdEditorTemp.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 1f);
-            BannerSampleAdEditorTemp.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 1f);
-            BannerSampleAdEditorTemp.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 1f);
-            BannerSampleAdEditorTemp.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
-            BannerSampleAdEditorTemp.SetActive(true);
+                BannerSampleAdEditorTemp.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 1f);
+                BannerSampleAdEditorTemp.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 1f);
+                BannerSampleAdEditorTemp.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 1f);
+                BannerSampleAdEditorTemp.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
+                BannerSampleAdEditorTemp.SetActive(true);
 
-            BannerSampleAdEditor.Add(IndexId, BannerSampleAdEditorTemp);
+                BannerSampleAdEditor.Add(IndexId, BannerSampleAdEditorTemp);
+            }
         }
         else
         {
@@ -347,28 +368,39 @@ public class Yodo1EditorAds : MonoBehaviour
     }
     public static void ShowBannerAdsInEditor(string IndexId, int align, int size, int offsetX, int offsetY)
     {
+        if (AdHolder == null)
+        {
+            AdHolder = Instantiate(Resources.Load("SampleAds/AdHolder") as GameObject);
+            AdHolder.name = "Yodo1AdCanvas";
+            AdHolderCanvas = AdHolder.transform.GetChild(0).GetComponent<Canvas>();
+            AdHolderCanvas.sortingOrder = HighestOrderCanvas();
+        }
         GameObject BannerAd;
         if (!BannerSampleAdEditor.TryGetValue(IndexId, out BannerAd))
         {
-            Transform highestOrderTransform = HighestOrderCanvas();
             if (size == 0)
             {
-                
-                BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/StandardBannerSampleAdPanel") as GameObject, highestOrderTransform);
-                CalculateAnchoringForStandardBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
-
+                if (AdHolderCanvas != null)
+                {
+                    BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/StandardBannerSampleAdPanel") as GameObject, AdHolderCanvas.transform);
+                    CalculateAnchoringForStandardBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                }
             }
             else if (size == 1)
             {
-                BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/LargeBanner") as GameObject, highestOrderTransform);
-                CalculateAnchoringForLargeBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
-
+                if (AdHolderCanvas != null)
+                {
+                    BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/LargeBanner") as GameObject, AdHolderCanvas.transform);
+                    CalculateAnchoringForLargeBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                }
             }
             else if (size == 2)
             {
-                BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/IABMediumRectangleBanner") as GameObject, highestOrderTransform);
-                CalculateAnchoringForIABBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
-
+                if (AdHolderCanvas != null)
+                {
+                    BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/IABMediumRectangleBanner") as GameObject, AdHolderCanvas.transform);
+                    CalculateAnchoringForIABBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                }
             }
             else if (size == 3)
             {
@@ -376,22 +408,28 @@ public class Yodo1EditorAds : MonoBehaviour
                 string[] res = UnityStats.screenRes.Split('x');
                 if (int.Parse(res[1]) > int.Parse(res[0]))
                 {
-                    BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/SmartBannerPortrait") as GameObject, highestOrderTransform);
-                    CalculateAnchoringForAdaptiveBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
-
+                    if (AdHolderCanvas != null)
+                    {
+                        BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/SmartBannerPortrait") as GameObject, AdHolderCanvas.transform);
+                        CalculateAnchoringForAdaptiveBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                    }
                 }
                 else
                 {
-                    BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/SmartBannerLandscape") as GameObject, highestOrderTransform);
-                    CalculateAnchoringForSmartBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
-
+                    if (AdHolderCanvas != null)
+                    {
+                        BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/SmartBannerLandscape") as GameObject, AdHolderCanvas.transform);
+                        CalculateAnchoringForSmartBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                    }
                 }
             }
             else if (size == 4)
             {
-                BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/AdaptiveBanner") as GameObject, highestOrderTransform);
-                CalculateAnchoringForAdaptiveBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
-
+                if (AdHolderCanvas != null)
+                {
+                    BannerSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/AdaptiveBanner") as GameObject, AdHolderCanvas.transform);
+                    CalculateAnchoringForAdaptiveBanner(align, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                }
             }
             BannerSampleAdEditorTemp.transform.SetSiblingIndex(BannerSampleAdEditorTemp.transform.parent.childCount - 3);
             BannerSampleAdEditorTemp.GetComponent<RectTransform>().anchorMin = new Vector2(anchorMinX, anchorMinY);
@@ -469,6 +507,13 @@ public class Yodo1EditorAds : MonoBehaviour
     }
     public static void ShowNativeAdsInEditor(string IndexId, int width, int height, int offsetX, int offsetY, Color colorVal)
     {
+        if (AdHolder == null)
+        {
+            AdHolder = Instantiate(Resources.Load("SampleAds/AdHolder") as GameObject);
+            AdHolder.name = "Yodo1AdCanvas";
+            AdHolderCanvas = AdHolder.transform.GetChild(0).GetComponent<Canvas>();
+            AdHolderCanvas.sortingOrder = HighestOrderCanvas();
+        }
         GameObject NativeAd;
         if (!NativeSampleAdEditor.TryGetValue(IndexId, out NativeAd))
         {
@@ -483,39 +528,44 @@ public class Yodo1EditorAds : MonoBehaviour
             }
             int xVal = (width / 2) + offsetX;
             int yVal = -(height / 2) - offsetY;
-            Transform highestOrderTransform = HighestOrderCanvas();
             if ((width / height) > 3.5)
             {
-                NativeSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/TemplateNativeAdSmall") as GameObject, highestOrderTransform);
-                if (height > 60 && width > 360)
+                if (AdHolderCanvas != null)
                 {
-                    NativeSampleAdEditorTemp.GetComponent<RectTransform>().localScale = new Vector2((float)width / 360, (float)height / 60);
+                    NativeSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/TemplateNativeAdSmall") as GameObject, AdHolderCanvas.transform);
+                    if (height > 60 && width > 360)
+                    {
+                        NativeSampleAdEditorTemp.GetComponent<RectTransform>().localScale = new Vector2((float)width / 360, (float)height / 60);
 
-                }
-                else
-                {
-                    NativeSampleAdEditorTemp.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+                    }
+                    else
+                    {
+                        NativeSampleAdEditorTemp.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
 
+                    }
                 }
 
             }
             else
             {
-                NativeSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/TemplateNativeAdMedium") as GameObject, highestOrderTransform);
-                if (height > 300 && width > 360)
+                if (AdHolderCanvas != null)
                 {
-                    NativeSampleAdEditorTemp.GetComponent<RectTransform>().localScale = new Vector2((float)width / 360, (float)height / 300);
+                    NativeSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/TemplateNativeAdMedium") as GameObject, AdHolderCanvas.transform);
+                    if (height > 300 && width > 360)
+                    {
+                        NativeSampleAdEditorTemp.GetComponent<RectTransform>().localScale = new Vector2((float)width / 360, (float)height / 300);
 
-                }
-                else
-                {
-                    NativeSampleAdEditorTemp.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-                }
-                if (height < 200)
-                {
-                    NativeSampleAdEditorTemp.transform.GetChild(0).gameObject.SetActive(false);
-                    NativeSampleAdEditorTemp.transform.GetChild(2).gameObject.SetActive(false);
-                    NativeSampleAdEditorTemp.transform.GetChild(4).gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        NativeSampleAdEditorTemp.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+                    }
+                    if (height < 200)
+                    {
+                        NativeSampleAdEditorTemp.transform.GetChild(0).gameObject.SetActive(false);
+                        NativeSampleAdEditorTemp.transform.GetChild(2).gameObject.SetActive(false);
+                        NativeSampleAdEditorTemp.transform.GetChild(4).gameObject.SetActive(false);
+                    }
                 }
             }
 
@@ -552,48 +602,60 @@ public class Yodo1EditorAds : MonoBehaviour
     }
     public static void ShowNativeAdsInEditor(string IndexId, int align, int width, int height, int offsetX, int offsetY, Color colorVal)
     {
+        if (AdHolder == null)
+        {
+            AdHolder = Instantiate(Resources.Load("SampleAds/AdHolder") as GameObject);
+            AdHolder.name = "Yodo1AdCanvas";
+            AdHolderCanvas = AdHolder.transform.GetChild(0).GetComponent<Canvas>();
+            AdHolderCanvas.sortingOrder = HighestOrderCanvas();
+        }
         GameObject NativeAd;
         if (!NativeSampleAdEditor.TryGetValue(IndexId, out NativeAd))
         {
-            Transform highestOrderTransform = HighestOrderCanvas();
             if ((width / height) > 3.5)
             {
-                NativeSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/TemplateNativeAdSmall") as GameObject, highestOrderTransform);
-                if (height > 60 && width > 360)
+                if (AdHolderCanvas != null)
                 {
-                    NativeSampleAdEditorTemp.GetComponent<RectTransform>().localScale = new Vector2((float)width / 360, (float)height / 60);
-                    CalculateAnchoringForNativeAds(align, width, height, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                    NativeSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/TemplateNativeAdSmall") as GameObject, AdHolderCanvas.transform);
+                    if (height > 60 && width > 360)
+                    {
+                        NativeSampleAdEditorTemp.GetComponent<RectTransform>().localScale = new Vector2((float)width / 360, (float)height / 60);
+                        CalculateAnchoringForNativeAds(align, width, height, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
 
-                }
-                else
-                {
-                    NativeSampleAdEditorTemp.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-                    CalculateAnchoringForNativeAds(align, width, height, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                    }
+                    else
+                    {
+                        NativeSampleAdEditorTemp.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+                        CalculateAnchoringForNativeAds(align, width, height, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
 
+                    }
                 }
 
             }
             else
             {
-                NativeSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/TemplateNativeAdMedium") as GameObject, highestOrderTransform);
-                
-                if (height > 300 && width > 360)
+                if (AdHolderCanvas != null)
                 {
-                    NativeSampleAdEditorTemp.GetComponent<RectTransform>().localScale = new Vector2((float)width / 360, (float)height / 300);
-                    CalculateAnchoringForNativeAds(align, width, height, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                    NativeSampleAdEditorTemp = Instantiate(Resources.Load("SampleAds/TemplateNativeAdMedium") as GameObject, AdHolderCanvas.transform);
 
-                }
-                else
-                {
-                    NativeSampleAdEditorTemp.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-                    CalculateAnchoringForNativeAds(align, width, height, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+                    if (height > 300 && width > 360)
+                    {
+                        NativeSampleAdEditorTemp.GetComponent<RectTransform>().localScale = new Vector2((float)width / 360, (float)height / 300);
+                        CalculateAnchoringForNativeAds(align, width, height, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
 
-                }
-                if (height < 200)
-                {
-                    NativeSampleAdEditorTemp.transform.GetChild(0).gameObject.SetActive(false);
-                    NativeSampleAdEditorTemp.transform.GetChild(2).gameObject.SetActive(false);
-                    NativeSampleAdEditorTemp.transform.GetChild(4).gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        NativeSampleAdEditorTemp.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+                        CalculateAnchoringForNativeAds(align, width, height, out anchorMinX, out anchorMinY, out anchorMaxX, out anchorMaxY, out pivotX, out pivotY, out anchoredPositionX, out anchoredPositionY);
+
+                    }
+                    if (height < 200)
+                    {
+                        NativeSampleAdEditorTemp.transform.GetChild(0).gameObject.SetActive(false);
+                        NativeSampleAdEditorTemp.transform.GetChild(2).gameObject.SetActive(false);
+                        NativeSampleAdEditorTemp.transform.GetChild(4).gameObject.SetActive(false);
+                    }
                 }
             }
             
@@ -602,9 +664,11 @@ public class Yodo1EditorAds : MonoBehaviour
             NativeSampleAdEditorTemp.GetComponent<RectTransform>().anchorMax = new Vector2(anchorMaxX, anchorMaxY);
             NativeSampleAdEditorTemp.GetComponent<RectTransform>().pivot = new Vector2(pivotX, pivotY);
             NativeSampleAdEditorTemp.GetComponent<Image>().color = colorVal;
-            NativeSampleAdEditorTemp.GetComponent<RectTransform>().anchoredPosition = new Vector2(anchoredPositionX+offsetX, anchoredPositionY-offsetY);
+            NativeSampleAdEditorTemp.GetComponent<RectTransform>().anchoredPosition = new Vector2(anchoredPositionX + offsetX, anchoredPositionY - offsetY);
             NativeSampleAdEditorTemp.SetActive(true);
             NativeSampleAdEditor.Add(IndexId, NativeSampleAdEditorTemp);
+            
+            
         }
         else
         {

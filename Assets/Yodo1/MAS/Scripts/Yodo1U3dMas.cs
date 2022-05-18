@@ -2,6 +2,21 @@
 
 namespace Yodo1.MAS
 {
+    public class Yodo1U3dAttrackingStatus
+    {
+        public const int NotDetermined = 0;
+        public const int Restricted = 1;
+        public const int Denied = 2;
+        public const int Authorized = 3;
+        public const int SystemLow = -1;
+    }
+
+    public class Yodo1U3dInitializeInfo
+    {
+        public const int UserAge = 1;
+        public const int AttrackingStatus = 2;
+    }
+
     public class Yodo1U3dMas
     {
         public static readonly string TAG = "[YodoMas] ";
@@ -253,6 +268,41 @@ namespace Yodo1.MAS
             return ret;
         }
         #endregion
+
+        public static int GetUserAge()
+        {
+            int age = 0;
+            if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+#if UNITY_IPHONE
+                age = Yodo1U3dAdsIOS.GetUserAge();
+#endif
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+#if UNITY_ANDROID
+                age = Yodo1U3dAdsAndroid.GetUserAge();
+#endif
+            }
+            return age;
+        }
+
+        public static int GetAttrackingStatus()
+        {
+            int status = Yodo1U3dAttrackingStatus.NotDetermined;
+            if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+#if UNITY_IPHONE
+                status = Yodo1U3dAdsIOS.GetAttrackingStatus();
+#endif
+            } else if (Application.platform == RuntimePlatform.Android)
+            {
+#if UNITY_ANDROID
+                Debug.LogWarning("Obtaining is not supported on the Android platform");
+#endif
+            }
+            return status;
+        }
 
         #region AdBuildConfig
         public static void SetAdBuildConfig(Yodo1AdBuildConfig yodo1AdBuildConfig)

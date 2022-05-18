@@ -16,10 +16,7 @@ namespace Managers
             SaveGame();
         }
 
-        /*  private void OnApplicationFocus(bool focus)
-          {
-              OnApplicationPause(!focus);
-          }
+          
   
           private void OnApplicationPause(bool pause)
           {
@@ -31,11 +28,12 @@ namespace Managers
               {
                   LoadGame();
               }
-          }*/
+          }
 
 
         private static void SaveGame()
         {
+            Debug.Log("Save player data.");
             PlayerPrefs.SetString("DefaultBuff", JsonUtility.ToJson(DefaultBuff.grade));
             PlayerPrefs.SetString("StoppersBuff", JsonUtility.ToJson(BuyStopper.grades));
             PlayerPrefs.SetString("Statistic", JsonUtility.ToJson(Statistics.stats));
@@ -50,8 +48,12 @@ namespace Managers
         private static void LoadGame()
         {
             Debug.Log("Loading player data.");
-            if (PlayerPrefs.HasKey("x2reward"))
+            if (!PlayerPrefs.HasKey("version 2.3"))
+            {
                 PlayerPrefs.DeleteAll();
+                PlayerPrefs.SetFloat("version 2.3", 0);
+            }
+
             DefaultBuff.grade =
                 JsonUtility.FromJson<CostAndGrade>(PlayerPrefs.GetString("DefaultBuff",
                     JsonUtility.ToJson(new CostAndGrade())));
