@@ -22,7 +22,6 @@ public class Teleport : MonoBehaviour
         for (int _ball = 0; _ball < balls.Length; _ball++)
         {
             _balls[_ball] = balls[_ball].GetComponent<BallsChallenge>();
-            StartCoroutine(_balls[_ball].StartTime());
         }
         StartCoroutine(Spawn());
     }
@@ -41,27 +40,36 @@ public class Teleport : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        collision.gameObject.SetActive(false);
-        Statistics.stats.lostBalls++;
-        StartCoroutine(Spawn());
-    }
-
-/*
-    private IEnumerator Phoenix(GameObject go)
-    {
-        go.GetComponent<Rigidbody2D>().gravityScale = 0;
-        while (go.transform.position.y < spawnPoint.transform.position.y - 0.1f)
+        if (collision.gameObject.CompareTag("Player"))
         {
-            go.transform.position =
-                Vector3.MoveTowards(go.transform.position, spawnPoint.transform.position, 10f * Time.deltaTime);
-            yield return new WaitForFixedUpdate();
+            collision.gameObject.SetActive(false);
+            Statistics.stats.lostBalls++;
+            StartCoroutine(Spawn());
         }
-
-        go.GetComponent<SpriteRenderer>().color = Color.black;
-        go.GetComponent<CircleCollider2D>().enabled = true;
-        go.GetComponent<Rigidbody2D>().gravityScale = 1;
+        else if (collision.gameObject.CompareTag("FieldBall"))
+        {
+            int _i = field;
+            while (true)
+            {
+                _i = _i==FieldManager.fields.isOpen.Length-1?0:_i+1;
+                if (!FieldManager.fields.isOpen[_i]) continue;
+                
+                GameManager.instance.spawnPoints[_i].Spawn(collision.gameObject);
+                collision.gameObject.GetComponent<TrailRenderer>().Clear();
+                return;
+            }
+            
+        }
     }
-*/
+
+    private void Spawn(GameObject ball)
+    {
+        ball.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        ball.GetComponent<Rigidbody2D>().angularVelocity = 0f;
+        ball.transform.position = spawnPoint.transform.position;
+        ball.GetComponent<BallsChallenge>().timeOnField = 0;
+        ball.SetActive(true);
+    }
     private IEnumerator Spawn()
     {
         //  var _child = balls[0].GetComponentsInChildren<TrailRenderer>();
@@ -75,13 +83,7 @@ public class Teleport : MonoBehaviour
             {
                 _t.GetComponent<TrailRenderer>().Clear();
             }*/
-
-            if (ChallengeManager.IsStartChallenge[field] &&
-                (ChallengeManager.progress.countCompleteChallenge[field] == 3 ||
-                 ChallengeManager.progress.countCompleteChallenge[field] == 4))
-            {
-                _balls[_j].timeOnField = 0;
-            }
+            _balls[_j].timeOnField = 0;
             balls[_j].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             balls[_j].GetComponent<Rigidbody2D>().angularVelocity = 0f;
             balls[_j].transform.localPosition = spawnPoint.transform.localPosition;
@@ -91,8 +93,5 @@ public class Teleport : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        collision.isTrigger = false;
-    }
+ 
 }

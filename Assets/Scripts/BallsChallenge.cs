@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,12 +7,15 @@ public class BallsChallenge : MonoBehaviour
 {
     public int timeOnField;
 
-    public IEnumerator StartTime()
+    private void Start()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(1f);
+        InvokeRepeating("StartTime",0f, 1f);
+    }
+
+    private void StartTime()
+    {
+       
             timeOnField++;
-        }
+        
     }
 }

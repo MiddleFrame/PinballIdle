@@ -141,6 +141,8 @@ namespace Yodo1.MAS
                 Yodo1U3dAdsAndroid.InitWithAppKey(appKey);
 #endif
             }
+            
+            Yodo1U3dMasCallback.ForwardEvent("onSdkInitializedEvent");
         }
 
         #region Privacy Methods
@@ -271,7 +273,7 @@ namespace Yodo1.MAS
 
         public static int GetUserAge()
         {
-            int age = 0;
+            int age = 18;
             if (Application.platform == RuntimePlatform.IPhonePlayer)
             {
 #if UNITY_IPHONE

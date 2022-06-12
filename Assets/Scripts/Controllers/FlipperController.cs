@@ -45,7 +45,7 @@ namespace Controllers
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!DefaultBuff.autoMod[_flipperLeft.Field] || !other.CompareTag("Player")) return;
+            if (!DefaultBuff.autoMod[_flipperLeft.Field] || other.gameObject.layer != 7) return;
             Audio();
             RightOrLeft[_flipperLeft.Field] = true;
             IsFlipper[_flipperLeft.Field] = true;
@@ -53,7 +53,7 @@ namespace Controllers
 
         private void OnTriggerExit2D(Collider2D collision)
         {
-            if (DefaultBuff.autoMod[_flipperLeft.Field] && collision.CompareTag("Player"))
+            if (DefaultBuff.autoMod[_flipperLeft.Field] && collision.gameObject.layer == 7)
             {
                 IsFlipper[_flipperLeft.Field] = false;
             }

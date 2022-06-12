@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id">
+  <string name="gcm_defaultSenderId" translatable="false">1089568064159</string>
+  <string name="google_storage_bucket" translatable="false">pinball-i.appspot.com</string>
+  <string name="project_id" translatable="false">pinball-i</string>
+  <string name="google_api_key" translatable="false">AIzaSyDSjKzCV9xbSQlHrP9v15LsbMSiK9qD0vI</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDSjKzCV9xbSQlHrP9v15LsbMSiK9qD0vI</string>
+  <string name="google_app_id" translatable="false">1:1089568064159:android:88f53da2b6e4fe71cf18aa</string>
+  <string name="default_web_client_id" translatable="false">1089568064159-2a65d10do4f139cfd6aod65nuant41rh.apps.googleusercontent.com</string>
+</resources>

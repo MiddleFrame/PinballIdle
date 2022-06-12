@@ -2,6 +2,7 @@
 using Yodo1.MAS;
 using UnityEngine.Events;
 using System.Collections;
+using COPPA;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +10,9 @@ public class YodoAdsManager : MonoBehaviour
 {
     public static YodoAdsManager instance;
 
+    [SerializeField]
+    private GameObject COPPA;
+    
     [Space(10)]
     [Header("Privacy Popup Settings")]
     [SerializeField]
@@ -95,20 +99,27 @@ public class YodoAdsManager : MonoBehaviour
                 Debug.Log(Yodo1U3dMas.TAG + "NoCode The initialization has failed");
             }
         };
-
+        if (Coppa.Init)
+        {
+            Coppa.InitAds(Coppa.Year);
+        }
+        else
+        {
+            COPPA.SetActive(true);
+        }
         if (privacyPopup)
         {
             Yodo1AdBuildConfig buildConfig = new Yodo1AdBuildConfig();
-            if (!string.IsNullOrEmpty(privacyPolicyLink) && !string.IsNullOrEmpty(termOfServiceLink))
+            if (string.IsNullOrEmpty(privacyPolicyLink) && string.IsNullOrEmpty(termOfServiceLink))
             {
                 buildConfig.enableUserPrivacyDialog(true);
             }
-            else if (!string.IsNullOrEmpty(privacyPolicyLink) && !string.IsNullOrEmpty(termOfServiceLink))
+            else if (!string.IsNullOrEmpty(privacyPolicyLink) && string.IsNullOrEmpty(termOfServiceLink))
             {
                 buildConfig.enableUserPrivacyDialog(true)
                     .privacyPolicyUrl(privacyPolicyLink);
             }
-            else if (!string.IsNullOrEmpty(privacyPolicyLink) && !string.IsNullOrEmpty(termOfServiceLink))
+            else if (string.IsNullOrEmpty(privacyPolicyLink) && !string.IsNullOrEmpty(termOfServiceLink))
             {
                 buildConfig.enableUserPrivacyDialog(true)
                     .userAgreementUrl(termOfServiceLink);

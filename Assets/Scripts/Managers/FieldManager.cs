@@ -10,6 +10,7 @@ namespace Managers
         public static Fields fields;
         private static readonly int[] fieldCosts = {0, 300, 300, 300, 300, 300, 300, 300, 300};
         public static int currentField;
+        private static int lastField;
 
         [Header("Camera"), SerializeField]
         private Camera _mainCamera;
@@ -36,7 +37,7 @@ namespace Managers
         private Coroutine _scale, _position;
 
         private const int CENTER_SIZE = 15;
-        private const int DEFAULT_SIZE = 5;
+        private const float DEFAULT_SIZE = 4f;
 
         public static Action openAllField;
         public static Action openOneField;
@@ -55,6 +56,7 @@ namespace Managers
 
         public void OpenAllFields()
         {
+            lastField = currentField;
             openAllField?.Invoke();
             GameManager.instance.oneFieldCanvas.SetActive(false);
             GameManager.instance.bonusCanvas.SetActive(false);
@@ -70,6 +72,11 @@ namespace Managers
 
             _position = StartCoroutine(moveCamera(_centerPosition));
             _scale = StartCoroutine(scaleCamera(true));
+        }
+
+        public void OpenLastField()
+        {
+            OpenSomeField(lastField);
         }
 
         public void OpenSomeField(int i)
@@ -106,8 +113,8 @@ namespace Managers
             while (_progress <= 0.99f)
             {
                 _camera.transform.position = Vector3.Lerp(_start, lastPos, _progress);
-                _progress += 2 * Time.deltaTime;
-                yield return null;
+                _progress += 1.818f * Time.fixedDeltaTime;
+                yield return new WaitForFixedUpdate();
             }
 
             _camera.transform.position = lastPos;
@@ -118,37 +125,38 @@ namespace Managers
         {
             Debug.Log($"Start scaling with scale {_mainCamera.orthographicSize}");
             var _scaler = isCenter ? 1 : -1;
-            while (isCenter
-                       ? _mainCamera.orthographicSize < CENTER_SIZE - 0.1f
-                       : _mainCamera.orthographicSize > DEFAULT_SIZE + 0.1f)
-            {
-                _mainCamera.orthographicSize += _scaler * 20f * Time.deltaTime;
-                yield return null;
-            }
-            Debug.Log($"Finish scaling with scale {_mainCamera.orthographicSize}");
-
-            _mainCamera.orthographicSize = isCenter ? CENTER_SIZE : DEFAULT_SIZE;
-            _allFieldCanvas.gameObject.SetActive(isCenter);
             if (isCenter)
             {
                 currentField = -1;
             }
-            else
-            {
-                if (ChallengeManager.IsStartChallenge[currentField])
-                {
-                    GameManager.instance.bonusCanvas.SetActive(false);
-                    GameManager.instance.upperCanvas.SetActive(false);
-                    ChallengeManager.Instance._challengeCanvas.SetActive(true);
-                }
-                else
-                {
-                    GameManager.instance.bonusCanvas.SetActive(true);
-                }
 
-                GameManager.instance.oneFieldCanvas.SetActive(true);
+            while (isCenter
+                       ? _mainCamera.orthographicSize < CENTER_SIZE - 0.01f
+                       : _mainCamera.orthographicSize > DEFAULT_SIZE + 0.01f)
+            {
+                _mainCamera.orthographicSize += _scaler * 20f * Time.fixedDeltaTime;
+                yield return new WaitForFixedUpdate();
             }
 
+            Debug.Log($"Finish scaling with scale {_mainCamera.orthographicSize}");
+
+            _mainCamera.orthographicSize = isCenter ? CENTER_SIZE : DEFAULT_SIZE;
+            _allFieldCanvas.gameObject.SetActive(isCenter);
+
+            if (isCenter) yield break;
+
+            if (ChallengeManager.IsStartChallenge[currentField])
+            {
+                GameManager.instance.bonusCanvas.SetActive(false);
+                GameManager.instance.upperCanvas.SetActive(false);
+                ChallengeManager.Instance._challengeCanvas.SetActive(true);
+            }
+            else
+            {
+                GameManager.instance.bonusCanvas.SetActive(true);
+            }
+
+            GameManager.instance.oneFieldCanvas.SetActive(true);
         }
 
 
@@ -157,9 +165,11 @@ namespace Managers
             if (PlayerDataController.Gems < fieldCosts[field])
             {
                 GameManager.instance.shop.SetActive(true);
+                AnalyticManager.OpenDonateShop();
                 return;
             }
 
+            AnalyticManager.OpenNewField();
             PlayerDataController.Gems -= fieldCosts[field];
             fields.isOpen[field] = true;
             PlayerDataController.playerStats.lvl[field] = 1;

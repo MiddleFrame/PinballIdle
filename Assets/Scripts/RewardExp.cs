@@ -3,7 +3,6 @@ using Managers;
 using Shop;
 using UnityEngine;
 using UnityEngine.UI;
-using Yodo1.MAS;
 
 public class RewardExp : MonoBehaviour
 {
@@ -23,10 +22,6 @@ public class RewardExp : MonoBehaviour
         FieldManager.openOneField += openNewField;
     }
     
-    
-   
-
-
     public void OnAdReceivedRewardExp()
     {
         LetsScript.exp *= 2;

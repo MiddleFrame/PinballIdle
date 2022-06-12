@@ -84,7 +84,7 @@ namespace Controllers
         private void Start()
         {
             _levelSum = playerStats.lvl.Sum();
-            PigMoneybox.MaxPoints = 10000 + _levelSum * 5000;
+            PigMoneybox.MaxPoints = 5000 + _levelSum * 1000;
             Debug.Log("Sum of levels: " + LevelSum);
             PointSum = playerStats.pointSum;
             Gems = playerStats.gems;
@@ -146,7 +146,7 @@ namespace Controllers
 
     public class PlayerStats
     {
-        public long pointSum;
+        public long pointSum = AnalyticManager.Gold?100:0;
         public int gems;
         public int[] lvl = {1, 0, 0, 0, 0, 0, 0, 0, 0};
         public int[] exp = {0, 0, 0, 0, 0, 0, 0, 0, 0};

@@ -10,7 +10,7 @@ public class FlipperLeft : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!DefaultBuff.autoMod[Field] || !other.CompareTag("Player")) return;
+        if (!DefaultBuff.autoMod[Field] || other.gameObject.layer != 7) return;
         if (FieldManager.currentField == Field)
             As.Play();
         FlipperController.RightOrLeft[Field] = false;
@@ -19,7 +19,7 @@ public class FlipperLeft : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (DefaultBuff.autoMod[Field] && collision.CompareTag("Player"))
+        if (DefaultBuff.autoMod[Field] && collision.gameObject.layer == 7)
         {
             FlipperController.IsFlipper[Field] = false;
         }

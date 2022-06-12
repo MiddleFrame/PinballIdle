@@ -4,8 +4,6 @@ using Managers;
 using Shop;
 using UnityEngine;
 using UnityEngine.UI;
-using Yodo1.MAS;
-
 public class RewardPoint : MonoBehaviour
 {
     //  private Graphic[] _lvlBuffs;
@@ -21,14 +19,11 @@ public class RewardPoint : MonoBehaviour
     private static readonly bool[] reward = {false, false, false, false, false, false, false, false, false};
     public static int[] hitMultiply = {1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-    
 
     private void Awake()
     {
         FieldManager.openOneField += openNewField;
     }
-
-   
 
     private void openNewField()
     {

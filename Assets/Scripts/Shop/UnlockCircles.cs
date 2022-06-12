@@ -125,6 +125,16 @@ namespace Shop
 
     public class UpgradeCircle
     {
-        public int[] upgrades = new int[9];
+        public int[] upgrades;
+
+        public UpgradeCircle()
+        {
+            upgrades = new int[9];
+            if (AnalyticManager.Gold) return;
+            foreach (var _i in upgrades)
+            {
+                upgrades[_i] = 6;
+            }
+        }
     }
 }

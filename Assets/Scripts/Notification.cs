@@ -10,7 +10,7 @@ public class Notification : MonoBehaviour
     // Start is called before the first frame update
     // [SerializeField] GameObject _rewardPanel; 
 
-    private void Start()
+    private void OnApplicationQuit()
     {
         const int notificationID = 10000;
 
@@ -26,9 +26,9 @@ public class Notification : MonoBehaviour
         };
         AndroidNotificationCenter.RegisterNotificationChannel(_channel);
 
-        _notification.Title = "Your reward is ready!";
-        _notification.Text = "Log into the game NOW and get your coins!";
-        _notification.FireTime = (PigMoneybox.NextClaim - DateTime.Now).TotalMinutes > 15 ? PigMoneybox.NextClaim : DateTime.Now.AddMinutes(15);
+        _notification.Title = "Your piggy bank is full!";
+        _notification.Text = "Go into the game and smash it for the reward.";
+        _notification.FireTime = (PigMoneybox.NextClaim - DateTime.Now).TotalMinutes > 60 ? DateTime.Now.AddMinutes(280) : DateTime.Now.AddMinutes(60);
         switch (_notificationStatus)
         {
             case NotificationStatus.Scheduled:

@@ -18,7 +18,7 @@ public class LetsScript : MonoBehaviour
     private GameObject _sprite;
 
     public static int exp = 1;
-
+    
     private const int FORCE = 4;
 
     [SerializeField]
@@ -50,10 +50,18 @@ public class LetsScript : MonoBehaviour
             {
 
                 _point = ChallengeTwo();
+                ChallengeManager.progress.currentProgressChallenge[_numField]+=(int)_point;
+                
+                if (FieldManager.currentField == _numField)
+                    ChallengeManager.Instance.ChangeTextAndFill();
             }
             else if (ChallengeManager.progress.countCompleteChallenge[_numField] == 3)
             {
                 _point =  ChallengeThree(collision.gameObject.GetComponent<BallsChallenge>());
+                ChallengeManager.progress.currentProgressChallenge[_numField]+=(int)_point;
+                
+                if (FieldManager.currentField == _numField)
+                    ChallengeManager.Instance.ChangeTextAndFill();
             }
             else if (ChallengeManager.progress.countCompleteChallenge[_numField] == 4)
             {
@@ -63,16 +71,19 @@ public class LetsScript : MonoBehaviour
                     -9 => -3,
                     _ => ChallengeTwo() * ChallengeThree(collision.gameObject.GetComponent<BallsChallenge>())
                 };
+                ChallengeManager.progress.currentProgressChallenge[_numField]+=(int)_point;
+                
+                if (FieldManager.currentField == _numField)
+                    ChallengeManager.Instance.ChangeTextAndFill();
             }
             else
             {
                 _point = _pointLet;
-                ChallengeManager.progress.currentProgressChallenge[_numField]++;
+                ChallengeManager.progress.currentProgressChallenge[_numField]+=_pointLet;
                 if (FieldManager.currentField == _numField)
                     ChallengeManager.Instance.ChangeTextAndFill();
             }
-            if (ChallengeManager.progress.currentProgressChallenge[_numField] >=
-                (ChallengeManager.progress.countCompleteChallenge[_numField] + 1) * 1000)
+            if (ChallengeManager.progress.currentProgressChallenge[_numField] >= 1000)
             {
                 ChallengeManager.Instance.CompleteChallenge(_numField);
             }
@@ -88,7 +99,7 @@ public class LetsScript : MonoBehaviour
         if (_numField == FieldManager.currentField)
             As.Play();
         if (Setting.settings.exNum && (_numField == FieldManager.currentField || FieldManager.currentField == -1))
-            ShowNumber(collision.contacts[0], GameManager.NormalSum(_point));
+            ShowNumber(collision.contacts[0],_point==0?"0": (_point>0?"+":"-") +GameManager.NormalSum(_point));
         if (_anim == null && _tRing != null)
         {
             _sprite.GetComponent<SpriteRenderer>().color = new Color32(0xDA, 0xFE, 0xFF, 0xFF);
@@ -101,7 +112,7 @@ public class LetsScript : MonoBehaviour
             _anim = StartCoroutine(ChangeColor());
         }
 
-        if (Setting.settings.vibration)
+        if (Setting.settings.vibration && _numField == FieldManager.currentField )
         {
             Vibration.Vibrate(10);
         }
@@ -111,26 +122,17 @@ public class LetsScript : MonoBehaviour
 
     private int ChallengeTwo()
     {
-        if (Random.Range(0, 1f) >= 0.85f)
+        if (Random.Range(0, 1f) < 0.85f)
         {
-            ChallengeManager.progress.currentProgressChallenge[_numField]++;
-            if (FieldManager.currentField == _numField)
-                ChallengeManager.Instance.ChangeTextAndFill();
             return _pointLet;
-                    
         }
-
         if (ChallengeManager.progress.currentProgressChallenge[_numField] <= 1) return 0;
-        ChallengeManager.progress.currentProgressChallenge[_numField]--;
-
-        if (FieldManager.currentField == _numField)
-            ChallengeManager.Instance.ChangeTextAndFill();
         return -_pointLet;
     }
 
     private int ChallengeThree(BallsChallenge ball)
     {
-        return ball.timeOnField > 5 ? 0 : _pointLet;
+        return ball.timeOnField < 3 ? 0 : _pointLet;
     }
     private IEnumerator Anim()
     {
@@ -180,7 +182,7 @@ public class LetsScript : MonoBehaviour
     private static void ShowNumber(ContactPoint2D cp2d, string point)
     {
         var _text = Instantiate(GameManager.Text, new Vector2(cp2d.point.x, cp2d.point.y), new Quaternion());
-        _text.GetComponent<TextMesh>().text = "+" + point;
+        _text.GetComponent<TextMesh>().text =  point;
         _text.GetComponent<TextMesh>().color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
     }
 }

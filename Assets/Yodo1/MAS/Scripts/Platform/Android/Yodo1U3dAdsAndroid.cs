@@ -102,7 +102,7 @@ namespace Yodo1.MAS
                 int value = javaClass.CallStatic<int>("getUserAge");
                 return value;
             }
-            return 0;
+            return 18;
         }
 
         public static void ShowInterstitialAd()

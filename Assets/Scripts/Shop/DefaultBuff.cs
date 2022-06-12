@@ -82,6 +82,11 @@ namespace Shop
                     AutoMod(_i);
                 }
             }
+            if (grade.autoFlippers[0])
+            {
+                AutoMod(0);
+                AutoMod();
+            }
             if(grade.autoFlippers[0])
                 ChallengeManager.Instance.OpenChallenges();
         }

@@ -17,12 +17,12 @@ namespace Shop
 
         private int _points;
 
-        public static int MaxPoints { get; set; } = 10000;
+        public static int MaxPoints { get; set; } = 5000;
 
         public static DateTime NextClaim
         {
             get => DateTime.Parse(PlayerPrefs.GetString("NextClaim",
-                DateTime.MinValue.ToString(CultureInfo.InvariantCulture)));
+                DateTime.MinValue.ToString(CultureInfo.CurrentCulture)),CultureInfo.CurrentCulture);
             set => PlayerPrefs.SetString("NextClaim", value.ToString(CultureInfo.CurrentCulture));
         }
 

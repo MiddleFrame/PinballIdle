@@ -122,7 +122,18 @@ public static class Vibration
         if ( Application.isMobilePlatform ) {
 #if !UNITY_WEBGL
 #if UNITY_ANDROID
-            Debug.Log("Android version: " +AndroidVersion);
+            /*if (UnityEngine.Random.Range(0f, 1f) <= 0.5f)
+            {
+                Debug.Log("Call milliseconds vibrate");
+                vibrator.Call("vibrate", milliseconds);
+            }
+            else
+            {
+                Debug.Log("Call createOneShot vibrate");
+                AndroidJavaObject _createOneShot =
+                    vibrationEffect.CallStatic<AndroidJavaObject>("createOneShot", milliseconds, -1);
+                vibrator.Call("vibrate", _createOneShot);
+            }*/
             if ( AndroidVersion >= 26 ) {
                 try
                 {

@@ -42,6 +42,7 @@ namespace Managers
             PlayerPrefs.SetString("Fields", JsonUtility.ToJson(FieldManager.fields));
             PlayerPrefs.SetString("UpgradeCircle", JsonUtility.ToJson(UnlockCircles.upgrade));
             PlayerPrefs.SetString("Challenge", JsonUtility.ToJson(ChallengeManager.progress));
+            PlayerPrefs.SetString("BallsManager", JsonUtility.ToJson(BallsManager.balls));
         }
 
 
@@ -71,7 +72,9 @@ namespace Managers
             FieldManager.fields =
                 JsonUtility.FromJson<Fields>(PlayerPrefs.GetString("Fields", JsonUtility.ToJson(new Fields())));
             UnlockCircles.upgrade = JsonUtility.FromJson<UpgradeCircle>(
-                PlayerPrefs.GetString("UpgradeCircle", JsonUtility.ToJson(new UpgradeCircle())));
+                PlayerPrefs.GetString("UpgradeCircle", JsonUtility.ToJson(new UpgradeCircle())));  
+            BallsManager.balls = JsonUtility.FromJson<StatsBall>(
+                PlayerPrefs.GetString("BallsManager", JsonUtility.ToJson(new StatsBall())));
             ChallengeManager.progress = JsonUtility.FromJson<ChallengeProgress>(
                 PlayerPrefs.GetString("Challenge", JsonUtility.ToJson(new ChallengeProgress())));
             Debug.Log("Player data complete loading.");

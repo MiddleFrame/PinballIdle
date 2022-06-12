@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1089568064159",
+    "project_id": "pinball-i",
+    "storage_bucket": "pinball-i.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089568064159:android:88f53da2b6e4fe71cf18aa",
+        "android_client_info": {
+          "package_name": "com.MiddleFrame.PinballIdle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1089568064159-2a65d10do4f139cfd6aod65nuant41rh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSjKzCV9xbSQlHrP9v15LsbMSiK9qD0vI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1089568064159-2a65d10do4f139cfd6aod65nuant41rh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

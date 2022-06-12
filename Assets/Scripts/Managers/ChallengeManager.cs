@@ -11,10 +11,10 @@ namespace Managers
         public static ChallengeProgress progress;
 
         [SerializeField]
-        private Image _challengeButton;
+        private GameObject _closeChallenge;
 
         [SerializeField]
-        private Sprite _openChallenge;
+        private GameObject _openChallenge;
 
         [SerializeField]
         private GameObject[] _challengePanel;
@@ -77,8 +77,8 @@ namespace Managers
             ".",
             " when all obstacles are halved.",
             "provided that with a 15% chance of losing point.",
-            "provided that after five seconds the ball stops scoring.",
-            "if all obstacles are halved, with a 15% chance of losing points and after five seconds the ball stops scoring."
+            "provided that after three seconds the ball begins to score points.",
+            "if all obstacles are halved, with a 15% chance of losing points and after three seconds the ball begins to score points."
         };
 
         private void Awake()
@@ -90,10 +90,9 @@ namespace Managers
                 {
                     if (!IsStartChallenge[_field]) continue;
                     _progressTexts[_field].text =
-                        $"{Mathf.Floor(progress.currentProgressChallenge[_field] / ((progress.countCompleteChallenge[_field] + 1) * 1000f) * 100)}%";
+                        $"{Mathf.Floor(progress.currentProgressChallenge[_field] / 10f)}%";
                     _progressFills[_field].fillAmount =
-                        progress.currentProgressChallenge[_field] /
-                        ((progress.countCompleteChallenge[_field] + 1) * 1000f);
+                        progress.currentProgressChallenge[_field] / 1000f;
                 }
             };
             FieldManager.openOneField += () =>
@@ -104,7 +103,7 @@ namespace Managers
                     CloseChallenges();
                 switch (IsStartChallenge[FieldManager.currentField])
                 {
-                    case false when _progressTexts[FieldManager.currentField].text == "COMPLETE":
+                    case false when progress.currentProgressChallenge[FieldManager.currentField] > 0:
                         getReward();
                         break;
                     case true:
@@ -115,7 +114,8 @@ namespace Managers
             MenuController.shopOpen[2] += ChangeCostBallText;
             MenuController.shopOpen[2] += () =>
             {
-                _countBallsText.text = $"({progress.balls[FieldManager.currentField]+1}/{progress.countCompleteChallenge[FieldManager.currentField]+1})";
+                _countBallsText.text =
+                    $"({progress.balls[FieldManager.currentField] + 1}/{progress.countCompleteChallenge[FieldManager.currentField] + 1})";
                 if (IsStartChallenge[FieldManager.currentField])
                 {
                     if (!_startChallengeImage.raycastTarget) return;
@@ -126,12 +126,6 @@ namespace Managers
                 }
                 else
                 {
-                    if (_startChallengeImage.raycastTarget) return;
-                    _startChallengeImage.raycastTarget = true;
-                    _startChallengeImage.sprite = GameManager.instance._unlockedSprite;
-                    _startChallengeText.text = "START CHALLENGE";
-                    GameManager.TextUp(_startChallengeText.gameObject);
-
                     if (progress.countCompleteChallenge[FieldManager.currentField] >= 5)
                     {
                         if (!_startChallengeImage.raycastTarget) return;
@@ -215,10 +209,8 @@ namespace Managers
         public void ChangeTextAndFill()
         {
             _challengeProgressText.text =
-                $"{progress.currentProgressChallenge[FieldManager.currentField]}/{1000 * (progress.countCompleteChallenge[FieldManager.currentField] + 1)}";
-            _challengeProgress.fillAmount = progress.currentProgressChallenge[FieldManager.currentField] /
-                                            (1000.0f * (progress.countCompleteChallenge[FieldManager.currentField] +
-                                                        1));
+                $"{progress.currentProgressChallenge[FieldManager.currentField]}/1000";
+            _challengeProgress.fillAmount = progress.currentProgressChallenge[FieldManager.currentField] / 1000f;
         }
 
         public void CompleteChallenge(int field)
@@ -234,18 +226,21 @@ namespace Managers
             else
             {
                 _progressFills[field].fillAmount = 1;
-                _progressTexts[field].text = "COMPLETE";
+                _progressFills[field].color = Color.green;
+                _progressTexts[field].text = "✓";
             }
         }
 
         private void getReward()
         {
+            AnalyticManager.CompleteChallenge();
             _getRewardText.text =
                 $"You get: {300 + 100 * progress.countCompleteChallenge[FieldManager.currentField]} gems.";
             _completePanel.SetActive(true);
             CloseChallengePanel(FieldManager.currentField);
             PlayerDataController.Gems += 300 + 100 * progress.countCompleteChallenge[FieldManager.currentField];
-            if (progress.countCompleteChallenge[FieldManager.currentField] == 1 || progress.countCompleteChallenge[FieldManager.currentField] == 4)
+            if (progress.countCompleteChallenge[FieldManager.currentField] == 1 ||
+                progress.countCompleteChallenge[FieldManager.currentField] == 4)
             {
                 foreach (var _t in GameManager.instance.fields[FieldManager.currentField].circles)
                 {
@@ -256,9 +251,9 @@ namespace Managers
                     _t.transform.localScale = _localScale;
                 }
             }
+
             progress.countCompleteChallenge[FieldManager.currentField]++;
             progress.currentProgressChallenge[FieldManager.currentField] = 0;
-            
         }
 
         private void StartChallenge(int field)
@@ -273,6 +268,7 @@ namespace Managers
                 ChangeTextAndFill();
             }
 
+            _progressFills[field].color = new Color32(0x7A, 0xD9, 0xDB, 0xFF);
             IsStartChallenge[field] = true;
             if (progress.countCompleteChallenge[field] == 1 || progress.countCompleteChallenge[field] == 4)
             {
@@ -293,7 +289,7 @@ namespace Managers
         {
             _challengeCountText.text = $"({progress.countCompleteChallenge[FieldManager.currentField] + 1}/5)";
             _challengeText.text =
-                $"Score {(progress.countCompleteChallenge[FieldManager.currentField] + 1) * 1000} point" +
+                "Score 1000 point" +
                 _challenges[progress.countCompleteChallenge[FieldManager.currentField]];
             StartCoroutine(startChallenge());
         }
@@ -302,7 +298,7 @@ namespace Managers
         {
             for (int _i = 0; _i < 70; _i++)
             {
-                MenuController.instance._shops[2].transform.position -= new Vector3(0, 0.07f, 0);
+                MenuController.instance._shops[2].transform.position -= new Vector3(0, 0.15f, 0); //Todo time.deltatime
                 yield return null;
             }
 
@@ -312,6 +308,7 @@ namespace Managers
 
         public void ConfirmStartChallenge()
         {
+            AnalyticManager.StartChallenge();
             StartChallenge(FieldManager.currentField);
         }
 
@@ -323,11 +320,12 @@ namespace Managers
         public void BuyBall()
         {
             if (PlayerDataController.Gems < 450) return;
-
+            AnalyticManager.OpenNewBall();
             progress.balls[FieldManager.currentField]++;
             PlayerDataController.Gems -= 450;
             ChangeCostBallText();
-            _countBallsText.text = $"({progress.balls[FieldManager.currentField]}/6)";
+            _countBallsText.text =
+                $"({progress.balls[FieldManager.currentField] + 1}/{progress.countCompleteChallenge[FieldManager.currentField] + 1})";
         }
 
         private void CloseChallengePanel(int field)
@@ -338,14 +336,14 @@ namespace Managers
 
         public void OpenChallenges()
         {
-            _challengeButton.transform.parent.gameObject.GetComponent<Button>().enabled = true;
-            _challengeButton.sprite = _openChallenge;
+            _closeChallenge.SetActive(false);
+            _openChallenge.SetActive(true);
         }
 
         private void CloseChallenges()
         {
-            _challengeButton.transform.parent.gameObject.GetComponent<Button>().enabled = false;
-            _challengeButton.sprite = GameManager.instance._lockFunctionSprite;
+            _closeChallenge.SetActive(true);
+            _openChallenge.SetActive(false);
         }
     }
 

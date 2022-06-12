@@ -71,7 +71,7 @@ namespace Shop
             if (PlayerDataController.PointSum < COST_STOPPERS) return;
             PlayerDataController.PointSum -= COST_STOPPERS;
             Statistics.stats.pointSpent += COST_STOPPERS;
-
+            grades.isStopper[FieldManager.currentField] = true;
             openStoppers(FieldManager.currentField);
             changeText();
         }

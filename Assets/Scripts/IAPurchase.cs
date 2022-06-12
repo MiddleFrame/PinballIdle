@@ -43,13 +43,13 @@ public class IaPurchase : IStoreListener
         }
 
         if (_storeController?.products == null) yield break;
+        AdsAndIAP.isRemoveAds = false;
         if (_storeController.products.WithID(RemoveAds).hasReceipt)
         {
             AdsAndIAP.isRemoveAds = true;
             AdsAndIAP.instance.HideAds();
         }
 
-        AdsAndIAP.isRemoveAds = false;
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs purchaseEvent)
