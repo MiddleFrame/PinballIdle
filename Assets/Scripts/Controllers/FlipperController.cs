@@ -26,7 +26,7 @@ namespace Controllers
         }
 
         // Update is called once per frame
-        private void Update()
+        private void FixedUpdate()
         {
             if (IsFlipper[_flipperLeft.Field])
             {

@@ -44,6 +44,7 @@ namespace Managers
 
         private void Start()
         {
+            currentField = 0;
             Debug.Log("Fields: " + JsonUtility.ToJson(fields));
             for (int _i = 0; _i < fields.isOpen.Length; _i++)
             {

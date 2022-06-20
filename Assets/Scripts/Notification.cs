@@ -9,7 +9,6 @@ public class Notification : MonoBehaviour
     //private GameNotificationsManager notificationManager = new GameNotificationsManager();
     // Start is called before the first frame update
     // [SerializeField] GameObject _rewardPanel; 
-
     private void OnApplicationQuit()
     {
         const int notificationID = 10000;

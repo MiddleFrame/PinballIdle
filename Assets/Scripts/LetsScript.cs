@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Competition;
 using Controllers;
 using Managers;
 using Shop;
@@ -18,7 +19,6 @@ public class LetsScript : MonoBehaviour
     private GameObject _sprite;
 
     public static int exp = 1;
-    
     private const int FORCE = 4;
 
     [SerializeField]
@@ -31,6 +31,7 @@ public class LetsScript : MonoBehaviour
 
     private Coroutine _anim;
 
+    public static bool isCompetitive=false;
     private void Start()
     {
         if (_tRing != null)
@@ -43,7 +44,14 @@ public class LetsScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        
         long _point;
+        if (isCompetitive)
+        {
+            _point = _pointLet*CompetitionManager.upgrades[_numField]*(CompetitionManager.isBuff[_numField]?2:1)*(CompetitionManager.isUpgradeBuff[_numField]?2:1);
+            CompetitionManager.AddPoint((int)_point, _numField);
+            goto Anim;
+        }
         if (ChallengeManager.IsStartChallenge[_numField])
         {
             if (ChallengeManager.progress.countCompleteChallenge[_numField] == 2 )
@@ -95,11 +103,12 @@ public class LetsScript : MonoBehaviour
             PlayerDataController.PointSum += _point;
             PlayerDataController.AddExp(_numField, exp);
         }
-
+        Anim:
         if (_numField == FieldManager.currentField)
-            As.Play();
-        if (Setting.settings.exNum && (_numField == FieldManager.currentField || FieldManager.currentField == -1))
-            ShowNumber(collision.contacts[0],_point==0?"0": (_point>0?"+":"-") +GameManager.NormalSum(_point));
+            As.Play(); 
+        
+        if (Setting.settings.exNum && (_numField == FieldManager.currentField || FieldManager.currentField == -1 || isCompetitive))
+            ShowNumber(collision.contacts[0],_point==0?"0": (_point>0?"+":"") +GameManager.NormalSum(_point), (isCompetitive&&_numField==0)?4:1);
         if (_anim == null && _tRing != null)
         {
             _sprite.GetComponent<SpriteRenderer>().color = new Color32(0xDA, 0xFE, 0xFF, 0xFF);
@@ -179,9 +188,10 @@ public class LetsScript : MonoBehaviour
         _anim = null;
     }
 
-    private static void ShowNumber(ContactPoint2D cp2d, string point)
+    private static void ShowNumber(ContactPoint2D cp2d, string point, int scale = 1)
     {
-        var _text = Instantiate(GameManager.Text, new Vector2(cp2d.point.x, cp2d.point.y), new Quaternion());
+        var _text = Instantiate(isCompetitive?CompetitionManager.Text:GameManager.Text, new Vector2(cp2d.point.x, cp2d.point.y), new Quaternion());
+        _text.transform.localScale *= scale;
         _text.GetComponent<TextMesh>().text =  point;
         _text.GetComponent<TextMesh>().color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
     }

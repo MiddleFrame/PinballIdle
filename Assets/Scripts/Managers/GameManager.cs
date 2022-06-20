@@ -35,6 +35,7 @@ namespace Managers
         private void Awake()
         {
             instance = this;
+            LetsScript.isCompetitive = false;
             Vibration.Init();
         }
 
@@ -85,11 +86,13 @@ namespace Managers
                 tx.transform.position -= new Vector3(0, 0.08f, 0);
             }
         }
+        
 
         public static void TextUp(GameObject tx)
         {
             if (tx.GetComponent<Text>() == null || tx.GetComponent<Text>().text != "MAX")
                 tx.transform.position += new Vector3(0, 0.08f, 0);
         }
+        
     }
 }

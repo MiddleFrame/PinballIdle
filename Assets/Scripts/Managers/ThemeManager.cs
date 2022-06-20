@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Competition;
 using JetBrains.Annotations;
 using Managers;
 using UnityEngine;
@@ -63,7 +64,8 @@ public class ThemeManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
+        if(instance==null)
+            instance = this;
         currentTheme = CurrentTheme;
     }
 
@@ -71,6 +73,7 @@ public class ThemeManager : MonoBehaviour
     {
         if (currentTheme == 0) return;
         ChangeThemes(currentTheme);
+        if(_themeImage!=null)
         _themeImage.sprite = _themeDarkSprite;
     }
 
