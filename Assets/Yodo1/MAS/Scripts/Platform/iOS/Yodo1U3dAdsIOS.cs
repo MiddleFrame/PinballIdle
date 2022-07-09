@@ -119,6 +119,17 @@ public class Yodo1U3dAdsIOS
         }
     }
 
+    [DllImport(LIB_NAME)]
+    private static extern void UnityMasInitMasWithAppKey(string appKey, string gameObject, string methodName);
+
+    public static void InitMasWithAppKey(string appKey)
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            UnityMasInitMasWithAppKey(appKey, Yodo1U3dMasCallback.Instance.SdkObjectName, Yodo1U3dMasCallback.Instance.SdkMethodName);
+        }
+    }
+
     /// <summary>
     /// 设置广告配置
     /// </summary>
@@ -318,7 +329,8 @@ public class Yodo1U3dAdsIOS
     private static extern void UnityHideNativeAd(string param);
     [DllImport(LIB_NAME)]
     private static extern void UnityDestroyNativeAd(string param);
-    public static void Native(string methodName, string param) {
+    public static void Native(string methodName, string param)
+    {
         if (Application.platform == RuntimePlatform.IPhonePlayer)
         {
             if (methodName.Equals("loadNativeAd"))
@@ -386,6 +398,33 @@ public class Yodo1U3dAdsIOS
         }
     }
 
+    [DllImport(LIB_NAME)]
+    private static extern void UnityLoadInterstitialAdV2(string param);
+    [DllImport(LIB_NAME)]
+    private static extern void UnityShowInterstitialAdV2(string param);
+    [DllImport(LIB_NAME)]
+    private static extern void UnityDestroyInterstitialAdV2(string param);
+    [DllImport(LIB_NAME)]
+    private static extern bool UnityIsInterstitialLoadedV2(string param);
+    public static void InterstitialV2(string methodName, string param)
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            if (methodName.Equals("loadInterstitialAdV2"))
+            {
+                UnityLoadInterstitialAdV2(param);
+            }
+            if (methodName.Equals("showInterstitialAdV2"))
+            {
+                UnityShowInterstitialAdV2(param);
+            }
+            if (methodName.Equals("destroyInterstitialAdV2"))
+            {
+                UnityDestroyInterstitialAdV2(param);
+            }
+        }
+    }
+
     #endregion
 
     #region  Video
@@ -429,6 +468,51 @@ public class Yodo1U3dAdsIOS
         {
             UnityShowRewardedAdWithPlacementId(placementId);
         }
+    }
+
+
+    [DllImport(LIB_NAME)]
+    private static extern void UnityLoadRewardAdV2(string param);
+    [DllImport(LIB_NAME)]
+    private static extern void UnityShowRewardAdV2(string param);
+    [DllImport(LIB_NAME)]
+    private static extern void UnityDestroyRewardAdV2(string param);
+    [DllImport(LIB_NAME)]
+    private static extern bool UnityIsRewardedAdLoadedV2(string param);
+    public static void RewardV2(string methodName, string param)
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            if (methodName.Equals("loadRewardAdV2"))
+            {
+                UnityLoadRewardAdV2(param);
+            }
+            if (methodName.Equals("showRewardAdV2"))
+            {
+                UnityShowRewardAdV2(param);
+            }
+            if (methodName.Equals("destroyRewardAdV2"))
+            {
+                UnityDestroyRewardAdV2(param);
+            }
+        }
+    }
+
+
+    public static bool IsAdLoadedV2(string methodName, string param)
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            if (methodName.Equals("isInterstitialAdLoadedV2"))
+            {
+                return UnityIsInterstitialLoadedV2(param);
+            }
+            if (methodName.Equals("isRewardedAdLoadedV2"))
+            {
+                return UnityIsRewardedAdLoadedV2(param);
+            }
+        }
+        return false;
     }
 
     #endregion

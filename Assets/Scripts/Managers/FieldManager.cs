@@ -8,7 +8,7 @@ namespace Managers
     public class FieldManager : MonoBehaviour
     {
         public static Fields fields;
-        private static readonly int[] fieldCosts = {0, 300, 300, 300, 300, 300, 300, 300, 300};
+        private static readonly int[] fieldCosts = {0, 150, 150, 150, 150, 150, 150, 150, 150};
         public static int currentField;
         private static int lastField;
 

@@ -1,7 +1,6 @@
 using UnityEngine;
 using Yodo1.MAS;
 using UnityEngine.Events;
-using UnityEditor;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -62,8 +61,9 @@ public class TemplateNativeAd : MonoBehaviour
     [ConditionalHide("LoadManually", true)]
     public Button DestroyNativeAdButton;
 
-    private void Start()
+    public void Init()
     {
+        width = Screen.width;
         if (!LoadManually)
         {
             Invoke("LoadNativeAd", 2f);
@@ -76,7 +76,8 @@ public class TemplateNativeAd : MonoBehaviour
             }
             if (HideNativeAdButton != null)
             {
-                HideNativeAdButton.onClick.AddListener(() => {
+                HideNativeAdButton.onClick.AddListener(() =>
+                {
                     if (nativeAdView != null)
                     {
                         nativeAdView.Hide();
@@ -85,7 +86,8 @@ public class TemplateNativeAd : MonoBehaviour
             }
             if (DestroyNativeAdButton != null)
             {
-                DestroyNativeAdButton.onClick.AddListener(() => {
+                DestroyNativeAdButton.onClick.AddListener(() =>
+                {
                     if (nativeAdView != null)
                     {
                         nativeAdView.Destroy();
@@ -107,6 +109,7 @@ public class TemplateNativeAd : MonoBehaviour
         }
 
 #endif
+      
     }
     private void OnEnable()
     {
@@ -155,7 +158,7 @@ public class TemplateNativeAd : MonoBehaviour
             nativeAdView.Destroy();
             nativeAdView = null;
         }
-        if(LoadPredefinedPositions)
+        if (LoadPredefinedPositions)
         {
             Yodo1U3dNativeAdPosition[] vertical = new Yodo1U3dNativeAdPosition[] { Yodo1U3dNativeAdPosition.NativeTop, Yodo1U3dNativeAdPosition.NativeBottom, Yodo1U3dNativeAdPosition.NativeVerticalCenter };
             Yodo1U3dNativeAdPosition[] horizontal = new Yodo1U3dNativeAdPosition[] { Yodo1U3dNativeAdPosition.NativeHorizontalCenter, Yodo1U3dNativeAdPosition.NativeLeft, Yodo1U3dNativeAdPosition.NativeRight };
@@ -178,6 +181,11 @@ public class TemplateNativeAd : MonoBehaviour
         nativeAdView.OnAdFailedToLoadEvent += OnNativeAdFailedToLoadEvent;
 
         nativeAdView.LoadAd();
+        if (!gameObject.activeInHierarchy)
+        {
+            Debug.Log("Hide native ad");
+            nativeAdView.Hide();
+        }
     }
 #if UNITY_EDITOR
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -202,6 +210,7 @@ public class TemplateNativeAd : MonoBehaviour
     {
         // Banner ad is ready to be shown.
         Debug.Log(Yodo1U3dMas.TAG + "Native ad loaded");
+     
         OnNativeAdLoaded.Invoke();
     }
 

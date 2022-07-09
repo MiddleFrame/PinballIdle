@@ -9,15 +9,13 @@ using UnityEngine.SceneManagement;
 public class YodoAdsManager : MonoBehaviour
 {
     public static YodoAdsManager instance;
-
     [SerializeField]
     private GameObject COPPA;
-    
     [Space(10)]
     [Header("Privacy Popup Settings")]
     [SerializeField]
     private bool privacyPopup = true;
-
+    public static Yodo1U3dBannerAdView bannerAdView;
     [Header("Custom Privacy links (optional) ")]
     [Tooltip("Enter your privacy policy link. Leave empty if you do not have a privacy policy")]
     [SerializeField]
@@ -58,7 +56,7 @@ public class YodoAdsManager : MonoBehaviour
     [SerializeField] UnityEvent OnSDKIntialized;
     [SerializeField] UnityEvent OnSDKInitializationFailed;
 
-    bool isInitialized = false;
+    public bool isInitialized = false;
 
     private void Awake()
     {
@@ -110,16 +108,16 @@ public class YodoAdsManager : MonoBehaviour
         if (privacyPopup)
         {
             Yodo1AdBuildConfig buildConfig = new Yodo1AdBuildConfig();
-            if (string.IsNullOrEmpty(privacyPolicyLink) && string.IsNullOrEmpty(termOfServiceLink))
+            if (!string.IsNullOrEmpty(privacyPolicyLink) && !string.IsNullOrEmpty(termOfServiceLink))
             {
                 buildConfig.enableUserPrivacyDialog(true);
             }
-            else if (!string.IsNullOrEmpty(privacyPolicyLink) && string.IsNullOrEmpty(termOfServiceLink))
+            else if (!string.IsNullOrEmpty(privacyPolicyLink) && !string.IsNullOrEmpty(termOfServiceLink))
             {
                 buildConfig.enableUserPrivacyDialog(true)
                     .privacyPolicyUrl(privacyPolicyLink);
             }
-            else if (string.IsNullOrEmpty(privacyPolicyLink) && !string.IsNullOrEmpty(termOfServiceLink))
+            else if (!string.IsNullOrEmpty(privacyPolicyLink) && !string.IsNullOrEmpty(termOfServiceLink))
             {
                 buildConfig.enableUserPrivacyDialog(true)
                     .userAgreementUrl(termOfServiceLink);
@@ -149,9 +147,17 @@ public class YodoAdsManager : MonoBehaviour
 
         if (!isInitialized)
         {
-            Yodo1U3dMas.InitializeSdk();
+            Yodo1U3dMas.InitializeMasSdk();
             //Yodo1U3dMas.SetAutoPauseGame(autoPauseGame);
         }
+        if (bannerAdView != null)
+        {
+            bannerAdView.Destroy();
+        }
+
+        // Create a 320x50 banner at top of the screen
+        bannerAdView = new Yodo1U3dBannerAdView(Yodo1U3dBannerAdSize.Banner, Yodo1U3dBannerAdPosition.BannerBottom | Yodo1U3dBannerAdPosition.BannerHorizontalCenter);
+        bannerAdView.Hide();
     }
 #if UNITY_EDITOR
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)

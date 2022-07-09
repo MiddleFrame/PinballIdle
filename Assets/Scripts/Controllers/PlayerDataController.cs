@@ -146,8 +146,8 @@ namespace Controllers
 
     public class PlayerStats
     {
-        public long pointSum = AnalyticManager.Gold?100:0;
-        public int gems ;
+        public long pointSum;
+        public int gems;
         public int[] lvl = {1, 0, 0, 0, 0, 0, 0, 0, 0};
         public int[] exp = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     }

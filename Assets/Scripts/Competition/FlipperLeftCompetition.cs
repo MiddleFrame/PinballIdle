@@ -12,7 +12,7 @@ namespace Competition
         public int Field;
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (Player)
+            if (Player || CompetitionManager.isWinners[Field])
                 return;
             FlipperCompetition.Left[Field] = true;
             FlipperCompetition.IsFlipper[Field] = true;

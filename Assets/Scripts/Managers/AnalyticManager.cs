@@ -9,7 +9,6 @@ namespace Managers
 {
     public class AnalyticManager : MonoBehaviour
     {
-        public static bool Gold = false;
 
         private void Awake()
         {
@@ -26,7 +25,6 @@ namespace Managers
                 var _dependencyStatus = task.Result;
                 if (_dependencyStatus == DependencyStatus.Available)
                 {
-                    FirebaseApp _app = FirebaseApp.DefaultInstance;
                     try
                     {
                         Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.Zero)
@@ -163,10 +161,34 @@ namespace Managers
         {
             FirebaseAnalytics.LogEvent("statistic");
         }
+        public static void BuyCoinForDiamond()
+        {
+            FirebaseAnalytics.LogEvent("buy_coin_for_diamond");
+        }
 
         public static void ChangeTheme()
         {
             FirebaseAnalytics.LogEvent("change_theme");
+        }
+        public static void StartCompetition()
+        {
+            FirebaseAnalytics.LogEvent("start_competition");
+        }
+        public static void FirstPlaceCompetition()
+        {
+            FirebaseAnalytics.LogEvent("first_place_competition");
+        }
+        public static void SecondPlaceCompetition()
+        {
+            FirebaseAnalytics.LogEvent("second_place_competition");
+        }
+        public static void ThirdPlaceCompetition()
+        {
+            FirebaseAnalytics.LogEvent("third_place_competition");
+        }
+        public static void LoseCompetition()
+        {
+            FirebaseAnalytics.LogEvent("lose_competition");
         }
     }
 }

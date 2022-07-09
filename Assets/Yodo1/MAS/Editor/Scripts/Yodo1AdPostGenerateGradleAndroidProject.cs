@@ -180,7 +180,7 @@ namespace Yodo1.MAS
             string text_all = streamReader1.ReadToEnd();
             streamReader1.Close();
 
-            bool changed = false;
+            //bool changed = false;
             string oldLineStr = string.Empty;
             string newLineStr = string.Empty;
 

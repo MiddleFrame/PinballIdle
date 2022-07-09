@@ -1,7 +1,6 @@
 using Competition;
 using Controllers;
 using Managers;
-using Shop;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using static UnityEngine.Screen;

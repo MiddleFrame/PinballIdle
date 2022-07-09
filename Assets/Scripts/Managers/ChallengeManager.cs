@@ -42,6 +42,8 @@ namespace Managers
 
         [SerializeField]
         private Text _countBallsText;
+        [SerializeField]
+        private Text _countCompleteChallengeText;
 
         [SerializeField]
         private Image _startChallengeImage;
@@ -114,6 +116,7 @@ namespace Managers
             MenuController.shopOpen[2] += ChangeCostBallText;
             MenuController.shopOpen[2] += () =>
             {
+                _countCompleteChallengeText.text = $"{progress.countCompleteChallenge[FieldManager.currentField]}/5";
                 _countBallsText.text =
                     $"({progress.balls[FieldManager.currentField] + 1}/{progress.countCompleteChallenge[FieldManager.currentField] + 1})";
                 if (IsStartChallenge[FieldManager.currentField])
@@ -176,7 +179,7 @@ namespace Managers
                 if (_isMaximum)
                 {
                     _isMaximum = false;
-                    _costBall.text = "450";
+                    _costBall.text = "100";
                     GameManager.TextUp(_costBall.gameObject);
                     if (!_buyBallsImage.raycastTarget)
                     {
@@ -319,10 +322,10 @@ namespace Managers
 
         public void BuyBall()
         {
-            if (PlayerDataController.Gems < 450) return;
+            if (PlayerDataController.Gems < 100) return;
             AnalyticManager.OpenNewBall();
             progress.balls[FieldManager.currentField]++;
-            PlayerDataController.Gems -= 450;
+            PlayerDataController.Gems -= 100;
             ChangeCostBallText();
             _countBallsText.text =
                 $"({progress.balls[FieldManager.currentField] + 1}/{progress.countCompleteChallenge[FieldManager.currentField] + 1})";

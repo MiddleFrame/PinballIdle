@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Yodo1.MAS
 {
-     public enum Yodo1U3dNativeAdPosition
+    public enum Yodo1U3dNativeAdPosition
     {
         NativeNone = 0,
         NativeLeft = 1,
@@ -17,7 +17,7 @@ namespace Yodo1.MAS
     public class Yodo1U3dNativeAdView
     {
         private static List<Yodo1U3dNativeAdView> NativeAdViews = new List<Yodo1U3dNativeAdView>();
-        private readonly string indexId = ((DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000) + "";
+        private readonly string indexId = ((DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000) + NativeAdViews.Count + "";
         private string adPlacement = "";
         private Yodo1U3dNativeAdPosition adPosition = Yodo1U3dNativeAdPosition.NativeNone;
         private int adOffsetX = 0;
@@ -212,7 +212,8 @@ namespace Yodo1.MAS
             this.adPlacement = adPlacement;
         }
 
-        public void SetBackgroundColor(Color backgroundColor) {
+        public void SetBackgroundColor(Color backgroundColor)
+        {
             this.backgroundColor = backgroundColor;
         }
 
@@ -228,7 +229,8 @@ namespace Yodo1.MAS
             dic.Add("height", this.adHeight);
             dic.Add("adPlacement", this.adPlacement);
             dic.Add("indexId", this.indexId);
-            if (!this.backgroundColor.Equals(Color.clear)) {
+            if (!this.backgroundColor.Equals(Color.clear))
+            {
                 dic.Add("backgroundColor", "#" + ColorUtility.ToHtmlStringRGB(this.backgroundColor));
             }
             return Yodo1JSON.Serialize(dic);

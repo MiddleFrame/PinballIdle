@@ -43,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 11
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -118,8 +118,6 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
-    maxJobWorkers: 0
-    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -175,7 +173,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -202,69 +199,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 88094106}
   m_CullTransparentMesh: 1
---- !u!1 &91761632
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 91761633}
-  - component: {fileID: 91761634}
-  m_Layer: 0
-  m_Name: Native
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &91761633
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 91761632}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1347745445}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &91761634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 91761632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1495e7202415a46ad8adbcec64785a4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LoadPredefinedPositions: 1
-  VerticalAlignment: 0
-  HorizontalAlignment: 0
-  XPosition: 0
-  YPosition: 0
-  width: 720
-  height: 600
-  nativeAdOnAllScenes: 1
-  PlacementID: 
-  backGroundColor: {r: 0.09611963, g: 0.4528302, b: 0.17707099, a: 1}
-  OnNativeAdLoaded:
-    m_PersistentCalls:
-      m_Calls: []
-  OnNativeAdFailedToLoad:
-    m_PersistentCalls:
-      m_Calls: []
-  LoadManually: 0
-  ShowNativeAdButton: {fileID: 0}
-  HideNativeAdButton: {fileID: 0}
-  DestroyNativeAdButton: {fileID: 0}
 --- !u!1 &109182002
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,7 +262,6 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!1 &137820363
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,7 +374,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placementID: 
+  OnRewardedAdLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRewardedAdLoadFailed:
+    m_PersistentCalls:
+      m_Calls: []
   OnRewardedAdOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRewardedAdOpenFailed:
     m_PersistentCalls:
       m_Calls: []
   OnRewardedAdClosed:
@@ -467,7 +409,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
-    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -512,7 +453,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -587,7 +527,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -643,7 +582,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1040358375}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &683929079
 MonoBehaviour:
@@ -708,10 +647,74 @@ Transform:
   m_LocalPosition: {x: 220.32585, y: 543.76544, z: -47.890633}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1439830589}
   - {fileID: 683929078}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1195615644
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1195615645}
+  - component: {fileID: 1195615646}
+  m_Layer: 0
+  m_Name: Native (Left)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1195615645
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1195615644}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1347745445}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1195615646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1195615644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1495e7202415a46ad8adbcec64785a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LoadPredefinedPositions: 1
+  VerticalAlignment: 0
+  HorizontalAlignment: 1
+  XPosition: 0
+  YPosition: 0
+  width: 360
+  height: 300
+  nativeAdOnAllScenes: 1
+  PlacementID: 
+  backGroundColor: {r: 0.09611963, g: 0.4528302, b: 0.17707099, a: 1}
+  OnNativeAdLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnNativeAdFailedToLoad:
+    m_PersistentCalls:
+      m_Calls: []
+  LoadManually: 0
+  ShowNativeAdButton: {fileID: 0}
+  HideNativeAdButton: {fileID: 0}
+  DestroyNativeAdButton: {fileID: 0}
 --- !u!1 &1266956521
 GameObject:
   m_ObjectHideFlags: 0
@@ -836,7 +839,6 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
 --- !u!223 &1316836643
 Canvas:
   m_ObjectHideFlags: 0
@@ -905,10 +907,141 @@ Transform:
   m_LocalPosition: {x: 161.98961, y: 912.8316, z: -314.1829}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 91761633}
+  - {fileID: 1195615645}
+  - {fileID: 1760917795}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1439830588
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1439830589}
+  - component: {fileID: 1439830590}
+  m_Layer: 0
+  m_Name: Standard
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1439830589
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439830588}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1040358375}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1439830590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439830588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29c21954dfb7044b88e71e57252dd67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bannerSize: 0
+  VerticalAlignment: 0
+  HorizontalAlignment: 0
+  bannerOnAllScenes: 1
+  PlacementID: 
+  OnBannerLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBannerFailedToLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBannerOpen:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBannerFailToOpen:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBannerClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  LoadManually: 0
+  ShowBannerButton: {fileID: 0}
+  HideBannerButton: {fileID: 0}
+  DestroyBannerButton: {fileID: 0}
+--- !u!1 &1760917794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1760917795}
+  - component: {fileID: 1760917796}
+  m_Layer: 0
+  m_Name: Native (Right)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1760917795
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760917794}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1347745445}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1760917796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760917794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1495e7202415a46ad8adbcec64785a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LoadPredefinedPositions: 1
+  VerticalAlignment: 0
+  HorizontalAlignment: 2
+  XPosition: 0
+  YPosition: 0
+  width: 360
+  height: 300
+  nativeAdOnAllScenes: 1
+  PlacementID: 
+  backGroundColor: {r: 0.09611963, g: 0.4528302, b: 0.17707099, a: 1}
+  OnNativeAdLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnNativeAdFailedToLoad:
+    m_PersistentCalls:
+      m_Calls: []
+  LoadManually: 0
+  ShowNativeAdButton: {fileID: 0}
+  HideNativeAdButton: {fileID: 0}
+  DestroyNativeAdButton: {fileID: 0}
 --- !u!1 &1955925403
 GameObject:
   m_ObjectHideFlags: 0
@@ -962,7 +1095,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placementID: 
+  OnInterstitialAdLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnInterstitialAdLoadFailed:
+    m_PersistentCalls:
+      m_Calls: []
   OnInterstitialAdOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  OnInterstitialAdOpenFailed:
     m_PersistentCalls:
       m_Calls: []
   OnInterstitialAdClosed:
@@ -985,7 +1127,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
-    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1030,7 +1171,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1129,7 +1269,6 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &2029957456

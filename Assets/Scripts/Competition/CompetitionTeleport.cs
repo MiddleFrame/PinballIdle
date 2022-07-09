@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Managers;
 using UnityEngine;
 
 namespace Competition
@@ -23,6 +22,7 @@ namespace Competition
 
         private void Update()
         {
+            if (CompetitionManager.isWinners[field]) return;
             angle += _a * Time.deltaTime;
 
             var _position = centerSpawn.transform.position;
@@ -48,6 +48,7 @@ namespace Competition
         {
             //  var _child = balls[0].GetComponentsInChildren<TrailRenderer>();
 
+            if (CompetitionManager.isWinners[field]) yield break;
 
             for (int _j = 0; _j <= CompetitionManager.balls[field]; _j++)
             {

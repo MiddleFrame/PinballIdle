@@ -393,7 +393,7 @@
 
         private IEnumerator SendUrl(string url, ApiCallback callback)
         {
-            using (WWW www = new WWW(url))
+            using (UnityWebRequest www = new UnityWebRequest(url))
             {
                 yield return www;
                 if (www.error != null)
@@ -403,7 +403,7 @@
                 }
                 else
                 {
-                    callback(www.text);
+                    callback(www.downloadHandler.text);
                 }
             }
         }

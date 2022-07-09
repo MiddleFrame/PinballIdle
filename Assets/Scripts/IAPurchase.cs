@@ -5,28 +5,27 @@ using UnityEngine.Purchasing;
 
 public class IaPurchase : IStoreListener
 {
-    public const string RemoveAds = "remove_ads";
-    public const string Coffee = "coffee";
-    public const string BigPack = "get_big_pack";
-    public const string LittlePack = "get_little_pack_daimonds";
-    public const string MediumPack = "pack_medium_diamond";
-    private static IStoreController _storeController;
+    public const string REMOVE_ADS = "remove_ads";
+    public const string COFFEE = "coffee";
+    public const string BIG_PACK = "get_big_pack";
+    public const string LITTLE_PACK = "get_little_pack_daimonds";
+    public const string MEDIUM_PACK = "pack_medium_diamond";
+    public static IStoreController _storeController;
     private static IExtensionProvider _storeExtensionProvider;
-
     public void IapInitialize()
     {
         if (IsIapInitialized())
             return;
         var _builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
-        _builder.AddProduct(RemoveAds, ProductType.NonConsumable);
-        _builder.AddProduct(BigPack, ProductType.Consumable);
-        _builder.AddProduct(LittlePack, ProductType.Consumable);
-        _builder.AddProduct(MediumPack, ProductType.Consumable);
-        _builder.AddProduct(Coffee, ProductType.Consumable);
+        _builder.AddProduct(REMOVE_ADS, ProductType.NonConsumable);
+        _builder.AddProduct(BIG_PACK, ProductType.Consumable);
+        _builder.AddProduct(LITTLE_PACK, ProductType.Consumable);
+        _builder.AddProduct(MEDIUM_PACK, ProductType.Consumable);
+        _builder.AddProduct(COFFEE, ProductType.Consumable);
         UnityPurchasing.Initialize(this, _builder);
     }
 
-    private static bool IsIapInitialized()
+    public static bool IsIapInitialized()
     {
         return _storeController != null && _storeExtensionProvider != null;
     }
@@ -44,7 +43,7 @@ public class IaPurchase : IStoreListener
 
         if (_storeController?.products == null) yield break;
         AdsAndIAP.isRemoveAds = false;
-        if (_storeController.products.WithID(RemoveAds).hasReceipt)
+        if (_storeController.products.WithID(REMOVE_ADS).hasReceipt)
         {
             AdsAndIAP.isRemoveAds = true;
             AdsAndIAP.instance.HideAds();
@@ -56,20 +55,20 @@ public class IaPurchase : IStoreListener
     {
         switch (purchaseEvent.purchasedProduct.definition.id)
         {
-            case RemoveAds:
+            case REMOVE_ADS:
                 
                 AdsAndIAP.isRemoveAds = true;
                 AdsAndIAP.instance.HideAds();
                 Debug.Log("buy: " + (purchaseEvent.purchasedProduct.definition.id));
                 break;
-            case LittlePack:
-                PlayerDataController.Gems += 1000;
+            case LITTLE_PACK:
+                PlayerDataController.Gems += 300;
                 break;
-            case MediumPack:
+            case MEDIUM_PACK:
+                PlayerDataController.Gems += 2000;
+                break;
+            case BIG_PACK:
                 PlayerDataController.Gems += 10000;
-                break;
-            case BigPack:
-                PlayerDataController.Gems += 20000;
                 break;
         }
 
@@ -95,6 +94,7 @@ public class IaPurchase : IStoreListener
     {
         _storeController = controller;
         _storeExtensionProvider = extensions;
+        
     }
 
     public static void BuyProductID(string productId)

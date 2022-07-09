@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using Yodo1.MAS;
 using UnityEngine.Events;
-using UnityEditor;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -57,28 +56,30 @@ public class Banner : MonoBehaviour
 
     private void Start()
     {
-        if(!LoadManually)
+        if (!LoadManually)
         {
             Invoke("LoadBanner", 2f);
         }
         else
         {
-            if(ShowBannerButton != null)
+            if (ShowBannerButton != null)
             {
-                ShowBannerButton.onClick.AddListener(()=> { LoadBanner(); });
+                ShowBannerButton.onClick.AddListener(() => { LoadBanner(); });
             }
-            if(HideBannerButton != null)
+            if (HideBannerButton != null)
             {
-                HideBannerButton.onClick.AddListener(()=> {
+                HideBannerButton.onClick.AddListener(() =>
+                {
                     if (bannerAdView != null)
                     {
                         bannerAdView.Hide();
                     }
                 });
             }
-            if(DestroyBannerButton != null)
+            if (DestroyBannerButton != null)
             {
-                DestroyBannerButton.onClick.AddListener(() => {
+                DestroyBannerButton.onClick.AddListener(() =>
+                {
                     if (bannerAdView != null)
                     {
                         bannerAdView.Destroy();
@@ -86,7 +87,7 @@ public class Banner : MonoBehaviour
                 });
             }
         }
-#if UNITY_EDITOR
+
         if (bannerOnAllScenes)
         {
             if (transform.parent != null)
@@ -98,8 +99,6 @@ public class Banner : MonoBehaviour
                 DontDestroyOnLoad(gameObject);
             }
         }
-
-#endif
 
 
     }
@@ -196,7 +195,7 @@ public class Banner : MonoBehaviour
         }
     }
 #endif
-        private void OnBannerAdLoadedEvent(Yodo1U3dBannerAdView adView)
+    private void OnBannerAdLoadedEvent(Yodo1U3dBannerAdView adView)
     {
         Debug.Log(Yodo1U3dMas.TAG + "NoCode BannerV2 ad loaded");
         OnBannerLoaded.Invoke();
@@ -225,6 +224,4 @@ public class Banner : MonoBehaviour
         Debug.Log(Yodo1U3dMas.TAG + "NoCode BannerV2 ad closed");
         OnBannerClosed.Invoke();
     }
-
-
 }

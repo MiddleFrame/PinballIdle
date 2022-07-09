@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using Yodo1.MAS;
-using UnityEngine.UI;
 
 public class InterstitialAtBreaks : MonoBehaviour
 {
@@ -11,25 +9,51 @@ public class InterstitialAtBreaks : MonoBehaviour
 
     [Space(10)]
     [Header("Interstitial AD Events (optional) ")]
+    [SerializeField] UnityEvent OnInterstitialAdLoaded;
+    [SerializeField] UnityEvent OnInterstitialAdLoadFailed;
     [SerializeField] UnityEvent OnInterstitialAdOpened;
+    [SerializeField] UnityEvent OnInterstitialAdOpenFailed;
     [SerializeField] UnityEvent OnInterstitialAdClosed;
-    [SerializeField] UnityEvent OnInterstitialAdError;
+
+    //[System.Obsolete("Please use `OnAdLoadFailedEvent` and `OnAdOpenFailedEvent` instead.", false)]
+    //[SerializeField] UnityEvent OnInterstitialAdError;
 
     private void OnEnable()
     {
-        Yodo1U3dMasCallback.Interstitial.OnAdOpenedEvent += OnInterstitialAdOpenedEvent;
-        Yodo1U3dMasCallback.Interstitial.OnAdClosedEvent += OnInterstitialAdClosedEvent;
-        Yodo1U3dMasCallback.Interstitial.OnAdErrorEvent += OnInterstitialAdErorEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdLoadedEvent += OnInterstitialAdLoadedEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdLoadFailedEvent += OnInterstitialAdLoadFailedEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdOpenedEvent += OnInterstitialAdOpenedEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdOpenFailedEvent += OnInterstitialAdOpenFailedEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdClosedEvent += OnInterstitialAdClosedEvent;
 
-        if (Yodo1U3dMas.IsInterstitialAdLoaded())
+        LoadAd();
+    }
+
+    private void OnDisable()
+    {
+        Yodo1U3dInterstitialAd.GetInstance().OnAdLoadedEvent -= OnInterstitialAdLoadedEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdLoadFailedEvent -= OnInterstitialAdLoadFailedEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdOpenedEvent -= OnInterstitialAdOpenedEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdOpenFailedEvent -= OnInterstitialAdOpenFailedEvent;
+        Yodo1U3dInterstitialAd.GetInstance().OnAdClosedEvent -= OnInterstitialAdClosedEvent;
+    }
+
+    private void LoadAd()
+    {
+        Yodo1U3dInterstitialAd.GetInstance().LoadAd();
+    }
+
+    private void ShowAd()
+    {
+        if (Yodo1U3dInterstitialAd.GetInstance().IsLoaded())
         {
             if (string.IsNullOrEmpty(placementID))
             {
-                Yodo1U3dMas.ShowInterstitialAd();
+                Yodo1U3dInterstitialAd.GetInstance().ShowAd();
             }
             else
             {
-                Yodo1U3dMas.ShowInterstitialAd(placementID);
+                Yodo1U3dInterstitialAd.GetInstance().ShowAd(placementID);
             }
         }
         else
@@ -38,31 +62,42 @@ public class InterstitialAtBreaks : MonoBehaviour
         }
     }
 
-
-    private void OnDisable()
+    private void OnInterstitialAdLoadedEvent(Yodo1U3dInterstitialAd ad)
     {
-        Yodo1U3dMasCallback.Interstitial.OnAdOpenedEvent -= OnInterstitialAdOpenedEvent;
-        Yodo1U3dMasCallback.Interstitial.OnAdClosedEvent -= OnInterstitialAdClosedEvent;
-        Yodo1U3dMasCallback.Interstitial.OnAdErrorEvent -= OnInterstitialAdErorEvent;
+        Debug.Log(Yodo1U3dMas.TAG + "NoCode Interstitial ad loaded");
+        OnInterstitialAdLoaded.Invoke();
+
+        if (gameObject.activeSelf == true)
+        {
+            ShowAd();
+        }
     }
 
-    private void OnInterstitialAdOpenedEvent()
+    private void OnInterstitialAdLoadFailedEvent(Yodo1U3dInterstitialAd ad, Yodo1U3dAdError adError)
+    {
+        Debug.Log(Yodo1U3dMas.TAG + "NoCode Interstitial ad load failed, error - " + adError.ToString());
+        OnInterstitialAdLoadFailed.Invoke();
+        //OnInterstitialAdError.Invoke();
+    }
+
+    private void OnInterstitialAdOpenedEvent(Yodo1U3dInterstitialAd ad)
     {
         Debug.Log(Yodo1U3dMas.TAG + "NoCode Interstitial ad opened");
         OnInterstitialAdOpened.Invoke();
     }
 
-    private void OnInterstitialAdClosedEvent()
+    private void OnInterstitialAdOpenFailedEvent(Yodo1U3dInterstitialAd ad, Yodo1U3dAdError adError)
     {
-        Debug.Log(Yodo1U3dMas.TAG + "NoCode Interstitial ad closed - breaks");
+        Debug.Log(Yodo1U3dMas.TAG + "NoCode Interstitial ad open failed, error - " + adError.ToString());
+        OnInterstitialAdOpenFailed.Invoke();
+        //OnInterstitialAdError.Invoke();
+    }
+
+    private void OnInterstitialAdClosedEvent(Yodo1U3dInterstitialAd ad)
+    {
+        Debug.Log(Yodo1U3dMas.TAG + "NoCode Interstitial ad closed - AdBreaks");
         OnInterstitialAdClosed.Invoke();
+
+        gameObject.SetActive(false);
     }
-
-    private void OnInterstitialAdErorEvent(Yodo1U3dAdError adError)
-    {
-        Debug.Log(Yodo1U3dMas.TAG + "NoCode Interstitial ad error - " + adError.ToString());
-        OnInterstitialAdError.Invoke();
-    }
-
-
 }

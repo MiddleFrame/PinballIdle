@@ -12,11 +12,16 @@ public class RewardedAd : MonoBehaviour
     public string placementID;
     [Space(10)]
     [Header("Rewarded AD Events")]
+    [SerializeField] UnityEvent OnRewardedAdLoaded;
+    [SerializeField] UnityEvent OnRewardedAdLoadFailed;
     [SerializeField] UnityEvent OnRewardedAdOpened;
+    [SerializeField] UnityEvent OnRewardedAdOpenFailed;
     [SerializeField] UnityEvent OnRewardedAdClosed;
     [Header("Award User Here")]
     [SerializeField] UnityEvent OnAdReceivedReward;
-    [SerializeField] UnityEvent OnRewardedAdError;
+
+    //[System.Obsolete("Please use `OnAdLoadFailedEvent` and `OnAdOpenFailedEvent` instead.", false)]
+    //[SerializeField] UnityEvent OnRewardedAdError;
 
     private void Awake()
     {
@@ -26,6 +31,8 @@ public class RewardedAd : MonoBehaviour
     private void Start()
     {
         rvBtn.onClick.AddListener(TaskOnClick);
+
+        LoadAd();
     }
 
     void TaskOnClick()
@@ -35,19 +42,20 @@ public class RewardedAd : MonoBehaviour
             OnAdReceivedReward.Invoke();
             return;
         }
-        if (Yodo1U3dMas.IsRewardedAdLoaded())
+        if (Yodo1U3dRewardAd.GetInstance().IsLoaded())
         {
-            Yodo1U3dMasCallback.Rewarded.OnAdOpenedEvent += OnRewardedAdOpenedEvent;
-            Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent += OnRewardedAdClosedEvent;
-            Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent += OnAdReceivedRewardEvent;
-            Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent += OnRewardedAdErorEvent;
+            Yodo1U3dRewardAd.GetInstance().OnAdOpenedEvent += OnRewardAdOpenedEvent;
+            Yodo1U3dRewardAd.GetInstance().OnAdOpenFailedEvent += OnRewardAdOpenFailedEvent;
+            Yodo1U3dRewardAd.GetInstance().OnAdClosedEvent += OnRewardAdClosedEvent;
+            Yodo1U3dRewardAd.GetInstance().OnAdEarnedEvent += OnRewardAdEarnedEvent;
+
             if (string.IsNullOrEmpty(placementID))
             {
-                Yodo1U3dMas.ShowRewardedAd();
+                Yodo1U3dRewardAd.GetInstance().ShowAd();
             }
             else
             {
-                Yodo1U3dMas.ShowRewardedAd(placementID);
+                Yodo1U3dRewardAd.GetInstance().ShowAd(placementID);
             }
         }
         else
@@ -56,34 +64,63 @@ public class RewardedAd : MonoBehaviour
         }
     }
 
-    private void OnRewardedAdOpenedEvent()
+    private void LoadAd()
+    {
+        Yodo1U3dRewardAd.GetInstance().OnAdLoadedEvent -= OnRewardAdLoadedEvent;
+        Yodo1U3dRewardAd.GetInstance().OnAdLoadFailedEvent -= OnRewardAdLoadFailedEvent;
+
+        Yodo1U3dRewardAd.GetInstance().OnAdLoadedEvent += OnRewardAdLoadedEvent;
+        Yodo1U3dRewardAd.GetInstance().OnAdLoadFailedEvent += OnRewardAdLoadFailedEvent;
+
+        Yodo1U3dRewardAd.GetInstance().LoadAd();
+    }
+
+    private void OnRewardAdLoadedEvent(Yodo1U3dRewardAd ad)
+    {
+        Debug.Log(Yodo1U3dMas.TAG + "NoCode Rewarded ad loaded");
+        OnRewardedAdLoaded.Invoke();
+    }
+
+    private void OnRewardAdLoadFailedEvent(Yodo1U3dRewardAd ad, Yodo1U3dAdError adError)
+    {
+        Debug.Log(Yodo1U3dMas.TAG + "NoCode Rewarded ad load failed");
+        OnRewardedAdLoadFailed.Invoke();
+        //OnRewardedAdError.Invoke();
+
+        LoadAd();
+    }
+
+    private void OnRewardAdOpenedEvent(Yodo1U3dRewardAd ad)
     {
         Debug.Log(Yodo1U3dMas.TAG + "NoCode Rewarded ad opened");
         OnRewardedAdOpened.Invoke();
     }
 
-    private void OnRewardedAdClosedEvent()
+    private void OnRewardAdOpenFailedEvent(Yodo1U3dRewardAd ad, Yodo1U3dAdError adError)
+    {
+        Debug.Log(Yodo1U3dMas.TAG + "NoCode Rewarded ad open failed");
+        OnRewardedAdOpenFailed.Invoke();
+        //OnRewardedAdError.Invoke();
+
+        LoadAd();
+    }
+
+    private void OnRewardAdClosedEvent(Yodo1U3dRewardAd ad)
     {
         Debug.Log(Yodo1U3dMas.TAG + "NoCode Rewarded ad closed");
         OnRewardedAdClosed.Invoke();
-        Yodo1U3dMasCallback.Rewarded.OnAdOpenedEvent -= OnRewardedAdOpenedEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdClosedEvent -= OnRewardedAdClosedEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdReceivedRewardEvent -= OnAdReceivedRewardEvent;
-        Yodo1U3dMasCallback.Rewarded.OnAdErrorEvent -= OnRewardedAdErorEvent;
+
+        Yodo1U3dRewardAd.GetInstance().OnAdOpenedEvent -= OnRewardAdOpenedEvent;
+        Yodo1U3dRewardAd.GetInstance().OnAdOpenFailedEvent -= OnRewardAdOpenFailedEvent;
+        Yodo1U3dRewardAd.GetInstance().OnAdClosedEvent -= OnRewardAdClosedEvent;
+        Yodo1U3dRewardAd.GetInstance().OnAdEarnedEvent -= OnRewardAdEarnedEvent;
+
+        LoadAd();
     }
 
-    private void OnAdReceivedRewardEvent()
+    private void OnRewardAdEarnedEvent(Yodo1U3dRewardAd ad)
     {
         Debug.Log(Yodo1U3dMas.TAG + "NoCode Rewarded ad received reward");
         OnAdReceivedReward.Invoke();
     }
-
-    private void OnRewardedAdErorEvent(Yodo1U3dAdError adError)
-    {
-        Debug.Log(Yodo1U3dMas.TAG + "NoCode Rewarded ad error - " + adError.ToString());
-        OnRewardedAdError.Invoke();
-    }
-
-
-
 }

@@ -87,7 +87,7 @@ namespace Competition
                     cost += 50;
                     break;
                 case 1:
-                    cost += 100;
+                    cost *= 2;
                     break;
                 case 2:
                     cost += 200;

@@ -9,7 +9,7 @@ public class BallsManager : MonoBehaviour
 {
     public static StatsBall balls;
 
-    private static int costFieldBall = 500;
+    private static int costFieldBall = 200;
     [SerializeField]
     private GameObject[] _fieldBalls;
 

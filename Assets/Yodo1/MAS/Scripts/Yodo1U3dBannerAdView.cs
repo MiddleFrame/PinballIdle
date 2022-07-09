@@ -7,11 +7,11 @@ namespace Yodo1.MAS
     public class Yodo1U3dBannerAdView
     {
         private static List<Yodo1U3dBannerAdView> BannerAdViews = new List<Yodo1U3dBannerAdView>();
-        private readonly string indexId = ((DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000) + "";
+        private readonly string indexId = (((DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000) + BannerAdViews.Count) + "";
 
         private Yodo1U3dBannerAdSize adSize;
         private Yodo1U3dBannerAdPosition adPosition;
-        private string adPlacement = "";
+        private string adPlacement = string.Empty;
         private int adPositionX = 0;
         private int adPositionY = 0;
 
@@ -188,8 +188,8 @@ namespace Yodo1.MAS
         {
 
 #if UNITY_EDITOR
-           
-            Yodo1EditorAds.ShowBannerAdsInEditor(indexId, (int)adPosition,(int)adSize.AdType,adPositionX,adPositionY);
+
+            Yodo1EditorAds.ShowBannerAdsInEditor(indexId, (int)adPosition, (int)adSize.AdType, adPositionX, adPositionY);
 #endif
 #if !UNITY_EDITOR
             BannerV2("loadBannerAdV2");
@@ -215,7 +215,7 @@ namespace Yodo1.MAS
         public void Show()
         {
 #if UNITY_EDITOR
-            Yodo1EditorAds.ShowBannerAdsInEditor(indexId, (int)adPosition,(int)adSize.AdType,adPositionX,adPositionY);
+            Yodo1EditorAds.ShowBannerAdsInEditor(indexId, (int)adPosition, (int)adSize.AdType, adPositionX, adPositionY);
 #endif
 #if !UNITY_EDITOR
             BannerV2("showBannerAdV2");

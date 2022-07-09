@@ -6,9 +6,21 @@ namespace Managers
 {
     public class SaveManager : MonoBehaviour
     {
+
+        private static bool isInit;
+    
         private void Awake()
         {
+            if (isInit)
+            {
+                Destroy(this);
+                return;
+            }
+
+            isInit = true;
+            DontDestroyOnLoad(this);
             LoadGame();
+            Debug.Log("Init save manager "+isInit);
         }
 
         private void OnApplicationQuit()

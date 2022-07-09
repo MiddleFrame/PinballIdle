@@ -41,13 +41,14 @@ namespace Competition
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (_flipperLeft.Player) return;
+            if (_flipperLeft.Player|| CompetitionManager.isWinners[_flipperLeft.Field]) return;
             Right[_flipperLeft.Field] = true;
             IsFlipper[_flipperLeft.Field] = true;
         }
 
         private void OnTriggerExit2D(Collider2D collision)
         {
+            if (_flipperLeft.Player) return;
             IsFlipper[_flipperLeft.Field] = false;
             
             Right[_flipperLeft.Field] = false;

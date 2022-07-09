@@ -33,10 +33,10 @@ RectTransform:
   m_Father: {fileID: 3302688970042850837}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 867, y: 630}
+  m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3854248667280480687
 CanvasRenderer:
@@ -130,12 +130,12 @@ GameObject:
   - component: {fileID: 412146198941712716}
   - component: {fileID: 8264054004642348024}
   m_Layer: 5
-  m_Name: adbreakpanel 1
+  m_Name: adbreakpanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3302688970042850837
 RectTransform:
   m_ObjectHideFlags: 0

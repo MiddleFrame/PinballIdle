@@ -33,6 +33,14 @@ namespace Yodo1.MAS
             }
         }
 
+         public static void InitMasWithAppKey(string appKey)
+        {
+            if (Application.platform == RuntimePlatform.Android && javaClass != null)
+            {
+                javaClass.CallStatic("initMas", currentActivity, appKey, Yodo1U3dMasCallback.Instance.SdkObjectName, Yodo1U3dMasCallback.Instance.SdkMethodName);
+            }
+        }
+
         public static void SetUserConsent(bool consent)
         {
             if (Application.platform == RuntimePlatform.Android && javaClass != null)
@@ -102,7 +110,7 @@ namespace Yodo1.MAS
                 int value = javaClass.CallStatic<int>("getUserAge");
                 return value;
             }
-            return 18;
+            return 0;
         }
 
         public static void ShowInterstitialAd()
@@ -110,7 +118,6 @@ namespace Yodo1.MAS
             if (Application.platform == RuntimePlatform.Android && javaClass != null)
             {
                 javaClass.CallStatic("showInterstitialAd", currentActivity);
-
             }
         }
 
@@ -277,6 +284,33 @@ namespace Yodo1.MAS
             {
                 javaClass.CallStatic(methodName, currentActivity, param);
             }
+        }
+
+        public static void RewardV2(string methodName, string param)
+        {
+            if (Application.platform == RuntimePlatform.Android && javaClass != null)
+            {
+                javaClass.CallStatic(methodName, currentActivity, param);
+            }
+        }
+
+
+        public static void InterstitialV2(string methodName, string param)
+        {
+            if (Application.platform == RuntimePlatform.Android && javaClass != null)
+            {
+                javaClass.CallStatic(methodName, currentActivity, param);
+            }
+        }
+
+        public static bool IsAdLoadedV2(string methodName)
+        {
+            if (Application.platform == RuntimePlatform.Android && javaClass != null)
+            {
+                bool value = javaClass.CallStatic<bool>(methodName);
+                return value;
+            }
+            return false;
         }
 #endif
     }

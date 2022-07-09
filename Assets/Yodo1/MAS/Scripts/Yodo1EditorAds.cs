@@ -29,7 +29,7 @@ public class Yodo1EditorAds : MonoBehaviour
         BannerSampleAdEditor = new Dictionary<string, GameObject>();
         NativeSampleAdEditor = new Dictionary<string, GameObject>();
         EventSystem sceneEventSystem = FindObjectOfType<EventSystem>();
-        if(AdHolder == null)
+        if (AdHolder == null)
         {
             AdHolder = Instantiate(Resources.Load("SampleAds/AdHolder") as GameObject);
             AdHolder.name = "Yodo1AdCanvas";
@@ -40,7 +40,7 @@ public class Yodo1EditorAds : MonoBehaviour
         {
             var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
         }
-        
+
         if (InterstitialSampleAdEditor == null)
         {
             if (AdHolderCanvas != null)
@@ -71,7 +71,7 @@ public class Yodo1EditorAds : MonoBehaviour
                 highestOrder = canvases[i].sortingOrder;
             }
         }
-        return highestOrder+1;
+        return highestOrder + 1;
     }
     public static void ShowStamdardBannerAdsInEditor(string IndexId)
     {
@@ -445,7 +445,7 @@ public class Yodo1EditorAds : MonoBehaviour
         }
         Debug.Log(Yodo1U3dMas.TAG + "Editor Banner ad opened");
     }
-    private static void CalculateAnchoringForNativeAds(int align, float width,float height, out float anchorMinX, out float anchorMinY, out float anchorMaxX, out float anchorMaxY, out float pivotX, out float pivotY, out float anchoredPositionX, out float anchoredPositionY)
+    private static void CalculateAnchoringForNativeAds(int align, float width, float height, out float anchorMinX, out float anchorMinY, out float anchorMaxX, out float anchorMaxY, out float pivotX, out float pivotY, out float anchoredPositionX, out float anchoredPositionY)
     {
         if (align == 0)
         {
@@ -473,14 +473,14 @@ public class Yodo1EditorAds : MonoBehaviour
             anchorMinX = 1f;
             anchorMaxX = 1f;
             pivotX = 0.5f;
-            anchoredPositionX = -width/2;
+            anchoredPositionX = -width / 2;
         }
         else if ((align & (int)Yodo1U3dNativeAdPosition.NativeLeft) == (int)Yodo1U3dNativeAdPosition.NativeLeft)
         {
             anchorMinX = 0f;
             anchorMaxX = 0f;
             pivotX = 0.5f;
-            anchoredPositionX = width/2;
+            anchoredPositionX = width / 2;
         }
 
         if ((align & (int)Yodo1U3dNativeAdPosition.NativeVerticalCenter) == (int)Yodo1U3dNativeAdPosition.NativeVerticalCenter)
@@ -488,7 +488,7 @@ public class Yodo1EditorAds : MonoBehaviour
             anchorMinY = 0.5f;
             anchorMaxY = 0.5f;
             pivotY = 0f;
-            anchoredPositionY = -height/2;
+            anchoredPositionY = -height / 2;
         }
         else if ((align & (int)Yodo1U3dNativeAdPosition.NativeBottom) == (int)Yodo1U3dNativeAdPosition.NativeBottom)
         {
@@ -544,7 +544,6 @@ public class Yodo1EditorAds : MonoBehaviour
 
                     }
                 }
-
             }
             else
             {
@@ -630,7 +629,6 @@ public class Yodo1EditorAds : MonoBehaviour
 
                     }
                 }
-
             }
             else
             {
@@ -658,7 +656,7 @@ public class Yodo1EditorAds : MonoBehaviour
                     }
                 }
             }
-            
+
             NativeSampleAdEditorTemp.transform.SetSiblingIndex(NativeSampleAdEditorTemp.transform.parent.childCount - 3);
             NativeSampleAdEditorTemp.GetComponent<RectTransform>().anchorMin = new Vector2(anchorMinX, anchorMinY);
             NativeSampleAdEditorTemp.GetComponent<RectTransform>().anchorMax = new Vector2(anchorMaxX, anchorMaxY);
@@ -667,14 +665,20 @@ public class Yodo1EditorAds : MonoBehaviour
             NativeSampleAdEditorTemp.GetComponent<RectTransform>().anchoredPosition = new Vector2(anchoredPositionX + offsetX, anchoredPositionY - offsetY);
             NativeSampleAdEditorTemp.SetActive(true);
             NativeSampleAdEditor.Add(IndexId, NativeSampleAdEditorTemp);
-            
-            
         }
         else
         {
             NativeAd.SetActive(true);
         }
         Debug.Log(Yodo1U3dMas.TAG + "Editor Native ad opened");
+    }
+
+    public static void LoadInterstitialAdsInEditor()
+    {
+        if (InterstitialSampleAdEditor != null)
+        {
+            Yodo1U3dMasCallback.ForwardEvent("onInterstitialAdLoadedEvent");
+        }
     }
 
     public static void ShowInterstitialAdsInEditor()
@@ -686,6 +690,15 @@ public class Yodo1EditorAds : MonoBehaviour
             Yodo1U3dMasCallback.ForwardEvent("onInterstitialAdOpenedEvent");
         }
     }
+
+    public static void LoadRewardedVideodsInEditor()
+    {
+        if (RewardedVideoSampleAdEditor != null)
+        {
+            Yodo1U3dMasCallback.ForwardEvent("onRewardedAdLoadedEvent");
+        }
+    }
+
     public static void ShowRewardedVideodsInEditor()
     {
         if (RewardedVideoSampleAdEditor != null)

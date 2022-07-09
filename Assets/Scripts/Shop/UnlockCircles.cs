@@ -130,11 +130,8 @@ namespace Shop
         public UpgradeCircle()
         {
             upgrades = new int[9];
-            if (AnalyticManager.Gold) return;
-            foreach (var _i in upgrades)
-            {
-                upgrades[_i] = 6;
-            }
+            upgrades[0] = 6;
+            
         }
     }
 }

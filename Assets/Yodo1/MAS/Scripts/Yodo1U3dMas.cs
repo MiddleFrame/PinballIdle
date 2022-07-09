@@ -19,7 +19,7 @@ namespace Yodo1.MAS
 
     public class Yodo1U3dMas
     {
-        public static readonly string TAG = "[YodoMas] ";
+        public static readonly string TAG = "[Yodo1Mas] ";
 
         public delegate void InitializeDelegate(bool success, Yodo1U3dAdError error);
         [System.Obsolete("Please use `Yodo1U3dMasCallback.OnSdkInitializedEvent` instead.\n" +
@@ -69,24 +69,45 @@ namespace Yodo1.MAS
         /// </summary>
         public static void InitializeSdk()
         {
+            string appKey = _InitializeSdk();
+            if (appKey != null)
+            {
+                Yodo1U3dMas.InitWithAppKey(appKey);
+            }
+        }
+
+        /// <summary>
+        /// Initialize the default instance of Yodo1 MAS SDK.
+        /// </summary>
+        public static void InitializeMasSdk()
+        {
+            string appKey = _InitializeSdk();
+            if (appKey != null)
+            {
+                Yodo1U3dMas.InitMasWithAppKey(appKey);
+            }
+        }
+
+        private static string _InitializeSdk()
+        {
             if (Yodo1U3dMasCallback.isInitialized())
             {
                 Debug.LogWarning(Yodo1U3dMas.TAG + "The SDK has been initialized, please do not initialize the SDK repeatedly.");
-#if UNITY_EDITOR
-                Yodo1EditorAds.InitializeAds();
-                var typeEditor = typeof(Yodo1U3dMasCallback);
-                if (!GameObject.FindObjectOfType<Yodo1U3dMasCallback>())
-                {
-                    var sdkObjEditor = new GameObject("Yodo1U3dMasCallback", typeEditor).GetComponent<Yodo1U3dMasCallback>(); // Its Awake() method sets Instance.
-                    if (Yodo1U3dMasCallback.Instance != sdkObjEditor)
-                    {
-                        Debug.LogError(Yodo1U3dMas.TAG + "It looks like you have the " + typeEditor.Name + " on a GameObject in your scene. Please remove the script from your scene.");
-                        return;
-                    }
-                }
-                Yodo1U3dMasCallback.ForwardEvent("onSdkInitializedEvent");
-#endif
-                return;
+                //#if UNITY_EDITOR
+                //                Yodo1EditorAds.InitializeAds();
+                //                var typeEditor = typeof(Yodo1U3dMasCallback);
+                //                if (!GameObject.FindObjectOfType<Yodo1U3dMasCallback>())
+                //                {
+                //                    var sdkObjEditor = new GameObject("Yodo1U3dMasCallback", typeEditor).GetComponent<Yodo1U3dMasCallback>(); // Its Awake() method sets Instance.
+                //                    if (Yodo1U3dMasCallback.Instance != sdkObjEditor)
+                //                    {
+                //                        Debug.LogError(Yodo1U3dMas.TAG + "It looks like you have the " + typeEditor.Name + " on a GameObject in your scene. Please remove the script from your scene.");
+                //                        return;
+                //                    }
+                //                }
+                //                Yodo1U3dMasCallback.ForwardEvent("onSdkInitializedEvent");
+                //#endif
+                return null;
             }
 
             var type = typeof(Yodo1U3dMasCallback);
@@ -94,14 +115,14 @@ namespace Yodo1.MAS
             if (Yodo1U3dMasCallback.Instance != sdkObj)
             {
                 Debug.LogError(Yodo1U3dMas.TAG + "It looks like you have the " + type.Name + " on a GameObject in your scene. Please remove the script from your scene.");
-                return;
+                return null;
             }
 
             Yodo1AdSettings settings = Resources.Load("Yodo1/Yodo1AdSettings", typeof(Yodo1AdSettings)) as Yodo1AdSettings;
             if (settings == null)
             {
                 Debug.LogError(Yodo1U3dMas.TAG + "The SDK has not been initialized yet. The Yodo1AdSettings is missing.");
-                return;
+                return null;
             }
 
             string appKey = string.Empty;
@@ -111,16 +132,13 @@ namespace Yodo1.MAS
             appKey = settings.iOSSettings.AppKey.Trim();
 #endif
             Debug.Log(Yodo1U3dMas.TAG + "The SDK is initializing, the app key is " + appKey);
-            Yodo1U3dMas.InitWithAppKey(appKey);
 
 #if UNITY_EDITOR
-            Yodo1U3dMas.InitializeDelegate initializeDelegate = Yodo1U3dMasCallback.GetInitializeDelegate();
-            if (initializeDelegate != null)
-            {
-                initializeDelegate(true, null);
-            }
+            Yodo1EditorAds.InitializeAds();
+            Yodo1U3dMasCallback.ForwardEvent("onSdkInitializedEvent");
 #endif
             Yodo1U3dMasCallback.PrintAutoGameInfo();
+            return appKey;
         }
 
         /// <summary>
@@ -141,8 +159,26 @@ namespace Yodo1.MAS
                 Yodo1U3dAdsAndroid.InitWithAppKey(appKey);
 #endif
             }
-            
-            Yodo1U3dMasCallback.ForwardEvent("onSdkInitializedEvent");
+        }
+
+        /// <summary>
+        /// Initialize with app key.
+        /// </summary>
+        /// <param name="appKey">The app key obtained from MAS Developer Platform.</param>
+        static void InitMasWithAppKey(string appKey)
+        {
+            if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+#if UNITY_IPHONE
+                Yodo1U3dAdsIOS.InitMasWithAppKey(appKey);
+#endif
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+#if UNITY_ANDROID
+                Yodo1U3dAdsAndroid.InitMasWithAppKey(appKey);
+#endif
+            }
         }
 
         #region Privacy Methods
@@ -273,7 +309,7 @@ namespace Yodo1.MAS
 
         public static int GetUserAge()
         {
-            int age = 18;
+            int age = 0;
             if (Application.platform == RuntimePlatform.IPhonePlayer)
             {
 #if UNITY_IPHONE
@@ -297,7 +333,8 @@ namespace Yodo1.MAS
 #if UNITY_IPHONE
                 status = Yodo1U3dAdsIOS.GetAttrackingStatus();
 #endif
-            } else if (Application.platform == RuntimePlatform.Android)
+            }
+            else if (Application.platform == RuntimePlatform.Android)
             {
 #if UNITY_ANDROID
                 Debug.LogWarning("Obtaining is not supported on the Android platform");
@@ -331,12 +368,12 @@ namespace Yodo1.MAS
         #endregion
 
         /// <summary>
-        /// Pausing game when interstitial or reward video ads are playing.
+        /// Pausing game when interstitial or reward video ads are playing. The default value is True.
         ///
-        /// Note: This method is work for Android and Unity editor, the default value is True.
-        /// The pausing of audios in game is only possible if the developers have used Unity's default audio source.
+        /// Note:
+        /// 1. Pausing audios, this method is work for Android and Unity editor. The pausing of audios in game is only possible if the developers have used Unity's default audio source.
         /// If the developers have handled audio separately, pausing of audios will not happen, and the developers will have to handle game pause according to their code.
-        /// Pausing of physics, animations etc will function normally.
+        /// 2. Pausing of physics, animations etc will function normally.
         /// </summary>
         /// <param name="pauseGame"><c>true</c>, the game will be paused when the interstitial or reward video ads are playing, <c>false</c> otherwise.</param>
         public static void SetAutoPauseGame(bool autoPauseGame)
