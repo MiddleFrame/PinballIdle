@@ -13,18 +13,20 @@ namespace Competition
         public static int PlayerPoint => point[0];
         private static int[] point;
         private const int MAX_SCORE = 10000;
-        private static CompetitionManager instance;
+        public static CompetitionManager instance;
         public static int[] balls;
         public static int[] upgrades;
         public static bool[] isUpgradeBuff;
         public static int winner;
         public static bool[] isWinners;
 
-        private static Pattern[] patterns;
+        public static Pattern[] patterns;
         private static int[] currentPattern;
 
         [SerializeField]
         private GameObject[] _completeWindow;
+        
+        public CompetitionTeleport[] _teleports;
 
         [SerializeField]
         private GameObject[] _trapAnim;
@@ -60,7 +62,7 @@ namespace Competition
             var _camera = Camera.main;
             float _ratio = 1f * Screen.height / Screen.width;
             if (_camera != null) _camera.transform.position = new Vector3(0, -11.7f, -24 - 2 * _ratio);
-            balls = new[] {1, 1, 1, 1, 1, 1, 1, 1, 1};
+            balls = new[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
             isUpgradeBuff = new[] {false, false, false, false, false, false, false, false, false};
             upgrades = new[] {1, 1, 1, 1, 1, 1, 1, 1, 1};
             point = new int[9]; //{9997, 9997, 9997, 9997, 9997, 9997, 9997, 9997, 9997};
@@ -238,7 +240,7 @@ namespace Competition
     }
 
 
-    internal class Pattern
+    public class Pattern
     {
         public int[] patterns;
 

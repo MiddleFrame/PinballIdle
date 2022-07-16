@@ -190,5 +190,9 @@ namespace Managers
         {
             FirebaseAnalytics.LogEvent("lose_competition");
         }
+        public static void ReviewWasShow()
+        {
+            FirebaseAnalytics.LogEvent("review_was_show");
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Managers;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class Teleport : MonoBehaviour
     public GameObject spawnPoint;
     public GameObject[] balls;
     private BallsChallenge[] _balls;
+    public TrailRenderer[] _ballsTrail;
     public float angle = 0.2f;
     public float speed;
     public float radius;
@@ -16,6 +18,15 @@ public class Teleport : MonoBehaviour
     private int _a = 1;
     public int field;
 
+    private void Awake()
+    {
+        _ballsTrail = new TrailRenderer[balls.Length];
+        for (int _ball = 0; _ball < balls.Length; _ball++)
+        {
+            _ballsTrail[_ball] = balls[_ball].GetComponent<TrailRenderer>();
+        }
+    }
+
     private void Start()
     {
         _balls = new BallsChallenge[balls.Length];
@@ -23,6 +34,7 @@ public class Teleport : MonoBehaviour
         {
             _balls[_ball] = balls[_ball].GetComponent<BallsChallenge>();
         }
+       
         StartCoroutine(Spawn());
     }
 
@@ -38,6 +50,30 @@ public class Teleport : MonoBehaviour
             _a = -_a;
     }
 
+    public void ChangeTrail(int trail)
+    {
+        foreach (var _trail in _ballsTrail)
+        {
+            _trail.colorGradient = GameManager.trails[trail];
+        }
+       
+
+        if (trail == 0)
+        {
+            foreach (var _ball in balls)
+            {
+                _ball.GetComponent<SpriteRenderer>().color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
+            }
+        }
+        else
+        {
+            foreach (var _ball in balls)
+            {
+                _ball.GetComponent<SpriteRenderer>().color = GameManager.ballColor[trail];
+            }
+        }
+    }
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -79,15 +115,12 @@ public class Teleport : MonoBehaviour
         {
             if (balls[_j].activeSelf) continue;
 
-            /*foreach (var _t in _child)
-            {
-                _t.GetComponent<TrailRenderer>().Clear();
-            }*/
             _balls[_j].timeOnField = 0;
             balls[_j].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             balls[_j].GetComponent<Rigidbody2D>().angularVelocity = 0f;
             balls[_j].transform.localPosition = spawnPoint.transform.localPosition;
             balls[_j].SetActive(true);
+            _ballsTrail[_j].Clear();
 
             yield return new WaitForSeconds(0.8f);
         }

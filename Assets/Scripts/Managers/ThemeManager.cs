@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Controllers;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,8 +40,11 @@ namespace Managers
         private List<SpriteRenderer> _black;
 
         [SerializeField]
+        private List<SpriteRenderer> _mainBalls;
+
+        [SerializeField]
         private List<SpriteRenderer> _gray;
-        
+
         [SerializeField]
         private List<Graphic> _grayUI;
 
@@ -55,6 +59,11 @@ namespace Managers
 
         [SerializeField]
         private List<Graphic> _alpha;
+        [SerializeField]
+        private List<Graphic> _shopLight;
+
+        [SerializeField]
+        private List<Graphic> _shopDark;
 
         [Space(20), ItemNotNull]
         public Theme[] themes;
@@ -74,12 +83,13 @@ namespace Managers
             if (instance == null)
                 instance = this;
             currentTheme = CurrentTheme;
+            if (currentTheme == 0) return;
+            ChangeThemes(currentTheme);
         }
 
         private void Start()
         {
-            if (currentTheme == 0) return;
-            ChangeThemes(currentTheme);
+            
             if (_themeImage != null)
                 _themeImage.sprite = _themeDarkSprite;
         }
@@ -142,6 +152,12 @@ namespace Managers
                 _graphic.color = themes[currentTheme].textColor;
             }
 
+            if (SkinShopController.CurrentTrail == 0)
+                foreach (var _graphic in _mainBalls)
+                {
+                    _graphic.color = themes[currentTheme].textColor;
+                }
+
             foreach (var _graphic in _dark)
             {
                 _graphic.color = themes[currentTheme].darkGray;
@@ -156,6 +172,7 @@ namespace Managers
             {
                 _graphic.color = themes[currentTheme].middleGray;
             }
+
             foreach (var _graphic in _grayUI)
             {
                 _graphic.color = themes[currentTheme].middleGray;
@@ -169,6 +186,14 @@ namespace Managers
             foreach (var _graphic in _alpha)
             {
                 _graphic.color = themes[currentTheme].alphaColor;
+            }
+            foreach (var _graphic in _shopDark)
+            {
+                _graphic.color = themes[currentTheme].shopDark;
+            }
+            foreach (var _graphic in _shopLight)
+            {
+                _graphic.color = themes[currentTheme].shopLight;
             }
 
             changeTheme?.Invoke();
@@ -186,5 +211,7 @@ namespace Managers
         public Color middleGray;
         public Color darkestGray;
         public Color alphaColor;
+        public Color shopLight;
+        public Color shopDark;
     }
 }

@@ -10,6 +10,10 @@ public class IaPurchase : IStoreListener
     public const string BIG_PACK = "get_big_pack";
     public const string LITTLE_PACK = "get_little_pack_daimonds";
     public const string MEDIUM_PACK = "pack_medium_diamond";
+    public const string SPECIAL_OFFER = "special_offer";
+    public const string NOT_SPECIAL_OFFER = "not_special_offer";
+    public const string BALL_TRAIL = "ball_trail";
+    public const string BALL_ANIM = "ball_anim";
     public static IStoreController _storeController;
     private static IExtensionProvider _storeExtensionProvider;
     public void IapInitialize()
@@ -22,6 +26,10 @@ public class IaPurchase : IStoreListener
         _builder.AddProduct(LITTLE_PACK, ProductType.Consumable);
         _builder.AddProduct(MEDIUM_PACK, ProductType.Consumable);
         _builder.AddProduct(COFFEE, ProductType.Consumable);
+        _builder.AddProduct(SPECIAL_OFFER, ProductType.NonConsumable);
+        _builder.AddProduct(NOT_SPECIAL_OFFER, ProductType.NonConsumable);
+        _builder.AddProduct(BALL_TRAIL, ProductType.NonConsumable);
+        _builder.AddProduct(BALL_ANIM, ProductType.NonConsumable);
         UnityPurchasing.Initialize(this, _builder);
     }
 
@@ -49,8 +57,30 @@ public class IaPurchase : IStoreListener
             AdsAndIAP.instance.HideAds();
         }
 
+    }  
+    public static IEnumerator CheckX2()
+    {
+        while (!IsIapInitialized())
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        if (_storeController?.products == null) yield break;
+        if (_storeController.products.WithID(SPECIAL_OFFER).hasReceipt || _storeController.products.WithID(NOT_SPECIAL_OFFER).hasReceipt )
+        {
+            SkinShopController.buymentX2 = 2;
+        }
+
     }
 
+    public static bool CheckProduct(string id)
+    {
+        if (IsIapInitialized())
+            return _storeController.products.WithID(id).hasReceipt;
+        else
+            return false;
+    }
+    
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs purchaseEvent)
     {
         switch (purchaseEvent.purchasedProduct.definition.id)
@@ -69,6 +99,22 @@ public class IaPurchase : IStoreListener
                 break;
             case BIG_PACK:
                 PlayerDataController.Gems += 10000;
+                break;
+            case SPECIAL_OFFER:
+                SkinShopController.ConfBuyTrail();
+                SkinShopController.ConfBuyAnim();
+                SkinShopController.buymentX2 = 2;
+                break;
+            case NOT_SPECIAL_OFFER:
+                SkinShopController.ConfBuyTrail();
+                SkinShopController.ConfBuyAnim();
+                SkinShopController.buymentX2 = 2;
+                break;
+            case BALL_ANIM:
+                SkinShopController.ConfBuyAnim();
+                break;
+            case BALL_TRAIL:
+                SkinShopController.ConfBuyTrail();
                 break;
         }
 

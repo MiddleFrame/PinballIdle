@@ -18,7 +18,13 @@ namespace Managers
         public GameObject oneFieldCanvas;
         public GameObject upperCanvas;
         public GameObject bonusCanvas;
-    
+
+        public static Gradient[] trails;
+        public static Color[] ballColor;
+        [SerializeField]
+        private  Gradient[] _trails;
+        [SerializeField]
+        private  Color[] _ballColor;
         [SerializeField]
         private GameObject text;
 
@@ -41,6 +47,16 @@ namespace Managers
 
         private void Start()
         {
+            trails = new Gradient[_trails.Length];
+            for (int _i = 0; _i < _trails.Length; _i++)
+            {
+                trails[_i] = _trails[_i];
+            } 
+            ballColor = new Color[_ballColor.Length];
+            for (int _i = 0; _i < _ballColor.Length; _i++)
+            {
+                ballColor[_i] = _ballColor[_i];
+            }
             Text.GetComponent<MeshRenderer>().sortingOrder = 3;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             _launchTheGame++;

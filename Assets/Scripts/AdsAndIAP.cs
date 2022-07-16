@@ -23,6 +23,7 @@ public class AdsAndIAP : MonoBehaviour
         IaPurchase _iAPurchase = new IaPurchase();
         _iAPurchase.IapInitialize();
         StartCoroutine(IaPurchase.CheckSubscription());
+        StartCoroutine(IaPurchase.CheckX2());
         if (IaPurchase.IsIapInitialized())
             _donateShopController.Init();
         else
