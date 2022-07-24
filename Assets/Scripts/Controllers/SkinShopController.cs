@@ -121,14 +121,15 @@ namespace Controllers
             {
                 _coinText.text = GameManager.NormalSum(PlayerDataController.PointSum);
                 _diamondText.text = GameManager.NormalSum(PlayerDataController.Gems);
+                
+                _animCost.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_ANIM)
+                    .metadata.localizedPrice
+                    .ToString("C", CultureInfo.CurrentCulture);
+                _trailCost.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_TRAIL).metadata
+                        .localizedPrice)
+                    .ToString("C", CultureInfo.CurrentCulture);
             };
 
-            _animCost.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_ANIM)
-                .metadata.localizedPrice
-                .ToString("C", CultureInfo.CurrentCulture);
-            _trailCost.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_TRAIL).metadata
-                    .localizedPrice)
-                .ToString("C", CultureInfo.CurrentCulture);
             if (DateTime.Now >= DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime")).AddDays(3))
             {
                 _specialCost.text = IaPurchase._storeController.products

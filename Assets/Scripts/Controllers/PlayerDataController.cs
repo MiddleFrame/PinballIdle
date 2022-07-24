@@ -123,6 +123,14 @@ namespace Controllers
                 changeFillAmount();
         }
 
+        public void CloseLevelPanel()
+        {
+            _lvlUpPanel.SetActive(false);
+            if (FieldManager.currentField != 0 || playerStats.lvl[0] != 2) return;
+            MenuController.instance.OpenShop(-2);
+            FindObjectOfType<FieldManager>().OpenAllFields();
+        }
+
         private static void changeFillAmount()
         {
             _instance._exp.fillAmount = playerStats.exp[FieldManager.currentField] /

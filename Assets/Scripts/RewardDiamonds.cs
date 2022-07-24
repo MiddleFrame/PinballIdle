@@ -26,12 +26,14 @@ public class RewardDiamonds : MonoBehaviour
     {
         PlayerDataController.Gems += 10;
         LastReceiveDiamond = DateTime.Now;
+        FindObjectOfType<DonateShopController>().OnEnable();
     }
 
     public static void OnAdReceivedRewardCoin()
     {
         PlayerDataController.PointSum += 100000;
         LastReceiveGold = DateTime.Now;
+        FindObjectOfType<DonateShopController>().OnEnable();
     }
 
     public static void BuyCoins()
