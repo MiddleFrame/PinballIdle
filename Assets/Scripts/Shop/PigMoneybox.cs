@@ -5,7 +5,6 @@ using Controllers;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
-using Yodo1.MAS;
 
 namespace Shop
 {

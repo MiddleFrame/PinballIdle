@@ -2,11 +2,12 @@ using System;
 using System.Collections;
 using Competition;
 using Controllers;
+using GoogleMobileAds.Api;
 using Managers;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Yodo1.MAS;
 using Random = UnityEngine.Random;
 
 namespace Shop
@@ -81,8 +82,7 @@ namespace Shop
         public void StartCompetitive()
         {
             _ruleWindow.SetActive(false);
-            if (YodoAdsManager.instance.isInitialized && !AdsAndIAP.isRemoveAds)
-                YodoAdsManager.bannerAdView.Show();
+            AdManager.ShowBanner();
             _findWindow.SetActive(true);
             CompetitionManager.isBuff[0] = false;
             StartCoroutine(FindCompetitive());
@@ -115,21 +115,22 @@ namespace Shop
                 _players.text = $"{_i}/9";
             }
 
-            if (YodoAdsManager.instance.isInitialized && !AdsAndIAP.isRemoveAds)
-                YodoAdsManager.bannerAdView.Hide();
+            AdManager.HideBanner();
             AnalyticManager.StartCompetition();
             SceneManager.LoadScene(1);
         }
 
-        public void OnRecieveReward()
+        public void OnReceiveReward()
         {
             _ruleWindow.SetActive(false);
-            if (YodoAdsManager.instance.isInitialized && !AdsAndIAP.isRemoveAds)
-                YodoAdsManager.bannerAdView.Show();
-            _findWindow.SetActive(true);
-            CompetitionManager.isBuff[0] = true;
-            StartCoroutine(FindCompetitive());
-            StartCoroutine(Timer());
+          
+                _findWindow.SetActive(true);
+                CompetitionManager.isBuff[0] = true;
+                StartCoroutine(FindCompetitive());
+                StartCoroutine(Timer());
+          
+                AdManager.ShowBanner();
+            
         }
     }
 }

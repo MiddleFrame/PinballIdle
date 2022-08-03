@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class RewardExp : MonoBehaviour
 {
+    public static RewardExp instance;
     [SerializeField]
     private Text _timeExpReward;
 
@@ -16,9 +17,12 @@ public class RewardExp : MonoBehaviour
     private Graphic[] _lvlBuffs;
 
     private static readonly bool[] reward = {false, false, false, false, false, false, false, false, false};
-    
+    private bool _isAfterReward =false;
     private void Awake()
     {
+       
+            instance = this;
+       
         FieldManager.openOneField += openNewField;
     }
     
@@ -26,6 +30,12 @@ public class RewardExp : MonoBehaviour
     {
         LetsScript.exp *= 2;
         StartCoroutine(timeExp());
+    }
+
+    public void RewardLoad()
+    {
+        if(!_isAfterReward)
+            _expBonus.SetActive(true);
     }
 
     private void changeColor()
@@ -57,6 +67,7 @@ public class RewardExp : MonoBehaviour
 
     private IEnumerator timeExp()
     {
+        _isAfterReward = true;
         _expBonus.SetActive(false);
         int _field = FieldManager.currentField;
         reward[_field] = true;
@@ -83,8 +94,11 @@ public class RewardExp : MonoBehaviour
         reward[_field] = false;
         ThemeManager.changeTheme -= changeColor;
 
-
         yield return new WaitForSeconds(60f);
-        _expBonus.SetActive(true);
+        _isAfterReward = false;
+        if (FieldManager.currentField == _field)
+        {
+            RewardLoad();
+        }
     }
 }

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class RewardPoint : MonoBehaviour
 {
     //  private Graphic[] _lvlBuffs;
+    
+    public static RewardPoint instance;
     [SerializeField]
     private Text _timex2Reward;
 
@@ -20,8 +22,10 @@ public class RewardPoint : MonoBehaviour
     public static int[] hitMultiply = {1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 
+    private bool _isAfterReward =false;
     private void Awake()
     {
+        instance = this;
         FieldManager.openOneField += openNewField;
     }
 
@@ -40,7 +44,11 @@ public class RewardPoint : MonoBehaviour
         hitMultiply[FieldManager.currentField] *= 2;
         StartCoroutine(Timex2());
     }
-
+    public void RewardLoad()
+    {
+        if(!_isAfterReward)
+            _x2Bonus.SetActive(true);
+    }
     private void changeColor()
     {
         if (!reward[FieldManager.currentField]) return;
@@ -49,6 +57,7 @@ public class RewardPoint : MonoBehaviour
 
     private IEnumerator Timex2()
     {
+        _isAfterReward = true;
         _x2Bonus.SetActive(false);
 
         int _field = FieldManager.currentField;
@@ -80,6 +89,8 @@ public class RewardPoint : MonoBehaviour
         GameManager.instance.fields[_field].stroke.SetActive(false);
         reward[_field] = false;
         yield return new WaitForSeconds(60f);
+        
+        _isAfterReward = false;
         if (FieldManager.currentField == _field)
         {
             _x2Bonus.SetActive(true);

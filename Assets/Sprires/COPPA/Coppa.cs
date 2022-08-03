@@ -1,7 +1,6 @@
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
-using Yodo1.MAS;
 
 namespace COPPA
 {
@@ -45,10 +44,10 @@ namespace COPPA
 
         public static void InitAds(int year)
         {
-            Yodo1U3dMas.SetCOPPA(year>=13);
+            /*Yodo1U3dMas.SetCOPPA(year>=13);
             Yodo1U3dMas.SetCCPA(true);
             Yodo1U3dMas.SetGDPR(year>=16);
-            Yodo1U3dMas.InitializeSdk();
+            Yodo1U3dMas.InitializeSdk();*/
             Init = true;
             Time.timeScale = 1;
             

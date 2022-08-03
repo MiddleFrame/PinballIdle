@@ -4,6 +4,7 @@ using System.Globalization;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 namespace Controllers
 {
@@ -80,7 +81,7 @@ namespace Controllers
             {
                 PlayerPrefs.SetString("SpecialOfferTime", DateTime.Now.ToString());
             }
-
+            
             CurrentAnim = currentAnim;
             CurrentTrail = currentTrail;
             for (int _i = 0; _i < skins.trail.Length; _i++)
@@ -108,6 +109,7 @@ namespace Controllers
             {
                 skins.trail[7] = true;
             }
+
             if (skins.trail[7] && skins.anim[3])
             {
                 _specialOffer.SetActive(false);
@@ -121,39 +123,33 @@ namespace Controllers
             {
                 _coinText.text = GameManager.NormalSum(PlayerDataController.PointSum);
                 _diamondText.text = GameManager.NormalSum(PlayerDataController.Gems);
-                
+
                 _animCost.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_ANIM)
-                    .metadata.localizedPrice
-                    .ToString("C", CultureInfo.CurrentCulture);
-                _trailCost.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_TRAIL).metadata
-                        .localizedPrice)
-                    .ToString("C", CultureInfo.CurrentCulture);
+                    .metadata.localizedPriceString;
+                _trailCost.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_TRAIL)
+                    .metadata.localizedPriceString);
+                if (DateTime.Now >= DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime")).AddDays(3))
+                {
+                    _specialCost.text = IaPurchase._storeController.products
+                        .WithStoreSpecificID(IaPurchase.NOT_SPECIAL_OFFER)
+                        .metadata.localizedPriceString;
+                    _doubleSpecialCost.gameObject.SetActive(false);
+                    Debug.Log("Not Special");
+                    isSpecial = false;
+                    _timerText.gameObject.SetActive(false);
+                }
+                else
+                {
+                    _specialCost.text = IaPurchase._storeController.products
+                        .WithStoreSpecificID(IaPurchase.SPECIAL_OFFER)
+                        .metadata.localizedPriceString;
+                    _doubleSpecialCost.text = IaPurchase._storeController.products
+                        .WithStoreSpecificID(IaPurchase.NOT_SPECIAL_OFFER).metadata
+                        .localizedPriceString;
+                }
             };
-
-            if (DateTime.Now >= DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime")).AddDays(3))
-            {
-                _specialCost.text = IaPurchase._storeController.products
-                    .WithStoreSpecificID(IaPurchase.NOT_SPECIAL_OFFER)
-                    .metadata.localizedPrice
-                    .ToString("C", CultureInfo.CurrentCulture);
-                _doubleSpecialCost.gameObject.SetActive(false);
-                Debug.Log("Not Special");
-                isSpecial = false;
-                _timerText.gameObject.SetActive(false);
-            }
-            else
-            {
-                _specialCost.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.SPECIAL_OFFER)
-                    .metadata.localizedPrice
-                    .ToString("C", CultureInfo.CurrentCulture);
-                _doubleSpecialCost.text = (IaPurchase._storeController.products
-                        .WithStoreSpecificID(IaPurchase.SPECIAL_OFFER).metadata
-                        .localizedPrice * 2)
-                    .ToString("C", CultureInfo.CurrentCulture);
-               
+            if (DateTime.Now < DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime")).AddDays(3))
                 StartCoroutine(timer());
-            }
-
             _specialTrail = _buyButtonTrail[7];
             _specialAnim = _buyButtonAnim[3];
             _specialOfferStat = _specialOffer;

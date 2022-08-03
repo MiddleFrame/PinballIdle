@@ -4,14 +4,29 @@ using UnityEngine;
 using Firebase;
 using Firebase.Analytics;
 using Firebase.Extensions;
+using Mycom.Tracker.Unity;
+
 
 namespace Managers
 {
     public class AnalyticManager : MonoBehaviour
     {
 
+        public static bool isMyTrackerInit;
         private void Awake()
         {
+#if !UNITY_IOS && !UNITY_ANDROID
+        return;
+#endif
+            // ...
+            // Настройте параметры трекера
+            // ...
+
+            // Инициализируйте трекер в зависимости от платформы
+#if !UNITY_EDITOR
+            MyTracker.Init("94020374764550666248");
+            isMyTrackerInit=true;
+#endif
             Debug.Log("Awake");
         }
 
@@ -140,59 +155,73 @@ namespace Managers
         public static void CompleteChallenge()
         {
             FirebaseAnalytics.LogEvent("complete_challenge");
+            MyTracker.TrackEvent("complete_challenge");
         }
 
         public static void OpenDonateShop()
         {
             FirebaseAnalytics.LogEvent("open_donate_shop");
+            MyTracker.TrackEvent("open_donate_shop");
         }
 
         public static void OpenNewField()
         {
             FirebaseAnalytics.LogEvent("open_new_field");
+            
+            MyTracker.TrackEvent("open_new_field");
         }
 
         public static void OpenNewBall()
         {
             FirebaseAnalytics.LogEvent("open_new_ball");
+            MyTracker.TrackEvent("open_new_ball");
         }
 
         public static void OpenStatistic()
         {
             FirebaseAnalytics.LogEvent("statistic");
+            MyTracker.TrackEvent("statistic");
         }
         public static void BuyCoinForDiamond()
         {
             FirebaseAnalytics.LogEvent("buy_coin_for_diamond");
+            MyTracker.TrackEvent("buy_coin_for_diamond");
         }
 
         public static void ChangeTheme()
         {
             FirebaseAnalytics.LogEvent("change_theme");
+            MyTracker.TrackEvent("change_theme");
         }
         public static void StartCompetition()
         {
             FirebaseAnalytics.LogEvent("start_competition");
+            MyTracker.TrackEvent("start_competition");
         }
         public static void FirstPlaceCompetition()
         {
             FirebaseAnalytics.LogEvent("first_place_competition");
+            MyTracker.TrackEvent("first_place_competition");
         }
         public static void SecondPlaceCompetition()
         {
             FirebaseAnalytics.LogEvent("second_place_competition");
+            MyTracker.TrackEvent("second_place_competition");
         }
         public static void ThirdPlaceCompetition()
         {
             FirebaseAnalytics.LogEvent("third_place_competition");
+            MyTracker.TrackEvent("third_place_competition");
         }
         public static void LoseCompetition()
         {
             FirebaseAnalytics.LogEvent("lose_competition");
+            MyTracker.TrackEvent("lose_competition");
         }
         public static void ReviewWasShow()
         {
             FirebaseAnalytics.LogEvent("review_was_show");
+            MyTracker.TrackEvent("review_was_show");
         }
     }
 }
