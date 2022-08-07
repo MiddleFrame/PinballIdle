@@ -34,8 +34,8 @@ public class Teleport : MonoBehaviour
         {
             _balls[_ball] = balls[_ball].GetComponent<BallsChallenge>();
         }
-       
-        StartCoroutine(Spawn());
+
+        YG.YandexGame.GetDataEvent += () => { StartCoroutine(Spawn()); };
     }
 
     private void Update()

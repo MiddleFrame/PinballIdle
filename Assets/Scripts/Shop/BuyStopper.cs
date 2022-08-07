@@ -1,4 +1,5 @@
-﻿using Controllers;
+﻿using System;
+using Controllers;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,12 +33,15 @@ namespace Shop
 
         private void Start()
         {
-            for (int _i = 0; _i < FieldManager.fields.isOpen.Length; _i++)
+            YG.YandexGame.GetDataEvent += () =>
             {
-                if (!FieldManager.fields.isOpen[_i]) continue;
-                if (grades.isStopper[_i])
-                    openStoppers(_i);
-            }
+                for (int _i = 0; _i < FieldManager.fields.isOpen.Length; _i++)
+                {
+                    if (!FieldManager.fields.isOpen[_i]) continue;
+                    if (grades.isStopper[_i])
+                        openStoppers(_i);
+                }
+            };
         }
 
         private void Update()
@@ -96,7 +100,7 @@ namespace Shop
         }
     }
 
-
+    [Serializable]
     public class StopperGrades
     {
         public bool[] isStopper;

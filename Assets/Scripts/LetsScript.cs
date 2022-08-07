@@ -136,11 +136,6 @@ public class LetsScript : MonoBehaviour
             _anim = StartCoroutine(ChangeColor());
         }
 
-        if (Setting.settings.vibration && _numField == FieldManager.currentField)
-        {
-            Vibration.Vibrate(10);
-        }
-
         collision.rigidbody.AddForce(-collision.contacts[0].normal * FORCE, ForceMode2D.Impulse);
     }
 

@@ -1,6 +1,6 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
-
 public class Statistics : MonoBehaviour
 {
     public static Stats stats;
@@ -26,7 +26,7 @@ public class Statistics : MonoBehaviour
 
 }
 
-
+[Serializable]
 public class Stats
 {
     public long pointSpent =0;

@@ -17,15 +17,18 @@ public class BallsManager : MonoBehaviour
     private GameObject _buyFieldBallButton;
     private void Start()
     {
-        if (balls.fieldBallCount > 0)
+        YG.YandexGame.GetDataEvent += () =>
         {
-            StartCoroutine(firstSpawnFieldBall());
-            if (balls.fieldBallCount == 9)
+            if (balls.fieldBallCount > 0)
             {
-                _buyFieldBallButton.SetActive(false);
+                StartCoroutine(firstSpawnFieldBall());
+                if (balls.fieldBallCount == 9)
+                {
+                    _buyFieldBallButton.SetActive(false);
+                }
             }
-        }
-        
+        };
+
     }
 
     private IEnumerator firstSpawnFieldBall()
@@ -44,7 +47,6 @@ public class BallsManager : MonoBehaviour
         if (PlayerDataController.Gems < costFieldBall)
         {
             GameManager.instance.shop.SetActive(true);
-            AnalyticManager.OpenDonateShop();
             return;
         }
         _fieldBalls[balls.fieldBallCount].SetActive(true);
@@ -58,7 +60,7 @@ public class BallsManager : MonoBehaviour
     
 }
 
-
+[Serializable]
 public class StatsBall
 {
     public int fieldBallCount;

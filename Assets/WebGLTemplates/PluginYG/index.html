@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">	
+
+	<!-- Yandex Games SDK -->
+    <script src="https://yandex.ru/games/sdk/v2"></script>
+
+#if BANNER_DYNAMIC_1 || BANNER_DYNAMIC_2 || BANNER_DYNAMIC_3 || BANNER_DYNAMIC_4 || BANNER_DYNAMIC_5 || BANNER_DYNAMIC_6 || BANNER_STATIC_1 || BANNER_STATIC_2
+    <!-- Yandex.RTB -->
+    <script>window.yaContextCb=window.yaContextCb||[]</script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+#endif
+    
+#if BANNER_DYNAMIC_1
+    <style>
+        #RTB1 {
+			position: fixed;
+			width: 70%;
+			height: 12%;
+			left: 15%;
+			top: 88%;
+            display: none;
+        }
+        #RTB1.show {
+            display: block;
+        }
+    </style>
+#endif
+
+#if BANNER_DYNAMIC_2
+    <style>
+        #RTB2 {
+			position: fixed;
+			width: 70%;
+			height: 12%;
+			left: 15%;
+			top: 88%;
+            display: none;
+        }
+        #RTB2.show {
+            display: block;
+        }
+    </style>
+#endif
+
+#if BANNER_DYNAMIC_3
+    <style>
+        #RTB3 {
+			position: fixed;
+			width: 70%;
+			height: 12%;
+			left: 15%;
+			top: 88%;
+            display: none;
+        }
+        #RTB3.show {
+            display: block;
+        }
+    </style>
+#endif
+
+#if BANNER_DYNAMIC_4
+    <style>
+        #RTB4 {
+			position: fixed;
+			width: 70%;
+			height: 12%;
+			left: 15%;
+			top: 88%;
+            display: none;
+        }
+        #RTB4.show {
+            display: block;
+        }
+    </style>
+#endif
+
+#if BANNER_DYNAMIC_5
+    <style>
+        #RTB5 {
+			position: fixed;
+			width: 70%;
+			height: 12%;
+			left: 15%;
+			top: 88%;
+            display: none;
+        }
+        #RTB5.show {
+            display: block;
+        }
+    </style>
+#endif
+
+#if BANNER_DYNAMIC_6
+    <style>
+        #RTB6 {
+			position: fixed;
+			width: 70%;
+			height: 12%;
+			left: 15%;
+			top: 88%;
+            display: none;
+        }
+        #RTB6.show {
+            display: block;
+        }
+    </style>
+#endif
+
+#if BANNER_STATIC_1
+    <style>
+        #RTBStatic1 {
+			position: fixed;
+			width: 80%;
+			height: 12%;
+			left: 50%;
+			bottom: 0%;
+			transform: translate(-50%, 0%);
+            display: none;
+        }
+        #RTBStatic1.show {
+            display: block;
+        }
+    </style>
+#endif
+
+#if BANNER_STATIC_2
+    <style>
+        #RTBStatic2 {
+			position: fixed;
+			width: 80%;
+			height: 12%;
+			left: 50%;
+			top: 0%;
+			transform: translate(-50%, 0%);
+            display: none;
+        }
+        #RTBStatic2.show {
+            display: block;
+        }
+    </style>
+#endif
+
+  </head>
+  <body class="{{{ SPLASH_SCREEN_STYLE.toLowerCase() }}}">
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas"></canvas>
+    </div>
+    <div id="loading-cover" style="display:none;">
+      <div id="unity-loading-bar">
+        <div id="unity-logo"><img src="logo.png"></div>
+        <div id="unity-progress-bar-empty" style="display: none;">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+#if BANNER_DYNAMIC_1
+    <div id = "RTB1">
+        <div id="yandex_rtb_{{{ BANNER_DYNAMIC_1 }}}"></div>
+        <script>
+            const rbt1 = document.querySelector('#RTB1');
+
+            function RenderRTB1()
+            {
+                try{
+                    window.yaContextCb.push(()=>{
+                      Ya.Context.AdvManager.render({
+                        renderTo: 'yandex_rtb_{{{ BANNER_DYNAMIC_1 }}}',
+                        blockId: '{{{ BANNER_DYNAMIC_1 }}}'
+                      })
+                    })
+                }
+                catch{
+                    console.info('RTB1 Crash!');
+                }
+            }
+
+            function ActivityRTB1(state){
+                if (state){
+                    rbt1.classList.add('show');
+                }
+                else{
+                    rbt1.classList.remove('show');
+                }
+            }
+
+            function RecalculateRTB1(_width, _height, _left, _top)
+            {
+                document.getElementById('RTB1').style.width = _width;
+                document.getElementById('RTB1').style.height = _height; 
+                document.getElementById('RTB1').style.left = _left;
+                document.getElementById('RTB1').style.top = _top;
+            }
+        </script>
+    </div>
+#endif
+
+#if BANNER_DYNAMIC_2
+    <div id = "RTB2">
+        <div id="yandex_rtb_{{{ BANNER_DYNAMIC_2 }}}"></div>
+        <script>
+            const rbt2 = document.querySelector('#RTB2');
+
+            function RenderRTB2()
+            {
+                try{
+                    window.yaContextCb.push(()=>{
+                      Ya.Context.AdvManager.render({
+                        renderTo: 'yandex_rtb_{{{ BANNER_DYNAMIC_2 }}}',
+                        blockId: '{{{ BANNER_DYNAMIC_2 }}}'
+                      })
+                    })
+                }
+                catch{
+                    console.info('RTB2 Crash!');
+                }
+            }
+            
+            function ActivityRTB2(state){
+                if (state){
+                    rbt2.classList.add('show');
+                }
+                else{
+                    rbt2.classList.remove('show');
+                }
+            }
+
+            function RecalculateRTB2(_width, _height, _left, _top)
+            {
+                document.getElementById('RTB2').style.width = _width;
+                document.getElementById('RTB2').style.height = _height;
+                document.getElementById('RTB2').style.left = _left;
+                document.getElementById('RTB2').style.top = _top;
+            }
+        </script>
+    </div>
+#endif
+
+#if BANNER_DYNAMIC_3
+    <div id = "RTB3">
+        <div id="yandex_rtb_{{{ BANNER_DYNAMIC_3 }}}"></div>
+        <script>
+            const rbt3 = document.querySelector('#RTB3');
+
+            function RenderRTB3()
+            {
+                try{
+                    window.yaContextCb.push(()=>{
+                      Ya.Context.AdvManager.render({
+                        renderTo: 'yandex_rtb_{{{ BANNER_DYNAMIC_3 }}}',
+                        blockId: '{{{ BANNER_DYNAMIC_3 }}}'
+                      })
+                    })
+                }
+                catch{
+                    console.info('RTB3 Crash!');
+                }
+            }
+
+            function ActivityRTB3(state){
+                if (state){
+                    rbt3.classList.add('show');
+                }
+                else{
+                    rbt3.classList.remove('show');
+                }
+            }
+
+            function RecalculateRTB3(_width, _height, _left, _top)
+            {
+                document.getElementById('RTB3').style.width = _width;
+                document.getElementById('RTB3').style.height = _height;
+                document.getElementById('RTB3').style.left = _left;
+                document.getElementById('RTB3').style.top = _top;
+            }
+        </script>
+    </div>
+#endif
+
+#if BANNER_DYNAMIC_4
+    <div id = "RTB4">
+        <div id="yandex_rtb_{{{ BANNER_DYNAMIC_4 }}}"></div>
+        <script>
+            const rbt4 = document.querySelector('#RTB4');
+
+            function RenderRTB4()
+            {
+                try{
+                    window.yaContextCb.push(()=>{
+                      Ya.Context.AdvManager.render({
+                        renderTo: 'yandex_rtb_{{{ BANNER_DYNAMIC_4 }}}',
+                        blockId: '{{{ BANNER_DYNAMIC_4 }}}'
+                      })
+                    })
+                }
+                catch{
+                    console.info('RTB4 Crash!');
+                }
+            }
+
+            function ActivityRTB4(state){
+                if (state){
+                    rbt4.classList.add('show');
+                }
+                else{
+                    rbt4.classList.remove('show');
+                }
+            }
+
+            function RecalculateRTB4(_width, _height, _left, _top)
+            {
+                document.getElementById('RTB4').style.width = _width;
+                document.getElementById('RTB4').style.height = _height;
+                document.getElementById('RTB4').style.left = _left;
+                document.getElementById('RTB4').style.top = _top;
+            }
+        </script>
+    </div>
+#endif
+
+#if BANNER_DYNAMIC_5
+    <div id = "RTB5">
+        <div id="yandex_rtb_{{{ BANNER_DYNAMIC_5 }}}"></div>
+        <script>
+            const rbt5 = document.querySelector('#RTB5');
+
+            function RenderRTB5()
+            {
+                try{
+                    window.yaContextCb.push(()=>{
+                      Ya.Context.AdvManager.render({
+                        renderTo: 'yandex_rtb_{{{ BANNER_DYNAMIC_5 }}}',
+                        blockId: '{{{ BANNER_DYNAMIC_5 }}}'
+                      })
+                    })
+                }
+                catch{
+                    console.info('RTB5 Crash!');
+                }
+            }
+
+            function ActivityRTB5(state){
+                if (state){
+                    rbt5.classList.add('show');
+                }
+                else{
+                    rbt5.classList.remove('show');
+                }
+            }
+
+            function RecalculateRTB5(_width, _height, _left, _top)
+            {
+                document.getElementById('RTB5').style.width = _width;
+                document.getElementById('RTB5').style.height = _height;
+                document.getElementById('RTB5').style.left = _left;
+                document.getElementById('RTB5').style.top = _top;
+            }
+        </script>
+    </div>
+#endif
+
+#if BANNER_DYNAMIC_6
+    <div id = "RTB6">
+        <div id="yandex_rtb_{{{ BANNER_DYNAMIC_6 }}}"></div>
+        <script>
+            const rbt6 = document.querySelector('#RTB6');
+
+            function RenderRTB6()
+            {
+                try{
+                    window.yaContextCb.push(()=>{
+                      Ya.Context.AdvManager.render({
+                        renderTo: 'yandex_rtb_{{{ BANNER_DYNAMIC_6 }}}',
+                        blockId: '{{{ BANNER_DYNAMIC_6 }}}'
+                      })
+                    })
+                }
+                catch{
+                    console.info('RTB6 Crash!');
+                }
+            }
+
+            function ActivityRTB6(state){
+                if (state){
+                    rbt6.classList.add('show');
+                }
+                else{
+                    rbt6.classList.remove('show');
+                }
+            }
+
+            function RecalculateRTB6(_width, _height, _left, _top)
+            {
+                document.getElementById('RTB6').style.width = _width;
+                document.getElementById('RTB6').style.height = _height;
+                document.getElementById('RTB6').style.left = _left;
+                document.getElementById('RTB6').style.top = _top;
+            }
+        </script>
+    </div>
+#endif
+
+#if BANNER_STATIC_1
+    <div id = "RTBStatic1">
+        <div id="yandex_rtb_{{{ BANNER_STATIC_1 }}}"></div>
+        <script>
+            const rbtLoadGame1 = document.querySelector('#RTBStatic1');
+            rbtLoadGame1.classList.add('show');
+
+            function RenderStaticRTB1()
+            {
+                if(document.getElementById('RTBStatic1').style.display != 'none')
+                {
+                    try{
+                        window.yaContextCb.push(()=>{
+                          Ya.Context.AdvManager.render({
+                            renderTo: 'yandex_rtb_{{{ BANNER_STATIC_1 }}}',
+                            blockId: '{{{ BANNER_STATIC_1 }}}'
+                          })
+                        })
+                    }
+                    catch{
+                        console.info('BANNER_STATIC_1 Crash!');
+                    }
+
+                    setTimeout(function(){RenderStaticRTB1();}, 31000);
+                }
+            }
+            RenderStaticRTB1();
+        </script>
+    </div>
+#endif
+
+#if BANNER_STATIC_2
+    <div id = "RTBStatic2">
+        <div id="yandex_rtb_{{{ BANNER_STATIC_2 }}}"></div>
+        <script>
+            const rbtLoadGame2 = document.querySelector('#RTBStatic2');
+            rbtLoadGame2.classList.add('show');
+
+            function RenderStaticRTB2()
+            {
+                if(document.getElementById('RTBStatic2').style.display != 'none')
+                {
+                    try{
+                        window.yaContextCb.push(()=>{
+                          Ya.Context.AdvManager.render({
+                            renderTo: 'yandex_rtb_{{{ BANNER_STATIC_2 }}}',
+                            blockId: '{{{ BANNER_STATIC_2 }}}'
+                          })
+                        })
+                    }
+                    catch{
+                        console.info('BANNER_STATIC_2 Crash!');
+                    }
+
+                    setTimeout(function(){RenderStaticRTB2();}, 31000);
+                }
+            }
+            RenderStaticRTB2();
+        </script>
+    </div>
+#endif
+
+    <script>
+      const hideFullScreenButton = "";
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      const config = {
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#if MEMORY_FILENAME
+        memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "{{{ COMPANY_NAME }}}",
+        productName: "{{{ PRODUCT_NAME }}}",
+        productVersion: "{{{ PRODUCT_VERSION }}}",
+      };
+
+      const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingCover = document.querySelector("#loading-cover");
+      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+      const spinner = document.querySelector('.spinner');
+
+      const canFullscreen = (function() {
+        for (const key of [
+            'exitFullscreen',
+            'webkitExitFullscreen',
+            'webkitCancelFullScreen',
+            'mozCancelFullScreen',
+            'msExitFullscreen',
+          ]) {
+          if (key in document) {
+            return true;
+          }
+        }
+        return false;
+      }());
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+        //config.devicePixelRatio = 1;
+      }
+#if BACKGROUND_FILENAME
+      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
+#endif
+      loadingCover.style.display = "";
+	  
+      var player;
+      var lb;
+	  var myGameInstance = null;
+	  
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+          createUnityInstance(canvas, config, (progress) => {
+          spinner.style.display = "none";
+          progressBarEmpty.style.display = "";
+          progressBarFull.style.width = `${100 * progress}%`;
+        }).then((unityInstance) => {
+		  myGameInstance  = unityInstance;
+		  
+          loadingCover.style.display = "none";
+		  
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+	  
+      YaGames.init(
+          {
+              adv:
+              {
+                  onAdvClose: wasShown => {
+                      console.info('adv closed!');
+                  }
+              }
+          })
+          .then(ysdk => {
+              ysdk.adv.showFullscreenAdv();
+              window.ysdk = ysdk;
+          });
+
+        function initPlayer(photoSize, _scopes) {
+            return ysdk.getPlayer({ scopes: _scopes }).then(_player => {
+
+                player = _player;
+
+                var playerName = player.getName();
+                var playerPhoto = player.getPhoto(photoSize);
+
+                if (!_scopes){
+                    playerName = "anonymous";
+                    playerPhoto = "null";
+                }
+
+                if (player.getMode() === 'lite') {
+
+                    // Игрок не авторизован
+                    NotAuthorized();
+                }
+                else
+                {
+                    // Игрок авторизован
+                    console.log('auth ok');
+                    var authJson = { "playerAuth": "resolved", "playerName": playerName, "playerId": player.getUniqueID(), "playerPhoto": playerPhoto };
+                    myGameInstance.SendMessage('YandexGame', 'SetAuthorization', JSON.stringify(authJson));
+                }
+            }).catch(err =>
+            {
+                // Ошибка при инициализации объекта Player
+                console.log('auth err');
+                NotAuthorized();
+            });
+        }
+
+        function NotAuthorized()
+        {
+            console.log('auth failed');
+            var authJson = { "playerAuth": "rejected", "playerName": "unauthorized", "playerId": player.getUniqueID(), "playerPhoto": "null" };
+            myGameInstance.SendMessage('YandexGame', 'SetAuthorization', JSON.stringify(authJson));
+        }
+
+        function AuthorizationCheck(photoSize, scopes, staticRBTinGame)
+        {
+#if BANNER_STATIC_1
+            if(!staticRBTinGame){
+                rbtLoadGame1.classList.remove('show');
+                document.getElementById('RTBStatic1').style.display = 'none';
+            }
+#endif
+#if BANNER_STATIC_2
+            if(!staticRBTinGame){
+                rbtLoadGame2.classList.remove('show');
+                document.getElementById('RTBStatic2').style.display = 'none';
+            }
+#endif
+            initPlayer(photoSize, scopes);
+        }
+
+        function OpenAuthDialog(photoSize, scopes) {
+            ysdk.auth.openAuthDialog().then(() => {
+                initPlayer(photoSize, scopes);
+            }).catch(() => {
+                AuthorizationCheck(photoSize, scopes);
+            });
+        }
+
+        function SaveCloud(jsonData, flush){
+            player.setData({
+                saves: [jsonData],
+            }, flush).then(() => {
+                console.log('Cloud saves are installed');
+            });
+        }
+
+        function LoadCloud(){
+            player.getData(["saves"]).then(data => {
+                if (data.saves) {
+                    myGameInstance.SendMessage('YandexGame', 'SetLoadSaves', JSON.stringify(data.saves));
+                }
+                else{
+                    ResetProgress();
+                }
+            }).catch(() => {
+                console.log('load err');
+            });
+        }
+
+        function ResetProgress(){
+            myGameInstance.SendMessage('YandexGame', 'ResetSaveCloud');
+        }
+
+        function InitLeaderboard() {
+            ysdk.getLeaderboards().then(_lb => {
+                lb = _lb
+                myGameInstance.SendMessage('YandexGame', 'InitializedLB');
+            });
+        }
+
+        function SetLeaderboardScores(_name, score) {
+            ysdk.getLeaderboards()
+                .then(lb => {
+                    lb.setLeaderboardScore(_name, score);
+                });
+        }
+
+        function GetLeaderboardScores(nameLB, maxPlayers, quantityTop, quantityAround, photoSize, auth)
+        {
+            console.log('LeaderBoard Name: ' + nameLB);
+
+            if (auth)
+            {
+                ysdk.getLeaderboards()
+                    .then(lb => {
+                        lb.getLeaderboardEntries('' + nameLB, { quantityTop: quantityTop, includeUser: true, quantityAround: quantityAround })
+                            .then(res => {
+                                EntriesLB(res, nameLB, maxPlayers, photoSize);
+                            });
+                        });
+            }
+            else
+            {
+                ysdk.getLeaderboards()
+                    .then(lb => {
+                        lb.getLeaderboardEntries('' + nameLB, { quantityTop: quantityTop })
+                            .then(res => {
+                                EntriesLB(res, nameLB, maxPlayers, photoSize);
+                            });
+                        });
+            }
+        }
+
+        function EntriesLB(res, nameLB, maxPlayers, photoSize)
+        {
+            console.log(res);
+            var LeaderboardEntriesText = '';
+
+            var playersCount;
+            if (res.entries.length < maxPlayers) {
+            playersCount = res.entries.length;
+            }
+            else {
+                playersCount = maxPlayers;
+            }
+
+            let rank = [maxPlayers];
+            let photo = [maxPlayers];
+            let playersName = [maxPlayers];
+            let scorePlayers = [maxPlayers];
+
+            var i;
+            for (i = 0; i < playersCount; i++) {
+                rank[i] = res.entries[i].rank;
+                scorePlayers[i] = res.entries[i].score;
+
+                if (photoSize == 'nonePhoto' || res.entries[i].player.scopePermissions.avatar != "allow") {
+                    photo[i] = 'nonePhoto';
+                }
+                else {
+                    photo[i] = res.entries[i].player.getAvatarSrc(photoSize);
+                }
+
+                if (res.entries[i].player.scopePermissions.public_name != "allow") {
+                    playersName[i] = "Anonymous";
+                }
+                else {
+                    playersName[i] = res.entries[i].player.publicName;
+                }
+
+                LeaderboardEntriesText += rank[i] + '. ' + playersName[i] + ": " + scorePlayers[i] + '\n';
+            }
+
+            if (playersCount == 0) {
+                LeaderboardEntriesText = 'No data';
+            }
+
+            var jsonLB = { "nameLB": nameLB, "entries": LeaderboardEntriesText, "rank": rank, "photo": photo, "playersName": playersName, "scorePlayers": scorePlayers };
+            myGameInstance.SendMessage('YandexGame', 'LeaderboardEntries', JSON.stringify(jsonLB));
+        }
+
+        function FullscreenShow() {
+            window.ysdk.adv.showFullscreenAdv(
+                {
+                    callbacks: {
+                        onOpen: () => {
+                          myGameInstance.SendMessage('YandexGame', 'OpenFullscreen');
+                        },
+                        onClose: () => {
+                          myGameInstance.SendMessage('YandexGame', 'CloseFullscreen');
+                        }
+                    }
+                });
+        }
+
+        function RewardedShow(id) {
+            window.ysdk.adv.showRewardedVideo(
+                {
+                    callbacks:
+                    {
+                        onOpen: () => {
+                          myGameInstance.SendMessage('YandexGame', 'OpenVideo', id);
+                        },
+                        onClose: () => {
+                          myGameInstance.SendMessage('YandexGame', 'CloseVideo', id);
+                            console.log('Video ad closed. Id: ' + id);
+                        }
+                    }
+                });
+        }
+
+        function LanguageRequest() {
+            myGameInstance.SendMessage('YandexGame', 'SetLanguage', ysdk.environment.i18n.lang);
+        }
+
+        function RequestingEnvironmentData() {
+            var jsonEnvir = { 
+                "domain": ysdk.environment.i18n.tld, 
+                "deviceType": ysdk.deviceInfo.type, 
+                "isMobile": ysdk.deviceInfo.isMobile(), 
+                "isDesktop": ysdk.deviceInfo.isDesktop(), 
+                "isTablet": ysdk.deviceInfo.isTablet(), 
+                "isTV": ysdk.deviceInfo.isTV(),
+                "appID": ysdk.environment.app.id,
+                "browserLang": ysdk.environment.browser.lang,
+                "payload": ysdk.environment.payload
+            };
+            myGameInstance.SendMessage('YandexGame', 'SetEnvironmentData', JSON.stringify(jsonEnvir));
+        }
+
+        function Review() {
+            ysdk.feedback.canReview()
+                .then(({ value, reason }) => {
+                    if (value) {
+                        ysdk.feedback.requestReview()
+                            .then(({ feedbackSent }) => {
+                                console.log(feedbackSent);
+                            })
+                    } else {
+                        console.log(reason)
+                    }
+                })
+        }
+	  
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>

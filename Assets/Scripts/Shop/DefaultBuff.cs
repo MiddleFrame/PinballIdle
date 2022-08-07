@@ -70,25 +70,30 @@ namespace Shop
 
         private void Start()
         {
-            autoMod = new bool[grade.autoFlippers.Length];
-            for (int _i = 0; _i < FieldManager.fields.isOpen.Length; _i++)
+            YG.YandexGame.GetDataEvent += () =>
             {
-                if (!FieldManager.fields.isOpen[_i]) continue;
-                BuffHit(_i, grade.pointOnBit[_i] - 1);
-                BuffBonusTime(_i, (grade.bonusTime[_i] - 30) / 5);
-                BuffExpBonusTime(_i, (grade.expTime[_i] - 30) / 5);
-                if (grade.autoFlippers[_i])
+                autoMod = new bool[grade.autoFlippers.Length];
+                for (int _i = 0; _i < FieldManager.fields.isOpen.Length; _i++)
                 {
-                    AutoMod(_i);
+                    if (!FieldManager.fields.isOpen[_i]) continue;
+                    BuffHit(_i, grade.pointOnBit[_i] - 1);
+                    BuffBonusTime(_i, (grade.bonusTime[_i] - 30) / 5);
+                    BuffExpBonusTime(_i, (grade.expTime[_i] - 30) / 5);
+                    if (grade.autoFlippers[_i])
+                    {
+                        AutoMod(_i);
+                    }
                 }
-            }
-            if (grade.autoFlippers[0])
-            {
-                AutoMod(0);
-                AutoMod();
-            }
-            if(grade.autoFlippers[0])
-                ChallengeManager.Instance.OpenChallenges();
+
+                if (grade.autoFlippers[0])
+                {
+                    AutoMod(0);
+                    AutoMod();
+                }
+
+                if (grade.autoFlippers[0])
+                    ChallengeManager.Instance.OpenChallenges();
+            };
         }
 
         private void Update()

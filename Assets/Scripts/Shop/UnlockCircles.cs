@@ -1,4 +1,5 @@
-﻿using Controllers;
+﻿using System;
+using Controllers;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,21 +36,24 @@ namespace Shop
 
         private void Start()
         {
-            if (MAX_UPGRADE != GameManager.instance.fields[0].circles.Length-1)
+            YG.YandexGame.GetDataEvent += () =>
             {
-                Debug.LogError(
-                    $"Max unlock circle ({MAX_UPGRADE}) not equal current circle on field ({GameManager.instance.fields[0].circles.Length-1})");
-            }
-
-            for (int _field = 0; _field < FieldManager.fields.isOpen.Length; _field++)
-            {
-                if (!FieldManager.fields.isOpen[_field]) continue;
-                _cost[_field] = START_COST + MULTI_COST * upgrade.upgrades[_field];
-                for (int _i = 0; _i < upgrade.upgrades[_field]; _i++)
+                if (MAX_UPGRADE != GameManager.instance.fields[0].circles.Length - 1)
                 {
-                    OpenCircle(_field, _i);
+                    Debug.LogError(
+                        $"Max unlock circle ({MAX_UPGRADE}) not equal current circle on field ({GameManager.instance.fields[0].circles.Length - 1})");
                 }
-            }
+
+                for (int _field = 0; _field < FieldManager.fields.isOpen.Length; _field++)
+                {
+                    if (!FieldManager.fields.isOpen[_field]) continue;
+                    _cost[_field] = START_COST + MULTI_COST * upgrade.upgrades[_field];
+                    for (int _i = 0; _i < upgrade.upgrades[_field]; _i++)
+                    {
+                        OpenCircle(_field, _i);
+                    }
+                }
+            };
         }
 
         private void Update()
@@ -122,7 +126,7 @@ namespace Shop
         }
     }
 
-
+    [Serializable]
     public class UpgradeCircle
     {
         public int[] upgrades;

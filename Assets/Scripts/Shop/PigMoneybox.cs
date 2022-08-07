@@ -45,26 +45,27 @@ namespace Shop
 
         private void Start()
         {
-            Debug.Log("Next claim: " + NextClaim);
-            if (NextClaim != DateTime.MinValue)
+            YG.YandexGame.GetDataEvent += () =>
             {
-                if (NextClaim < DateTime.Now)
+                Debug.Log("Next claim: " + NextClaim);
+                if (NextClaim != DateTime.MinValue)
                 {
-                    _points = MaxPoints;
-                    openMoneybox();
+                    if (NextClaim < DateTime.Now)
+                    {
+                        _points = MaxPoints;
+                        openMoneybox();
+                    }
+                    else
+                    {
+                        countPoints();
+                    }
                 }
                 else
                 {
-                    countPoints();
+                    NextClaim = DateTime.Now.AddMinutes((float) MaxPoints /
+                                                        (PlayerDataController.LevelSum * 15));
                 }
-            }
-            else
-            {
-                NextClaim = DateTime.Now.AddMinutes((float) MaxPoints /
-                                                    (PlayerDataController.LevelSum * 15));
-            }
-
-            StartCoroutine(checkSignal());
+            };
         }
 
        

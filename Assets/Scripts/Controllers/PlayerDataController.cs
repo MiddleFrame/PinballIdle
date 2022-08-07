@@ -83,13 +83,16 @@ namespace Controllers
 
         private void Start()
         {
-            _levelSum = playerStats.lvl.Sum();
-            PigMoneybox.MaxPoints = 5000 + _levelSum * 1000;
-            Debug.Log("Sum of levels: " + LevelSum);
-            PointSum = playerStats.pointSum;
-            Gems = playerStats.gems;
-            changeFillAmount();
-            changeLevelText();
+            YG.YandexGame.GetDataEvent += () =>
+            {
+                _levelSum = playerStats.lvl.Sum();
+                PigMoneybox.MaxPoints = 5000 + _levelSum * 1000;
+                Debug.Log("Sum of levels: " + LevelSum);
+                PointSum = playerStats.pointSum;
+                Gems = playerStats.gems;
+                changeFillAmount();
+                changeLevelText();
+            };
         }
 
         private static void changeFieldsLevelText()
@@ -151,7 +154,7 @@ namespace Controllers
         }
     }
 
-
+    [Serializable]
     public class PlayerStats
     {
         public long pointSum;

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -46,29 +47,32 @@ public class Setting : MonoBehaviour
 
     private void Start()
     {
-        if (!settings.exNum)
+        YG.YandexGame.GetDataEvent += () =>
         {
-            settings.exNum = !settings.exNum;
-            ChangeNum();
-        }
+            if (!settings.exNum)
+            {
+                settings.exNum = !settings.exNum;
+                ChangeNum();
+            }
 
-        if (!settings.sound)
-        {
-            settings.sound = !settings.sound;
-            ChangeSound();
-        }
+            if (!settings.sound)
+            {
+                settings.sound = !settings.sound;
+                ChangeSound();
+            }
 
-        if (!settings.levelText)
-        {
-            settings.levelText = !settings.levelText;
-            ViewLevelText();
-        }
+            if (!settings.levelText)
+            {
+                settings.levelText = !settings.levelText;
+                ViewLevelText();
+            }
 
-        if (!settings.vibration)
-        {
-            settings.vibration = !settings.vibration;
-            ChangeVibration();
-        }
+            if (!settings.vibration)
+            {
+                settings.vibration = !settings.vibration;
+                ChangeVibration();
+            }
+        };
     }
 
     public void ChangeNum()
@@ -116,7 +120,7 @@ public class Setting : MonoBehaviour
     }
 }
 
-
+[Serializable]
 public class MyPlayerSettings
 {
     public bool exNum = true;

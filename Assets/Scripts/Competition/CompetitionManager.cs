@@ -236,7 +236,7 @@ namespace Competition
             for (int _i = 0; _i < MenuController.shopOpen.Length; _i++)
                 MenuController.shopOpen[_i] = null;
             SceneManager.LoadScene(0);
-            AdManager.ShowInterstitial();
+            FindObjectOfType<YG.YandexGame>()._Review();
         }
     }
 

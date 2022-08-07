@@ -28,13 +28,7 @@ namespace Managers
         [SerializeField]
         private GameObject text;
 
-        public Sprite _lockFunctionSprite;
-
-        private int _launchTheGame
-        {
-            get => PlayerPrefs.GetInt("launchTheGame",0);
-            set => PlayerPrefs.SetInt("launchTheGame",value);
-        }
+      
         public static GameObject Text => instance.text;
 
 
@@ -42,7 +36,6 @@ namespace Managers
         {
             instance = this;
             LetsScript.isCompetitive = false;
-            Vibration.Init();
         }
 
         private void Start()
@@ -59,12 +52,6 @@ namespace Managers
             }
             Text.GetComponent<MeshRenderer>().sortingOrder = 3;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
-            _launchTheGame++;
-            if (_launchTheGame%3 == 0 && _launchTheGame >0)
-            {
-                Debug.Log("tryReview");
-                StartCoroutine(Review.OpenReview());
-            }
         }
 
 

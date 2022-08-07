@@ -96,7 +96,6 @@ namespace Managers
 
         public void ChangeTheme()
         {
-            AnalyticManager.ChangeTheme();
             ChangeThemes();
             _themeImage.sprite = currentTheme == 0 ? _themeLightSprite : _themeDarkSprite;
         }

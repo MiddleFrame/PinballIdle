@@ -2,10 +2,8 @@ using System;
 using System.Collections;
 using Competition;
 using Controllers;
-using GoogleMobileAds.Api;
 using Managers;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -56,21 +54,24 @@ namespace Shop
 
         private void Update()
         {
-            if (_isOpen && PlayerDataController.PointSum < 1000000)
+            YG.YandexGame.GetDataEvent += () =>
             {
-                _isOpen = false;
-                _startCompetitive.raycastTarget = false;
-                _startCompetitive.sprite = _closeSprite;
-                GameManager.TextDown(_costText);
-            }
-            else if (!_isOpen && PlayerDataController.PointSum >= 1000000)
-            {
-                _isOpen = true;
-                _startCompetitive.raycastTarget = true;
-                _startCompetitive.sprite = _openSprite;
+                if (_isOpen && PlayerDataController.PointSum < 1000000)
+                {
+                    _isOpen = false;
+                    _startCompetitive.raycastTarget = false;
+                    _startCompetitive.sprite = _closeSprite;
+                    GameManager.TextDown(_costText);
+                }
+                else if (!_isOpen && PlayerDataController.PointSum >= 1000000)
+                {
+                    _isOpen = true;
+                    _startCompetitive.raycastTarget = true;
+                    _startCompetitive.sprite = _openSprite;
 
-                GameManager.TextUp(_costText);
-            }
+                    GameManager.TextUp(_costText);
+                }
+            };
         }
 
         public void BuyCompetitive()
@@ -82,7 +83,6 @@ namespace Shop
         public void StartCompetitive()
         {
             _ruleWindow.SetActive(false);
-            AdManager.ShowBanner();
             _findWindow.SetActive(true);
             CompetitionManager.isBuff[0] = false;
             StartCoroutine(FindCompetitive());
@@ -115,8 +115,6 @@ namespace Shop
                 _players.text = $"{_i}/9";
             }
 
-            AdManager.HideBanner();
-            AnalyticManager.StartCompetition();
             SceneManager.LoadScene(1);
         }
 
@@ -129,7 +127,6 @@ namespace Shop
                 StartCoroutine(FindCompetitive());
                 StartCoroutine(Timer());
           
-                AdManager.ShowBanner();
             
         }
     }

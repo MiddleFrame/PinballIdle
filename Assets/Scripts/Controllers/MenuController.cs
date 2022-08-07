@@ -2,6 +2,7 @@ using System;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
+using YG;
 
 public class MenuController : MonoBehaviour
 {
@@ -30,6 +31,11 @@ public class MenuController : MonoBehaviour
 
     public void OpenShop(int shop)
     {
+        if (AdManager.isNeedInterstitial)
+        {
+           YandexGame.FullscreenShow();
+            AdManager.isNeedInterstitial = false;
+        }
         currentMenu = -1;
         for (int _j = 0; _j < _shops.Length; _j++)
         {

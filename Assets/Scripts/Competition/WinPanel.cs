@@ -55,24 +55,20 @@ namespace Competition
                         _reward.text = "100";
                         _buttonReward.text = "100";
                         _buttonX2reward.text = "200";
-                        AnalyticManager.FirstPlaceCompetition();
                         break;
                     case 2:
 
                         _reward.text = "75";
                         _buttonReward.text = "75";
                         _buttonX2reward.text = "150";
-                        AnalyticManager.SecondPlaceCompetition();
                         break;
                     case 3:
 
                         _reward.text = "50";
                         _buttonReward.text = "50";
                         _buttonX2reward.text = "100";
-                        AnalyticManager.ThirdPlaceCompetition();
                         break;
                     default:
-                        AnalyticManager.LoseCompetition();
                         break;
                 }
             }

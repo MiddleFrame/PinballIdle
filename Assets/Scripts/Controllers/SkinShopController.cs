@@ -84,36 +84,25 @@ namespace Controllers
             
             CurrentAnim = currentAnim;
             CurrentTrail = currentTrail;
-            for (int _i = 0; _i < skins.trail.Length; _i++)
+            YG.YandexGame.GetDataEvent += () =>
             {
-                if (skins.trail[_i])
+                for (int _i = 0; _i < skins.trail.Length; _i++)
                 {
-                    _buyButtonTrail[_i].SetActive(false);
+                    if (skins.trail[_i])
+                    {
+                        _buyButtonTrail[_i].SetActive(false);
+                    }
                 }
-            }
 
-            for (int _i = 0; _i < skins.anim.Length; _i++)
-            {
-                if (skins.anim[_i])
+                for (int _i = 0; _i < skins.anim.Length; _i++)
                 {
-                    _buyButtonAnim[_i].SetActive(false);
+                    if (skins.anim[_i])
+                    {
+                        _buyButtonAnim[_i].SetActive(false);
+                    }
                 }
-            }
 
-            if (IaPurchase.CheckProduct(IaPurchase.BALL_ANIM))
-            {
-                skins.anim[3] = true;
-            }
-
-            if (IaPurchase.CheckProduct(IaPurchase.BALL_TRAIL))
-            {
-                skins.trail[7] = true;
-            }
-
-            if (skins.trail[7] && skins.anim[3])
-            {
-                _specialOffer.SetActive(false);
-            }
+            };
 
             _strokesAnim[CurrentAnim].SetActive(true);
             _selectedTextAnim[CurrentAnim].SetActive(true);
@@ -305,7 +294,7 @@ namespace Controllers
     }
 }
 
-
+[Serializable]
 public class Skins
 {
     public bool[] trail = {true, false, false, false, false, false, false, false};

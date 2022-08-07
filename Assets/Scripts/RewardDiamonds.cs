@@ -39,7 +39,6 @@ public class RewardDiamonds : MonoBehaviour
     public static void BuyCoins()
     {
         if (PlayerDataController.Gems < 50) return;
-        AnalyticManager.BuyCoinForDiamond();
         PlayerDataController.PointSum += 1000000;
         PlayerDataController.Gems -= 50;
     }

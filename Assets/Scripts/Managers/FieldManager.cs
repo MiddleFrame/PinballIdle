@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Controllers;
 using UnityEngine;
+using YG;
 
 namespace Managers
 {
@@ -46,13 +47,16 @@ namespace Managers
         {
             currentField = 0;
             Debug.Log("Fields: " + JsonUtility.ToJson(fields));
-            for (int _i = 0; _i < fields.isOpen.Length; _i++)
+            YandexGame.GetDataEvent += () =>
             {
-                if (fields.isOpen[_i])
+                for (int _i = 0; _i < fields.isOpen.Length; _i++)
                 {
-                    buyFields(_i);
+                    if (fields.isOpen[_i])
+                    {
+                        buyFields(_i);
+                    }
                 }
-            }
+            };
         }
 
         public void OpenAllFields()
@@ -166,11 +170,9 @@ namespace Managers
             if (PlayerDataController.Gems < fieldCosts[field])
             {
                 GameManager.instance.shop.SetActive(true);
-                AnalyticManager.OpenDonateShop();
                 return;
             }
 
-            AnalyticManager.OpenNewField();
             PlayerDataController.Gems -= fieldCosts[field];
             fields.isOpen[field] = true;
             PlayerDataController.playerStats.lvl[field] = 1;
@@ -186,7 +188,7 @@ namespace Managers
         }
     }
 
-
+    [Serializable]
     public class Fields
     {
         public bool[] isOpen = {true, false, false, false, false, false, false, false, false};

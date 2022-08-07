@@ -1,6 +1,9 @@
+using System;
+using System.Collections;
 using Controllers;
 using Shop;
 using UnityEngine;
+using YG;
 
 namespace Managers
 {
@@ -17,9 +20,13 @@ namespace Managers
                 return;
             }
 
+            YandexGame.GetDataEvent += LoadGame;
+            YandexGame.GetDataEvent += ()=>
+            {
+                StartCoroutine(SavedGame());
+            };
             isInit = true;
             DontDestroyOnLoad(this);
-            LoadGame();
             Debug.Log("Init save manager "+isInit);
         }
 
@@ -28,7 +35,14 @@ namespace Managers
             SaveGame();
         }
 
-          
+        private IEnumerator SavedGame()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(5f);
+                SaveGame();
+            }
+        }
   
           private void OnApplicationPause(bool pause)
           {
@@ -36,63 +50,42 @@ namespace Managers
               {
                   SaveGame();
               }
-              else
-              {
-                  LoadGame();
-              }
           }
 
+          private void OnApplicationFocus(bool hasFocus)
+          {
+              SaveGame();
+          }
 
-        private static void SaveGame()
+          private static void SaveGame()
         {
             Debug.Log("Save player data.");
-            PlayerPrefs.SetString("DefaultBuff", JsonUtility.ToJson(DefaultBuff.grade));
-            PlayerPrefs.SetString("StoppersBuff", JsonUtility.ToJson(BuyStopper.grades));
-            PlayerPrefs.SetString("Statistic", JsonUtility.ToJson(Statistics.stats));
-            PlayerPrefs.SetString("PlayerStats", JsonUtility.ToJson(PlayerDataController.playerStats));
-            PlayerPrefs.SetString("Settings", JsonUtility.ToJson(Setting.settings));
-            PlayerPrefs.SetString("Fields", JsonUtility.ToJson(FieldManager.fields));
-            PlayerPrefs.SetString("UpgradeCircle", JsonUtility.ToJson(UnlockCircles.upgrade));
-            PlayerPrefs.SetString("Challenge", JsonUtility.ToJson(ChallengeManager.progress));
-            PlayerPrefs.SetString("BallsManager", JsonUtility.ToJson(BallsManager.balls));
-            PlayerPrefs.SetString("Skins", JsonUtility.ToJson(SkinShopController.skins));
+            YandexGame.savesData.defaultBuff = DefaultBuff.grade;
+            YandexGame.savesData.buyStopper = BuyStopper.grades;
+            YandexGame.savesData.statistics = Statistics.stats;
+            YandexGame.savesData.playerDataController = PlayerDataController.playerStats;
+            YandexGame.savesData.setting = Setting.settings;
+            YandexGame.savesData.fieldManager = FieldManager.fields;
+            YandexGame.savesData.unlockCircles = UnlockCircles.upgrade;
+            YandexGame.savesData.ballsManager = ChallengeManager.progress;
+            YandexGame.savesData.challengeManager = BallsManager.balls;
+            YandexGame.savesData.skinShopController = SkinShopController.skins;
+            YandexGame.SaveProgress();
         }
 
 
         private static void LoadGame()
         {
-            Debug.Log("Loading player data.");
-            if (!PlayerPrefs.HasKey("version 2.3"))
-            {
-                PlayerPrefs.DeleteAll();
-                PlayerPrefs.SetFloat("version 2.3", 0);
-            }
-
-            DefaultBuff.grade =
-                JsonUtility.FromJson<CostAndGrade>(PlayerPrefs.GetString("DefaultBuff",
-                    JsonUtility.ToJson(new CostAndGrade())));
-            BuyStopper.grades =
-                JsonUtility.FromJson<StopperGrades>(PlayerPrefs.GetString("StoppersBuff",
-                    JsonUtility.ToJson(new StopperGrades(9))));
-            Statistics.stats =
-                JsonUtility.FromJson<Stats>(PlayerPrefs.GetString("Statistic", JsonUtility.ToJson(new Stats())));
-            PlayerDataController.playerStats =
-                JsonUtility.FromJson<PlayerStats>(PlayerPrefs.GetString("PlayerStats",
-                    JsonUtility.ToJson(new PlayerStats())));
-            Setting.settings =
-                JsonUtility.FromJson<MyPlayerSettings>(PlayerPrefs.GetString("Settings",
-                    JsonUtility.ToJson(new MyPlayerSettings())));
-            FieldManager.fields =
-                JsonUtility.FromJson<Fields>(PlayerPrefs.GetString("Fields", JsonUtility.ToJson(new Fields())));
-            UnlockCircles.upgrade = JsonUtility.FromJson<UpgradeCircle>(
-                PlayerPrefs.GetString("UpgradeCircle", JsonUtility.ToJson(new UpgradeCircle())));  
-            BallsManager.balls = JsonUtility.FromJson<StatsBall>(
-                PlayerPrefs.GetString("BallsManager", JsonUtility.ToJson(new StatsBall())));
-            ChallengeManager.progress = JsonUtility.FromJson<ChallengeProgress>(
-                PlayerPrefs.GetString("Challenge", JsonUtility.ToJson(new ChallengeProgress())));
-            SkinShopController.skins = JsonUtility.FromJson<Skins>(
-                PlayerPrefs.GetString("Skins", JsonUtility.ToJson(new Skins())));
-            Debug.Log("Player data complete loading.");
+            DefaultBuff.grade= YandexGame.savesData.defaultBuff;
+            BuyStopper.grades=YandexGame.savesData.buyStopper;
+            Statistics.stats=YandexGame.savesData.statistics ;
+            PlayerDataController.playerStats= YandexGame.savesData.playerDataController ;
+            Setting.settings=YandexGame.savesData.setting ;
+            FieldManager.fields=YandexGame.savesData.fieldManager ;
+            UnlockCircles.upgrade= YandexGame.savesData.unlockCircles ;
+            ChallengeManager.progress= YandexGame.savesData.ballsManager;
+            BallsManager.balls= YandexGame.savesData.challengeManager ;
+            SkinShopController.skins=YandexGame.savesData.skinShopController  ;
         }
     }
 }

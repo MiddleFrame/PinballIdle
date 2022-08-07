@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Controllers;
 using Shop;
@@ -151,13 +152,16 @@ namespace Managers
 
         private void Start()
         {
-            for (int _field = 0; _field < 9; _field++)
+            YG.YandexGame.GetDataEvent += () =>
             {
-                if (progress.currentProgressChallenge[_field] > 0)
-                    StartChallenge(_field);
-            }
+                for (int _field = 0; _field < 9; _field++)
+                {
+                    if (progress.currentProgressChallenge[_field] > 0)
+                        StartChallenge(_field);
+                }
 
-            ChangeTextAndFill();
+                ChangeTextAndFill();
+            };
         }
 
         private void ChangeCostBallText()
@@ -236,7 +240,6 @@ namespace Managers
 
         private void getReward()
         {
-            AnalyticManager.CompleteChallenge();
             _getRewardText.text =
                 $"You get: {300 + 100 * progress.countCompleteChallenge[FieldManager.currentField]} gems.";
             _completePanel.SetActive(true);
@@ -311,7 +314,6 @@ namespace Managers
 
         public void ConfirmStartChallenge()
         {
-            AnalyticManager.StartChallenge();
             StartChallenge(FieldManager.currentField);
         }
 
@@ -323,7 +325,6 @@ namespace Managers
         public void BuyBall()
         {
             if (PlayerDataController.Gems < 100) return;
-            AnalyticManager.OpenNewBall();
             progress.balls[FieldManager.currentField]++;
             PlayerDataController.Gems -= 100;
             ChangeCostBallText();
@@ -350,7 +351,7 @@ namespace Managers
         }
     }
 
-
+    [Serializable]
     public class ChallengeProgress
     {
         public int[] countCompleteChallenge = {0, 0, 0, 0, 0, 0, 0, 0, 0};
