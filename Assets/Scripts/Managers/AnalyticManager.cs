@@ -13,6 +13,7 @@ namespace Managers
     {
 
         public static bool isMyTrackerInit;
+        public static bool isRemoteInit;
         private void Awake()
         {
 #if !UNITY_IOS && !UNITY_ANDROID
@@ -65,13 +66,12 @@ namespace Managers
                                                 Debug.LogError(task1.Exception);
                                             }
 
+                                            isRemoteInit = true;
                                             Debug.Log(
                                                 $"Firebase config last fetch time {Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.Info.FetchTime}.");
-                                            if (PlayerDataController.playerStats == null)
-                                            {
-                                                
-                                            }
-                                                
+                                            IaPurchase.NumberOfPrice = (int)GetLong("Price");
+                                            Debug.Log("This price "+IaPurchase.NumberOfPrice);
+
                                         });
                                 }
                                 catch (Exception _e)

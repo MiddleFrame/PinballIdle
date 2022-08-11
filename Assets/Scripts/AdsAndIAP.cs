@@ -1,4 +1,5 @@
 using System.Collections;
+using Managers;
 using UnityEngine;
 
 public class AdsAndIAP : MonoBehaviour
@@ -18,8 +19,10 @@ public class AdsAndIAP : MonoBehaviour
         instance = this;
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
+        while (!AnalyticManager.isRemoteInit)
+            yield return null;
         IaPurchase _iAPurchase = new IaPurchase();
         _iAPurchase.IapInitialize();
         StartCoroutine(IaPurchase.CheckSubscription());

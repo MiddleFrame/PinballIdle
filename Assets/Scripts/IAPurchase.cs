@@ -5,21 +5,36 @@ using UnityEngine.Purchasing;
 
 public class IaPurchase : IStoreListener
 {
-    public const string REMOVE_ADS = "remove_ads";
-    public const string COFFEE = "coffee";
-    public const string BIG_PACK = "get_big_pack";
-    public const string LITTLE_PACK = "get_little_pack_daimonds";
-    public const string MEDIUM_PACK = "pack_medium_diamond";
-    public const string SPECIAL_OFFER = "special_offer";
-    public const string NOT_SPECIAL_OFFER = "not_special_offer";
-    public const string BALL_TRAIL = "ball_trail";
-    public const string BALL_ANIM = "ball_anim";
+    public static string REMOVE_ADS = "remove_ads";
+    public static string COFFEE = "coffee";
+    public static string BIG_PACK = "get_big_pack";
+    public static string LITTLE_PACK = "get_little_pack_daimonds";
+    public static string MEDIUM_PACK = "pack_medium_diamond";
+    public static string SPECIAL_OFFER = "special_offer";
+    public static string NOT_SPECIAL_OFFER = "not_special_offer";
+    public static string BALL_TRAIL = "ball_trail";
+    public static string BALL_ANIM = "ball_anim";
+    public static int NumberOfPrice;
     public static IStoreController _storeController;
     private static IExtensionProvider _storeExtensionProvider;
+
     public void IapInitialize()
     {
         if (IsIapInitialized())
             return;
+        if (NumberOfPrice != 0)
+        {
+            REMOVE_ADS += "_1";
+            BIG_PACK += "_1";
+            LITTLE_PACK += "_1";
+            MEDIUM_PACK += "_1";
+            COFFEE += "_1";
+            SPECIAL_OFFER += "_1";
+            NOT_SPECIAL_OFFER += "_1";
+            BALL_TRAIL += "_1";
+            BALL_ANIM += "_1";
+        }
+
         var _builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
         _builder.AddProduct(REMOVE_ADS, ProductType.NonConsumable);
         _builder.AddProduct(BIG_PACK, ProductType.Consumable);
@@ -30,6 +45,8 @@ public class IaPurchase : IStoreListener
         _builder.AddProduct(NOT_SPECIAL_OFFER, ProductType.NonConsumable);
         _builder.AddProduct(BALL_TRAIL, ProductType.NonConsumable);
         _builder.AddProduct(BALL_ANIM, ProductType.NonConsumable);
+
+
         UnityPurchasing.Initialize(this, _builder);
     }
 
@@ -51,13 +68,14 @@ public class IaPurchase : IStoreListener
 
         if (_storeController?.products == null) yield break;
         AdsAndIAP.isRemoveAds = false;
-        if (_storeController.products.WithID(REMOVE_ADS).hasReceipt)
+        if (CheckProduct("remove_ads") ||
+            CheckProduct("remove_ads_1"))
         {
             AdsAndIAP.isRemoveAds = true;
             AdsAndIAP.instance.HideAds();
         }
+    }
 
-    }  
     public static IEnumerator CheckX2()
     {
         while (!IsIapInitialized())
@@ -66,56 +84,62 @@ public class IaPurchase : IStoreListener
         }
 
         if (_storeController?.products == null) yield break;
-        if (_storeController.products.WithID(SPECIAL_OFFER).hasReceipt || _storeController.products.WithID(NOT_SPECIAL_OFFER).hasReceipt )
+        if (CheckProduct("special_offer") ||
+            CheckProduct("not_special_offer_1") ||
+            CheckProduct("special_offer_1") ||
+            CheckProduct("not_special_offer"))
         {
             SkinShopController.buymentX2 = 2;
         }
-
     }
 
     public static bool CheckProduct(string id)
     {
-        if (IsIapInitialized())
+        if (IsIapInitialized() && _storeController.products.WithID(id) != null)
             return _storeController.products.WithID(id).hasReceipt;
         else
             return false;
     }
-    
+
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs purchaseEvent)
     {
-        switch (purchaseEvent.purchasedProduct.definition.id)
+        if (purchaseEvent.purchasedProduct.definition.id == REMOVE_ADS)
         {
-            case REMOVE_ADS:
-                
-                AdsAndIAP.isRemoveAds = true;
-                AdsAndIAP.instance.HideAds();
-                Debug.Log("buy: " + (purchaseEvent.purchasedProduct.definition.id));
-                break;
-            case LITTLE_PACK:
-                PlayerDataController.Gems += 300;
-                break;
-            case MEDIUM_PACK:
-                PlayerDataController.Gems += 2000;
-                break;
-            case BIG_PACK:
-                PlayerDataController.Gems += 10000;
-                break;
-            case SPECIAL_OFFER:
-                SkinShopController.ConfBuyTrail();
-                SkinShopController.ConfBuyAnim();
-                SkinShopController.buymentX2 = 2;
-                break;
-            case NOT_SPECIAL_OFFER:
-                SkinShopController.ConfBuyTrail();
-                SkinShopController.ConfBuyAnim();
-                SkinShopController.buymentX2 = 2;
-                break;
-            case BALL_ANIM:
-                SkinShopController.ConfBuyAnim();
-                break;
-            case BALL_TRAIL:
-                SkinShopController.ConfBuyTrail();
-                break;
+            AdsAndIAP.isRemoveAds = true;
+            AdsAndIAP.instance.HideAds();
+            Debug.Log("buy: " + (purchaseEvent.purchasedProduct.definition.id));
+        }
+        else if (purchaseEvent.purchasedProduct.definition.id == LITTLE_PACK)
+        {
+            PlayerDataController.Gems += 300;
+        }
+        else if (purchaseEvent.purchasedProduct.definition.id == MEDIUM_PACK)
+        {
+            PlayerDataController.Gems += 2000;
+        }
+        else if (purchaseEvent.purchasedProduct.definition.id == BIG_PACK)
+        {
+            PlayerDataController.Gems += 10000;
+        }
+        else if (purchaseEvent.purchasedProduct.definition.id == SPECIAL_OFFER)
+        {
+            SkinShopController.ConfBuyTrail();
+            SkinShopController.ConfBuyAnim();
+            SkinShopController.buymentX2 = 2;
+        }
+        else if (purchaseEvent.purchasedProduct.definition.id == NOT_SPECIAL_OFFER)
+        {
+            SkinShopController.ConfBuyTrail();
+            SkinShopController.ConfBuyAnim();
+            SkinShopController.buymentX2 = 2;
+        }
+        else if (purchaseEvent.purchasedProduct.definition.id == BALL_ANIM)
+        {
+            SkinShopController.ConfBuyAnim();
+        }
+        else if (purchaseEvent.purchasedProduct.definition.id == BALL_TRAIL)
+        {
+            SkinShopController.ConfBuyTrail();
         }
 
         return PurchaseProcessingResult.Complete;
@@ -140,7 +164,6 @@ public class IaPurchase : IStoreListener
     {
         _storeController = controller;
         _storeExtensionProvider = extensions;
-        
     }
 
     public static void BuyProductID(string productId)

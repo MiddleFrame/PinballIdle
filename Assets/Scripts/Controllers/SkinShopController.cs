@@ -100,12 +100,12 @@ namespace Controllers
                 }
             }
 
-            if (IaPurchase.CheckProduct(IaPurchase.BALL_ANIM))
+            if (IaPurchase.CheckProduct("ball_anim_1")||IaPurchase.CheckProduct("ball_anim_1"))
             {
                 skins.anim[3] = true;
             }
 
-            if (IaPurchase.CheckProduct(IaPurchase.BALL_TRAIL))
+            if (IaPurchase.CheckProduct("ball_trail") || IaPurchase.CheckProduct("ball_trail_1"))
             {
                 skins.trail[7] = true;
             }

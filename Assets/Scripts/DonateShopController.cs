@@ -33,23 +33,17 @@ public class DonateShopController : MonoBehaviour
     public void Init()
     {
         _diamondPacks[0].text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.LITTLE_PACK)
-            .metadata.localizedPrice
-            .ToString("C", CultureInfo.CurrentCulture);
+            .metadata.localizedPriceString;
         _fakePrice.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.MEDIUM_PACK).metadata
-                .localizedPrice * 2)
-            .ToString("C", CultureInfo.CurrentCulture);
+            .localizedPrice * 2).ToString();
         _diamondPacks[1].text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.MEDIUM_PACK)
-            .metadata.localizedPrice
-            .ToString("C", CultureInfo.CurrentCulture);
+            .metadata.localizedPriceString;
         _diamondPacks[2].text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BIG_PACK).metadata
-            .localizedPrice
-            .ToString("C", CultureInfo.CurrentCulture);
+            .localizedPriceString;
         _coffeeCost.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.COFFEE).metadata
-            .localizedPrice
-            .ToString("C", CultureInfo.CurrentCulture);
+            .localizedPriceString;
         _removeAds.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.REMOVE_ADS).metadata
-            .localizedPrice
-            .ToString("C", CultureInfo.CurrentCulture);
+            .localizedPriceString;
     }
 
     private Coroutine _timerDiamond;
