@@ -696,7 +696,9 @@ namespace YG
             Message("Reset Save Progress");
             savesData = new SavesYG { isFirstSession = false };
 
-            if (infoYG.LocalizationEnable && infoYG.callingLanguageCheck == InfoYG.CallingLanguageCheck.FirstLaunchOnly)
+            if (infoYG.LocalizationEnable &&
+                (infoYG.callingLanguageCheck == InfoYG.CallingLanguageCheck.FirstLaunchOnly ||
+                infoYG.callingLanguageCheck == InfoYG.CallingLanguageCheck.EveryGameLaunch))
                 _LanguageRequest();
 
             _SDKEnabled = true;

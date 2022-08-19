@@ -37,6 +37,10 @@ namespace YG
         static float timerRBT4 = 31;
         static float timerRBT5 = 31;
         static float timerRBT6 = 31;
+        bool focus = true;
+
+        void OnApplicationFocus(bool hasFocus) => focus = hasFocus;
+        void OnApplicationPause(bool isPaused) => focus = !isPaused;
 
         private void Awake()
         {
@@ -52,7 +56,8 @@ namespace YG
             YandexGame.CloseFullAdEvent += ActivateRTB;
             YandexGame.OpenVideoEvent += DeactivateRTB;
             YandexGame.CloseVideoEvent += ActivateRTB;
-            YandexGame.CheaterVideoEvent += ActivateRTB;
+
+            focus = true;
 
             if (YandexGame.SDKEnabled)
                 ActivateRTB();
@@ -66,6 +71,7 @@ namespace YG
             YandexGame.OpenVideoEvent -= DeactivateRTB;
             YandexGame.CloseVideoEvent -= ActivateRTB;
             YandexGame.CheaterVideoEvent -= ActivateRTB;
+
             DeactivateRTB();
         }
 
@@ -73,8 +79,9 @@ namespace YG
         {
             if (CheckDevice())
             {
+                RecalculateRect();
                 CancelInvoke("RecalculateRect");
-                Invoke("RecalculateRect", 0.5f);
+                Invoke("RecalculateRect", 0.3f);
             }
         }
 
@@ -83,7 +90,7 @@ namespace YG
             if (CheckDevice())
             {
                 // Обновление RTB-блоков
-                if (YandexGame.SDKEnabled)
+                if (YandexGame.SDKEnabled && focus && NoAds())
                 {
                     if (RTB_Number == RTBNumber.One)
                     {
@@ -93,7 +100,7 @@ namespace YG
                         {
                             timerRBT1 = 0;
                             RecalculateRect();
-                            Invoke("RenderRTB1", 0.01f);
+                            RenderRTB1();
                         }
                     }
                     else if (RTB_Number == RTBNumber.Two)
@@ -104,7 +111,7 @@ namespace YG
                         {
                             timerRBT2 = 0;
                             RecalculateRect();
-                            Invoke("RenderRTB2", 0.01f);
+                            RenderRTB2();
                         }
                     }
                     else if (RTB_Number == RTBNumber.Three)
@@ -115,7 +122,7 @@ namespace YG
                         {
                             timerRBT3 = 0;
                             RecalculateRect();
-                            Invoke("RenderRTB3", 0.01f);
+                            RenderRTB3();
                         }
                     }
                     else if (RTB_Number == RTBNumber.Four)
@@ -126,7 +133,7 @@ namespace YG
                         {
                             timerRBT4 = 0;
                             RecalculateRect();
-                            Invoke("RenderRTB4", 0.01f);
+                            RenderRTB4();
                         }
                     }
                     else if (RTB_Number == RTBNumber.Five)
@@ -137,7 +144,7 @@ namespace YG
                         {
                             timerRBT5 = 0;
                             RecalculateRect();
-                            Invoke("RenderRTB5", 0.01f);
+                            RenderRTB5();
                         }
                     }
                     else if (RTB_Number == RTBNumber.Six)
@@ -148,7 +155,7 @@ namespace YG
                         {
                             timerRBT6 = 0;
                             RecalculateRect();
-                            Invoke("RenderRTB6", 0.01f);
+                            RenderRTB6();
                         }
                     }
                 }
@@ -252,8 +259,7 @@ namespace YG
 
         void ActivateRTB() 
         { 
-            if (!YandexGame.nowFullAd && !YandexGame.nowVideoAd)
-                ActivityRTB(true);
+            if (NoAds()) ActivityRTB(true);
         }
         void ActivateRTB(int id) => ActivateRTB();
         void DeactivateRTB() => ActivityRTB(false);
@@ -373,6 +379,13 @@ namespace YG
             {
                 return allowDevice.Value;
             }
+        }
+
+        bool NoAds()
+        {
+            if (!YandexGame.nowFullAd && !YandexGame.nowVideoAd)
+                return true;
+            else return false;
         }
     }
 }

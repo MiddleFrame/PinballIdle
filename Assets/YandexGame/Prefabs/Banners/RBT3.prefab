@@ -127,11 +127,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RTB_Number: 2
   device: 0
-  minSize: {x: 20, y: 20}
+  minSize: {x: 50, y: 50}
+  rt: {fileID: 4213469765189186420}
   UIScaleMode: 0
   referenceResolution: {x: 1920, y: 1080}
   Match: 0
-  rt: {fileID: 4213469765189186420}
 --- !u!223 &4213469765294362806
 Canvas:
   m_ObjectHideFlags: 0

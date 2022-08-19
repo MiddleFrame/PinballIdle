@@ -54,7 +54,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RTB_Number: 4
   device: 0
-  minSize: {x: 20, y: 20}
+  minSize: {x: 50, y: 50}
   rt: {fileID: 8869135460827219567}
   UIScaleMode: 0
   referenceResolution: {x: 1920, y: 1080}
