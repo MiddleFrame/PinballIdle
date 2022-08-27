@@ -10,10 +10,11 @@ public class Teleport : MonoBehaviour
     public GameObject[] balls;
     private BallsChallenge[] _balls;
     public TrailRenderer[] _ballsTrail;
+    public bool isRotate;
     public float angle = 0.2f;
     public float speed;
     public float radius;
-    public int fieldMultiply = 1;
+    public float fieldMultiply = 1;
     public float restrictions = 1.35f;
     private int _a = 1;
     public int field;
@@ -41,13 +42,15 @@ public class Teleport : MonoBehaviour
     private void Update()
     {
         angle += _a * Time.deltaTime;
-
         var _position = centerSpawn.transform.position;
         var _x = Mathf.Cos(angle * speed) * radius + _position.x;
         var _y = fieldMultiply * Mathf.Sin(angle * speed) * radius + _position.y;
         spawnPoint.transform.position = new Vector3(_x, _y, spawnPoint.transform.position.z);
-        if ((_x < _position.x - restrictions && _a > 0) || (_x > _position.x + restrictions && _a < 0))
-            _a = -_a;
+        if (!isRotate)
+        {
+            if ((_x < _position.x - restrictions && _a > 0) || (_x > _position.x + restrictions && _a < 0))
+                _a = -_a;
+        }
     }
 
     public void ChangeTrail(int trail)

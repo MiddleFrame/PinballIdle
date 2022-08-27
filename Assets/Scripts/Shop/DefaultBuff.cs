@@ -106,13 +106,13 @@ namespace Shop
                             _isOpen = false;
                             _buttonImage.raycastTarget = false;
                             _buttonImage.sprite = GameManager.instance._lockedSprite;
-                            GameManager.TextDown(_costText.gameObject);
+                            GameManager.TextDown(_costText.transform.parent.gameObject);
                             break;
                         case false when PlayerDataController.PointSum >= _costOnGrade[FieldManager.currentField]:
                             _isOpen = true;
                             _buttonImage.sprite = GameManager.instance._unlockedSprite;
                             _buttonImage.raycastTarget = true;
-                            GameManager.TextUp(_costText.gameObject);
+                            GameManager.TextUp(_costText.transform.parent.gameObject);
                             break;
                     }
 
@@ -122,13 +122,13 @@ namespace Shop
                             _isBonusOpen = false;
                             _buttonBonusImage.raycastTarget = false;
                             _buttonBonusImage.sprite = GameManager.instance._lockedSprite;
-                            GameManager.TextDown(_costBonusText.gameObject);
+                            GameManager.TextDown(_costBonusText.transform.parent.gameObject);
                             break;
                         case false when PlayerDataController.PointSum >= _costOnBonusGrade[FieldManager.currentField]:
                             _isBonusOpen = true;
                             _buttonBonusImage.sprite = GameManager.instance._unlockedSprite;
                             _buttonBonusImage.raycastTarget = true;
-                            GameManager.TextUp(_costBonusText.gameObject);
+                            GameManager.TextUp(_costBonusText.transform.parent.gameObject);
                             break;
                     }
 
@@ -138,14 +138,14 @@ namespace Shop
                             _isExpBonusOpen = false;
                             _buttonExpBonusImage.raycastTarget = false;
                             _buttonExpBonusImage.sprite = GameManager.instance._lockedSprite;
-                            GameManager.TextDown(_costExpBonusText.gameObject);
+                            GameManager.TextDown(_costExpBonusText.transform.parent.gameObject);
                             break;
                         case false
                             when PlayerDataController.PointSum >= _costOnExpBonusGrade[FieldManager.currentField]:
                             _isExpBonusOpen = true;
                             _buttonExpBonusImage.sprite = GameManager.instance._unlockedSprite;
                             _buttonExpBonusImage.raycastTarget = true;
-                            GameManager.TextUp(_costExpBonusText.gameObject);
+                            GameManager.TextUp(_costExpBonusText.transform.parent.gameObject);
                             break;
                     }
 
@@ -157,7 +157,7 @@ namespace Shop
 
                     _buttonAutoFlipperImage.raycastTarget = false;
                     _buttonAutoFlipperImage.sprite = GameManager.instance._lockedSprite;
-                    GameManager.TextDown(_costAutoFlipperText.gameObject);
+                    GameManager.TextDown(_costAutoFlipperText.transform.parent.gameObject);
                     break;
                 case 1:
                 {
@@ -168,7 +168,7 @@ namespace Shop
 
                         _buttonAutoFlipperImage.sprite = GameManager.instance._unlockedSprite;
                         _buttonAutoFlipperImage.raycastTarget = true;
-                        GameManager.TextUp(_costAutoFlipperText.gameObject);
+                        GameManager.TextUp(_costAutoFlipperText.transform.parent.gameObject);
                     }
 
                     break;

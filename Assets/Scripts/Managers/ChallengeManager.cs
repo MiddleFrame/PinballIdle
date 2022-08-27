@@ -125,7 +125,7 @@ namespace Managers
                     _startChallengeImage.raycastTarget = false;
                     _startChallengeImage.sprite = GameManager.instance._lockedSprite;
                     _startChallengeText.text = "In progress";
-                    GameManager.TextDown(_startChallengeText.gameObject);
+                    GameManager.TextDown(_startChallengeText.transform.parent.gameObject);
                 }
                 else
                 {
@@ -135,7 +135,7 @@ namespace Managers
                         _startChallengeImage.raycastTarget = false;
                         _startChallengeImage.sprite = GameManager.instance._lockedSprite;
                         _startChallengeText.text = "Maximum :(";
-                        GameManager.TextDown(_startChallengeText.gameObject);
+                        GameManager.TextDown(_startChallengeText.transform.parent.gameObject);
                     }
                     else
                     {
@@ -143,7 +143,7 @@ namespace Managers
                         _startChallengeImage.raycastTarget = true;
                         _startChallengeImage.sprite = GameManager.instance._unlockedSprite;
                         _startChallengeText.text = "START CHALLENGE";
-                        GameManager.TextUp(_startChallengeText.gameObject);
+                        GameManager.TextUp(_startChallengeText.transform.parent.gameObject);
                     }
                 }
             };
@@ -167,7 +167,7 @@ namespace Managers
             {
                 _isMaximum = true;
                 _costBall.text = "MAX";
-                GameManager.TextDown(_costBall.gameObject);
+                GameManager.TextDown(_costBall.transform.parent.gameObject);
                 if (_buyBallsImage.raycastTarget)
                 {
                     _buyBallsImage.raycastTarget = false;
@@ -180,7 +180,7 @@ namespace Managers
                 {
                     _isMaximum = false;
                     _costBall.text = "100";
-                    GameManager.TextUp(_costBall.gameObject);
+                    GameManager.TextUp(_costBall.transform.parent.gameObject);
                     if (!_buyBallsImage.raycastTarget)
                     {
                         _buyBallsImage.raycastTarget = true;
@@ -196,7 +196,7 @@ namespace Managers
                     return;
                 _buyBallsImage.raycastTarget = false;
                 _buyBallsImage.sprite = GameManager.instance._lockedSprite;
-                GameManager.TextDown(_costBall.gameObject);
+                GameManager.TextDown(_costBall.transform.parent.gameObject);
             }
             else
             {
@@ -204,7 +204,7 @@ namespace Managers
                     return;
                 _buyBallsImage.raycastTarget = true;
                 _buyBallsImage.sprite = GameManager.instance._unlockedSprite;
-                GameManager.TextUp(_costBall.gameObject);
+                GameManager.TextUp(_costBall.transform.parent.gameObject);
             }
         }
 

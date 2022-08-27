@@ -31,14 +31,16 @@ public class LetsScript : MonoBehaviour
 
     private Coroutine _anim;
 
+    private bool _isTriple;
+
     public static bool isCompetitive = false;
     private int _animNum;
 
     private void Start()
     {
-        if (isCompetitive && _numField>0)
-            _animNum = CompetitionManager.patterns[_numField-1].patterns.Length % 4;
-        if (_tRing != null && _tRing.Length>0)
+        if (isCompetitive && _numField > 0)
+            _animNum = CompetitionManager.patterns[_numField - 1].patterns.Length % 4;
+        if (_tRing != null && _tRing.Length > 0)
         {
             _srRing = new SpriteRenderer[_tRing.Length];
             for (int _i = 0; _i < _tRing.Length; _i++)
@@ -47,7 +49,7 @@ public class LetsScript : MonoBehaviour
             }
         }
 
-        _defaultColor = _sprite.GetComponent<SpriteRenderer>().color;
+        _defaultColor = GameManager.instance.defaultColor;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -115,6 +117,16 @@ public class LetsScript : MonoBehaviour
             PlayerDataController.AddExp(_numField, exp);
         }
 
+        if (_isTriple && !isCompetitive)
+        {
+            _point *= 3;
+            _isTriple = false;
+            if (_tRing.Length>0)
+                _sprite.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
+                    GameManager.instance.defaultShadowBall;
+            GameManager.instance.fields[_numField].MakeTriple();
+        }
+
         Anim:
         if (_numField == FieldManager.currentField)
             As.Play();
@@ -124,7 +136,7 @@ public class LetsScript : MonoBehaviour
             ShowNumber(collision.contacts[0],
                 _point == 0 ? "0" : (_point > 0 ? "+" : "") + GameManager.NormalSum(_point),
                 (isCompetitive && _numField == 0) ? 4 : 1);
-        if (_anim == null && _tRing != null && _tRing.Length>0)
+        if (_anim == null && _tRing != null && _tRing.Length > 0)
         {
             _sprite.GetComponent<SpriteRenderer>().color = new Color32(0xDA, 0xFE, 0xFF, 0xFF);
 
@@ -158,6 +170,14 @@ public class LetsScript : MonoBehaviour
     private int ChallengeThree(BallsChallenge ball)
     {
         return ball.timeOnField < 3 ? 0 : _pointLet;
+    }
+
+    public void MakeTriple()
+    {
+        _isTriple = true;
+        _sprite.GetComponent<SpriteRenderer>().color = GameManager.instance.tripleColor;
+        if (_tRing.Length>0)
+            _sprite.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = GameManager.instance.goldShadowBall;
     }
 
     private IEnumerator Anim()

@@ -61,7 +61,7 @@ namespace Shop
                 _isOpen = false;
                 _startCompetitive.raycastTarget = false;
                 _startCompetitive.sprite = _closeSprite;
-                GameManager.TextDown(_costText);
+                GameManager.TextDown(_costText.transform.parent.gameObject);
             }
             else if (!_isOpen && PlayerDataController.PointSum >= 1000000)
             {
@@ -69,7 +69,7 @@ namespace Shop
                 _startCompetitive.raycastTarget = true;
                 _startCompetitive.sprite = _openSprite;
 
-                GameManager.TextUp(_costText);
+                GameManager.TextUp(_costText.transform.parent.gameObject);
             }
         }
 

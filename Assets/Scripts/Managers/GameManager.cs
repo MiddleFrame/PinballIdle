@@ -13,12 +13,15 @@ namespace Managers
 
         public Sprite _lockedSprite;
 
+        public Sprite defaultShadowBall;
+        public Sprite goldShadowBall;
         public Sprite _unlockedSprite;
         public Teleport[] spawnPoints;
         public GameObject oneFieldCanvas;
         public GameObject upperCanvas;
         public GameObject bonusCanvas;
-
+        public Color tripleColor;
+        public Color defaultColor;
         public static Gradient[] trails;
         public static Color[] ballColor;
         [SerializeField]
@@ -97,16 +100,13 @@ namespace Managers
 
         public static void TextDown(GameObject tx)
         {
-            if (tx.GetComponent<Text>() == null || tx.GetComponent<Text>().text != "MAX")
-            {
                 tx.transform.position -= new Vector3(0, 0.08f, 0);
-            }
+            
         }
         
 
         public static void TextUp(GameObject tx)
         {
-            if (tx.GetComponent<Text>() == null || tx.GetComponent<Text>().text != "MAX")
                 tx.transform.position += new Vector3(0, 0.08f, 0);
         }
         

@@ -1,6 +1,6 @@
-using System;
 using Managers;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Field : MonoBehaviour
 {
@@ -16,5 +16,10 @@ public class Field : MonoBehaviour
     {
         FieldManager.openAllField += () => { _allFieldElement.SetActive(true); };
         FieldManager.openOneField += () => { _allFieldElement.SetActive(false); };
+    }
+
+    public void MakeTriple()
+    {
+        circles[Random.Range(0, circles.Length)].GetComponent<LetsScript>().MakeTriple();
     }
 }

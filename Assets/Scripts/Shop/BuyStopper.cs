@@ -54,14 +54,14 @@ namespace Shop
                     _isStopperOpen = false;
                     _buyStoppers.raycastTarget = false;
                     _buyStoppers.sprite = GameManager.instance._lockedSprite;
-                    GameManager.TextDown(_costStoppersText.gameObject);
+                    GameManager.TextDown(_costStoppersText.transform.parent.gameObject);
                 }
                 else if (!_isStopperOpen && PlayerDataController.PointSum >= COST_STOPPERS)
                 {
                     _isStopperOpen = true;
                     _buyStoppers.sprite = GameManager.instance._unlockedSprite;
                     _buyStoppers.raycastTarget = true;
-                    GameManager.TextUp(_costStoppersText.gameObject);
+                    GameManager.TextUp(_costStoppersText.transform.parent.gameObject);
                 }
             }
         }
