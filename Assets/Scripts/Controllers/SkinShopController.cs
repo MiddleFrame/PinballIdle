@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Globalization;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +9,7 @@ namespace Controllers
 {
     public class SkinShopController : MonoBehaviour
     {
-        public static int buymentX2 = 1;
+        public static int buyElementX2 = 1;
         public static Skins skins;
         public static int CurrentTrail;
         public static int CurrentAnim;
@@ -128,7 +127,7 @@ namespace Controllers
                     .metadata.localizedPriceString;
                 _trailCost.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_TRAIL)
                     .metadata.localizedPriceString);
-                if (DateTime.Now >= DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime")).AddDays(3))
+                if (DateTime.Now >= DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime",DateTime.Now.ToString())).AddDays(3))
                 {
                     _specialCost.text = IaPurchase._storeController.products
                         .WithStoreSpecificID(IaPurchase.NOT_SPECIAL_OFFER)
@@ -148,14 +147,14 @@ namespace Controllers
                         .localizedPriceString;
                 }
             };
-            if (DateTime.Now < DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime")).AddDays(3))
+            if (DateTime.Now < DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime",DateTime.Now.ToString())).AddDays(3))
                 StartCoroutine(timer());
             _specialTrail = _buyButtonTrail[7];
             _specialAnim = _buyButtonAnim[3];
             _specialOfferStat = _specialOffer;
-            foreach (var spawn in GameManager.instance.spawnPoints)
+            foreach (var _spawn in GameManager.instance.spawnPoints)
             {
-                spawn.ChangeTrail(CurrentTrail);
+                _spawn.ChangeTrail(CurrentTrail);
             }
         }
 
@@ -233,9 +232,9 @@ namespace Controllers
             CurrentTrail = trail;
             _strokesTrail[trail].SetActive(true);
             _selectedTextTrail[trail].SetActive(true);
-            foreach (var spawn in GameManager.instance.spawnPoints)
+            foreach (var _spawn in GameManager.instance.spawnPoints)
             {
-                spawn.ChangeTrail(CurrentTrail);
+                _spawn.ChangeTrail(CurrentTrail);
             }
         }
 

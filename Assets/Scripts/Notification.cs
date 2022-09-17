@@ -95,7 +95,7 @@ public class Notification : MonoBehaviour
         const int notificationID2 = 11001;
 
         _notification = new AndroidNotification();
-        _notificationStatus = AndroidNotificationCenter.CheckScheduledNotificationStatus(notificationID1);
+        _notificationStatus = AndroidNotificationCenter.CheckScheduledNotificationStatus(notificationID2);
 
         _channel = new AndroidNotificationChannel()
         {
@@ -114,22 +114,22 @@ public class Notification : MonoBehaviour
         {
             case NotificationStatus.Scheduled:
                 // Replace the scheduled notification with a new notification.
-                AndroidNotificationCenter.UpdateScheduledNotification(notificationID1, _notification, "channel_id");
+                AndroidNotificationCenter.UpdateScheduledNotification(notificationID2, _notification, "channel_id");
                 break;
             case NotificationStatus.Delivered:
                 // Remove the previously shown notification from the status bar.
-                AndroidNotificationCenter.CancelNotification(notificationID1);
+                AndroidNotificationCenter.CancelNotification(notificationID2);
                 // _rewardPanel.SetActive(true);
                 if (RewardDiamonds.LastReceiveDiamond.AddHours(12) > DateTime.Now)
                     AndroidNotificationCenter.SendNotificationWithExplicitID(_notification, "channel_id",
-                        notificationID1);
+                        notificationID2);
                 break;
             case NotificationStatus.Unavailable:
             case NotificationStatus.Unknown:
             default:
                 if (RewardDiamonds.LastReceiveDiamond.AddHours(12) > DateTime.Now)
                     AndroidNotificationCenter.SendNotificationWithExplicitID(_notification, "channel_id",
-                        notificationID1);
+                        notificationID2);
                 break;
         }
 

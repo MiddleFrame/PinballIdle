@@ -232,6 +232,8 @@ namespace Shop
             Statistics.stats.pointSpent += _costOnGrade[FieldManager.currentField];
 
             grade.pointOnBit[FieldManager.currentField] += 1;
+            if (FieldManager.currentField == 0 && grade.pointOnBit[FieldManager.currentField] == 10)
+                AnalyticManager.BuyTenUpgrade();
             BuffHit(FieldManager.currentField);
             ChangeHitText();
         }
@@ -289,6 +291,7 @@ namespace Shop
             PlayerDataController.PointSum -= COST_AUTO_FLIPPER;
             Statistics.stats.pointSpent += COST_AUTO_FLIPPER;
             grade.autoFlippers[FieldManager.currentField] = true;
+            AnalyticManager.BuyAutoFlippers(FieldManager.currentField);
             OpenAutoMod();
             AutoMod();
             ChallengeManager.Instance.OpenChallenges();

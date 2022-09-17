@@ -9,7 +9,7 @@ namespace Managers
     public class AdManager : MonoBehaviour
     {
         // Start is called before the first frame update
-        public static AdManager instance;
+        private static AdManager instance;
         private static BannerView _bannerView;
         private static InterstitialAd _interstitial;
         private static RewardedAd _rewardExp;
@@ -20,7 +20,7 @@ namespace Managers
         private const string REWARD_EXP_UNIT = "ca-app-pub-8340576279106634/8409189390";
         private const string REWARD_X2_UNIT = "ca-app-pub-8340576279106634/5205824445";
         private const string REWARD_OTHER = "ca-app-pub-8340576279106634/9874314306";
-
+        private static int _time;
         private void Awake()
         {
             if (instance == null)
@@ -74,6 +74,7 @@ namespace Managers
         } 
         public static void ShowRewardExp()
         {
+            _time = 0;
             if (AdsAndIAP.isRemoveAds)
             {
                 RewardExp.instance.OnAdReceivedRewardExp();
@@ -118,6 +119,7 @@ namespace Managers
                 RewardPoint.instance.OnAdReceivedRewardX2();
                 return;
             }
+            _time = 0;
             if (_rewardX2.IsLoaded())
             {
                 _rewardX2.Show();
@@ -154,7 +156,8 @@ namespace Managers
                 action.Invoke();
                 return;
             }
-            
+
+            _time = 0;
             if (_rewardX2.IsLoaded())
             {
                 receive = action;
@@ -200,13 +203,16 @@ namespace Managers
         public static void ShowInterstitial()
         {
             if (AdsAndIAP.isRemoveAds) return;
+            _time = 0;
             if (_interstitial.IsLoaded())
             {
                 _interstitial.Show();
+                AdRequest _request = new AdRequest.Builder().Build();
+                _interstitial.LoadAd(_request);
             }
             else
             {
-                GameManager.instance.StartCoroutine(TryToShowInterstitial());
+               instance.StartCoroutine(TryToShowInterstitial());
             }
         }
 
@@ -231,6 +237,21 @@ namespace Managers
             AdRequest _request = new AdRequest.Builder().Build();
             // Load the interstitial with the request.
             _interstitial.LoadAd(_request);
+            StartCoroutine(TimerAds());
+        }
+
+        private IEnumerator TimerAds()
+        {
+            _time = -360;
+            while (true)
+            {
+                _time++;
+                yield return new WaitForSeconds(1f);
+                if (_time == 180)
+                {
+                    ShowInterstitial();
+                }
+            }
         }
       
         #endregion

@@ -89,7 +89,7 @@ public class IaPurchase : IStoreListener
             CheckProduct("special_offer_1") ||
             CheckProduct("not_special_offer"))
         {
-            SkinShopController.buymentX2 = 2;
+            SkinShopController.buyElementX2 = 2;
         }
     }
 
@@ -111,27 +111,27 @@ public class IaPurchase : IStoreListener
         }
         else if (purchaseEvent.purchasedProduct.definition.id == LITTLE_PACK)
         {
-            PlayerDataController.Gems += 300;
+            PlayerDataController.Gems += 600;
         }
         else if (purchaseEvent.purchasedProduct.definition.id == MEDIUM_PACK)
         {
-            PlayerDataController.Gems += 2000;
+            PlayerDataController.Gems += 4000;
         }
         else if (purchaseEvent.purchasedProduct.definition.id == BIG_PACK)
         {
-            PlayerDataController.Gems += 10000;
+            PlayerDataController.Gems += 20000;
         }
         else if (purchaseEvent.purchasedProduct.definition.id == SPECIAL_OFFER)
         {
             SkinShopController.ConfBuyTrail();
             SkinShopController.ConfBuyAnim();
-            SkinShopController.buymentX2 = 2;
+            SkinShopController.buyElementX2 = 2;
         }
         else if (purchaseEvent.purchasedProduct.definition.id == NOT_SPECIAL_OFFER)
         {
             SkinShopController.ConfBuyTrail();
             SkinShopController.ConfBuyAnim();
-            SkinShopController.buymentX2 = 2;
+            SkinShopController.buyElementX2 = 2;
         }
         else if (purchaseEvent.purchasedProduct.definition.id == BALL_ANIM)
         {

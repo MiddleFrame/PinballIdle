@@ -112,18 +112,19 @@ public class LetsScript : MonoBehaviour
         {
             _point = PlayerDataController.playerStats.lvl[_numField] * _pointLet *
                      DefaultBuff.grade.pointOnBit[_numField] * RewardPoint.hitMultiply[_numField] *
-                     SkinShopController.buymentX2;
+                     SkinShopController.buyElementX2;
             PlayerDataController.PointSum += _point;
             PlayerDataController.AddExp(_numField, exp);
         }
 
         if (_isTriple && !isCompetitive)
         {
-            _point *= 3;
+            _point *= 10;
             _isTriple = false;
             if (_tRing.Length>0)
                 _sprite.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
                     GameManager.instance.defaultShadowBall;
+            
             GameManager.instance.fields[_numField].MakeTriple();
         }
 
@@ -206,7 +207,7 @@ public class LetsScript : MonoBehaviour
     private IEnumerator ChangeColor()
     {
         yield return new WaitForSeconds(0.02f);
-        _sprite.GetComponent<SpriteRenderer>().color = _defaultColor;
+        _sprite.GetComponent<SpriteRenderer>().color = _isTriple? GameManager.instance.tripleColor :_defaultColor;
     }
 
     private IEnumerator Ring(int currAnim)

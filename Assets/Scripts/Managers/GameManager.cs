@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Managers
@@ -31,6 +33,10 @@ namespace Managers
         [SerializeField]
         private GameObject text;
 
+        [SerializeField]
+        private Image _deleteProgressImage;
+        private static Image deleteProgressImage;
+
         public Sprite _lockFunctionSprite;
 
         private int _launchTheGame
@@ -46,6 +52,7 @@ namespace Managers
             instance = this;
             LetsScript.isCompetitive = false;
             Vibration.Init();
+            deleteProgressImage = _deleteProgressImage;
         }
 
         private void Start()
@@ -103,7 +110,55 @@ namespace Managers
                 tx.transform.position -= new Vector3(0, 0.08f, 0);
             
         }
-        
+
+        private static Coroutine _deleteCoroutine;
+        public static void DeleteAllProgress()
+        {
+            if (_deleteCoroutine != null)
+            {
+                instance.StopCoroutine(_deleteCoroutine);
+                _deleteCoroutine = null;
+                deleteProgressImage.fillAmount = 0;
+            }
+            _deleteCoroutine = instance.StartCoroutine(deleteProgress());
+        }
+        public static void StopDeleteAllProgress()
+        {
+            if (_deleteCoroutine == null) return;
+            instance.StopCoroutine(_deleteCoroutine);
+            _deleteCoroutine = null;
+            deleteProgressImage.fillAmount = 0;
+        }
+
+        private static IEnumerator deleteProgress()
+        {
+            while (deleteProgressImage.fillAmount<1)
+            {
+                deleteProgressImage.fillAmount += Time.deltaTime;
+                yield return null;
+            }
+            PlayerPrefs.DeleteAll();
+            RestartAndroid();
+        }
+        private static void RestartAndroid() {
+            if (Application.isEditor) return;
+
+            using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
+                const int kIntent_FLAG_ACTIVITY_CLEAR_TASK = 0x00008000;
+                const int kIntent_FLAG_ACTIVITY_NEW_TASK = 0x10000000;
+
+                var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                var pm = currentActivity.Call<AndroidJavaObject>("getPackageManager");
+                var intent = pm.Call<AndroidJavaObject>("getLaunchIntentForPackage", Application.identifier);
+
+                intent.Call<AndroidJavaObject>("setFlags", kIntent_FLAG_ACTIVITY_NEW_TASK | kIntent_FLAG_ACTIVITY_CLEAR_TASK);
+                currentActivity.Call("startActivity", intent);
+                currentActivity.Call("finish");
+                var process = new AndroidJavaClass("android.os.Process");
+                int pid = process.CallStatic<int>("myPid");
+                process.CallStatic("killProcess", pid);
+            }
+        }
 
         public static void TextUp(GameObject tx)
         {

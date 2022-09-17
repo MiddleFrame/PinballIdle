@@ -33,6 +33,8 @@ namespace Managers
 
         [SerializeField]
         private GameObject[] _buyFields;
+        [SerializeField]
+        private GameObject[] _buyFieldsButton;
 
         private Coroutine _scale, _position;
 
@@ -53,6 +55,25 @@ namespace Managers
                     buyFields(_i);
                 }
             }
+
+            openAllField += () =>
+            {
+                int _flag = 0;
+                for (int _i = 0; _i < fields.isOpen.Length; _i++)
+                {
+                    if (fields.isOpen[_i] && _i < fields.isOpen.Length - 1 && !fields.isOpen[_i + 1])
+                    {
+                        _buyFieldsButton[_i+1].SetActive(true);
+                        _flag = _i+1;
+                    }
+
+                    if (_i > _flag)
+                    {
+                        _buyFieldsButton[_i].SetActive(false);
+                    }
+                }
+                
+            };
         }
 
         public void OpenAllFields()
@@ -82,14 +103,9 @@ namespace Managers
 
         public void OpenSomeField(int i)
         {
-            Debug.Log($"Start open {i} field");
             if (currentField != -1) return;
-            if (!fields.isOpen[i])
-            {
-                BuyFields(i);
-                return;
-            }
-
+            if (!fields.isOpen[i]) return;
+            Debug.Log($"Start open {i} field");
             _allFieldCanvas.gameObject.SetActive(false);
             currentField = i;
             openOneField?.Invoke();
@@ -161,7 +177,7 @@ namespace Managers
         }
 
 
-        private void BuyFields(int field)
+        public void BuyFields(int field)
         {
             if (PlayerDataController.Gems < fieldCosts[field])
             {
@@ -170,19 +186,21 @@ namespace Managers
                 return;
             }
 
-            AnalyticManager.OpenNewField();
+            AnalyticManager.OpenNewField(field);
             PlayerDataController.Gems -= fieldCosts[field];
             fields.isOpen[field] = true;
             PlayerDataController.playerStats.lvl[field] = 1;
             PlayerDataController.LevelSum++;
             buyFields(field);
             GameManager.instance.fields[field]._allFieldElement.SetActive(true);
+            openAllField.Invoke();
         }
 
         private void buyFields(int field)
         {
             _buyFields[field].SetActive(false);
             _fields[field].SetActive(true);
+            
         }
         
     }

@@ -1,35 +1,19 @@
 using System;
-using Controllers;
 using UnityEngine;
 using Firebase;
 using Firebase.Analytics;
 using Firebase.Extensions;
-using Mycom.Tracker.Unity;
 
 
 namespace Managers
 {
     public class AnalyticManager : MonoBehaviour
     {
-
-        public static bool isMyTrackerInit;
         public static bool isRemoteInit;
-        private void Awake()
-        {
-#if !UNITY_IOS && !UNITY_ANDROID
-        return;
-#endif
-            // ...
-            // Настройте параметры трекера
-            // ...
-
-            // Инициализируйте трекер в зависимости от платформы
-#if !UNITY_EDITOR
-            MyTracker.Init("94020374764550666248");
-            isMyTrackerInit=true;
-#endif
-            Debug.Log("Awake");
-        }
+        // private void Awake()
+        // {
+        //     
+        // }
 
         // Start is called before the first frame update
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -69,9 +53,8 @@ namespace Managers
                                             isRemoteInit = true;
                                             Debug.Log(
                                                 $"Firebase config last fetch time {Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.Info.FetchTime}.");
-                                            IaPurchase.NumberOfPrice = (int)GetLong("Price");
-                                            Debug.Log("This price "+IaPurchase.NumberOfPrice);
-
+                                            IaPurchase.NumberOfPrice = (int) GetLong("Price");
+                                            Debug.Log("This price " + IaPurchase.NumberOfPrice);
                                         });
                                 }
                                 catch (Exception _e)
@@ -150,78 +133,96 @@ namespace Managers
         public static void StartChallenge()
         {
             FirebaseAnalytics.LogEvent("start_challenge");
+            AppMetrica.Instance.ReportEvent("start_challenge");
         }
 
         public static void CompleteChallenge()
         {
             FirebaseAnalytics.LogEvent("complete_challenge");
-            MyTracker.TrackEvent("complete_challenge");
+            AppMetrica.Instance.ReportEvent("complete_challenge");
         }
 
         public static void OpenDonateShop()
         {
             FirebaseAnalytics.LogEvent("open_donate_shop");
-            MyTracker.TrackEvent("open_donate_shop");
+            AppMetrica.Instance.ReportEvent("open_donate_shop");
         }
 
-        public static void OpenNewField()
+        public static void OpenNewField(int field)
         {
             FirebaseAnalytics.LogEvent("open_new_field");
-            
-            MyTracker.TrackEvent("open_new_field");
+            FirebaseAnalytics.LogEvent($"open_new_field_00{field}");
+            AppMetrica.Instance.ReportEvent("open_new_field");
         }
 
         public static void OpenNewBall()
         {
             FirebaseAnalytics.LogEvent("open_new_ball");
-            MyTracker.TrackEvent("open_new_ball");
+            AppMetrica.Instance.ReportEvent("open_new_ball");
         }
 
         public static void OpenStatistic()
         {
             FirebaseAnalytics.LogEvent("statistic");
-            MyTracker.TrackEvent("statistic");
+            AppMetrica.Instance.ReportEvent("statistic");
         }
+
         public static void BuyCoinForDiamond()
         {
             FirebaseAnalytics.LogEvent("buy_coin_for_diamond");
-            MyTracker.TrackEvent("buy_coin_for_diamond");
+            AppMetrica.Instance.ReportEvent("buy_coin_for_diamond");
         }
 
         public static void ChangeTheme()
         {
             FirebaseAnalytics.LogEvent("change_theme");
-            MyTracker.TrackEvent("change_theme");
+            AppMetrica.Instance.ReportEvent("change_theme");
         }
+
         public static void StartCompetition()
         {
             FirebaseAnalytics.LogEvent("start_competition");
-            MyTracker.TrackEvent("start_competition");
+            AppMetrica.Instance.ReportEvent("start_competition");
         }
+
         public static void FirstPlaceCompetition()
         {
             FirebaseAnalytics.LogEvent("first_place_competition");
-            MyTracker.TrackEvent("first_place_competition");
+            AppMetrica.Instance.ReportEvent("first_place_competition");
         }
+
         public static void SecondPlaceCompetition()
         {
             FirebaseAnalytics.LogEvent("second_place_competition");
-            MyTracker.TrackEvent("second_place_competition");
+            AppMetrica.Instance.ReportEvent("second_place_competition");
         }
+
         public static void ThirdPlaceCompetition()
         {
             FirebaseAnalytics.LogEvent("third_place_competition");
-            MyTracker.TrackEvent("third_place_competition");
+            AppMetrica.Instance.ReportEvent("third_place_competition");
         }
+
         public static void LoseCompetition()
         {
             FirebaseAnalytics.LogEvent("lose_competition");
-            MyTracker.TrackEvent("lose_competition");
+            AppMetrica.Instance.ReportEvent("lose_competition");
         }
+
         public static void ReviewWasShow()
         {
             FirebaseAnalytics.LogEvent("review_was_show");
-            MyTracker.TrackEvent("review_was_show");
+            AppMetrica.Instance.ReportEvent("review_was_show");
+        }
+        public static void BuyAutoFlippers(int field)
+        {
+            FirebaseAnalytics.LogEvent($"buy_auto_flippers_00{field}");
+            AppMetrica.Instance.ReportEvent($"buy_auto_flippers_00{field}");
+        } 
+        public static void BuyTenUpgrade()
+        {
+            FirebaseAnalytics.LogEvent($"buy_first_ten_upgrade");
+            AppMetrica.Instance.ReportEvent($"buy_first_ten_upgrade");
         }
     }
 }
