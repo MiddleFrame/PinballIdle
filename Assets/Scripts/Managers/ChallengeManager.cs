@@ -173,6 +173,7 @@ namespace Managers
                     StartChallenge(_field);
             }
 
+            UpdateRank();
             ChangeTextAndFill();
         }
 

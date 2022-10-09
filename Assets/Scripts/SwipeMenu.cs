@@ -34,8 +34,8 @@ public class SwipeMenu : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             FlipperCompetition.IsFlipper[FieldManager.currentField] = false;
             FlipperCompetition.Right[FieldManager.currentField] = false;
             FlipperCompetition.Left[FieldManager.currentField] = false;
+            return;
         }
-
         FlipperController.IsFlipper[FieldManager.currentField] = false;
     }
 
