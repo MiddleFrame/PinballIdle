@@ -7,6 +7,7 @@ namespace Managers
 {
     public class FieldManager : MonoBehaviour
     {
+        public static FieldManager instance;
         public static Fields fields;
         private static readonly int[] fieldCosts = {0, 150, 300, 450, 600, 750, 900, 1050, 1200};
         public static int currentField;
@@ -29,6 +30,9 @@ namespace Managers
         private Canvas _allFieldCanvas;
 
         [SerializeField]
+        private GameObject _backButton;
+        
+        [SerializeField]
         private GameObject[] _fields;
 
         [SerializeField]
@@ -39,10 +43,15 @@ namespace Managers
         private Coroutine _scale, _position;
 
         private const int CENTER_SIZE = 15;
-        private const float DEFAULT_SIZE = 4f;
+        private const float DEFAULT_SIZE = 5f;
 
         public static Action openAllField;
         public static Action openOneField;
+
+        private void Awake()
+        {
+            instance = this;
+        }
 
         private void Start()
         {
@@ -81,7 +90,7 @@ namespace Managers
             lastField = currentField;
             openAllField?.Invoke();
             GameManager.instance.oneFieldCanvas.SetActive(false);
-            GameManager.instance.bonusCanvas.SetActive(false);
+            // GameManager.instance.bonusCanvas.SetActive(false);
             GameManager.instance.upperCanvas.SetActive(true);
             ChallengeManager.Instance._challengeCanvas.SetActive(false);
             if (_scale != null)
@@ -109,6 +118,7 @@ namespace Managers
             _allFieldCanvas.gameObject.SetActive(false);
             currentField = i;
             openOneField?.Invoke();
+            _backButton.SetActive(false);
             if (_scale != null)
             {
                 StopCoroutine(_scale);
@@ -164,13 +174,13 @@ namespace Managers
 
             if (ChallengeManager.IsStartChallenge[currentField])
             {
-                GameManager.instance.bonusCanvas.SetActive(false);
+                // GameManager.instance.bonusCanvas.SetActive(false);
                 GameManager.instance.upperCanvas.SetActive(false);
                 ChallengeManager.Instance._challengeCanvas.SetActive(true);
             }
             else
             {
-                GameManager.instance.bonusCanvas.SetActive(true);
+                // GameManager.instance.bonusCanvas.SetActive(true);
             }
 
             GameManager.instance.oneFieldCanvas.SetActive(true);

@@ -1,75 +1,82 @@
 using System;
+using System.Collections.Generic;
 using Managers;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class MenuController : MonoBehaviour
+namespace Controllers
 {
-    private const int ALL_FIELD = -2;
-    public static int currentMenu = -1;
-
-    public static MenuController instance;
-    
-    public GameObject[] _shops;
-
-    [SerializeField]
-    private GameObject[] _buttons;
-
-    [SerializeField]
-    private GameObject _backPanel;
-
-    [SerializeField]
-    private GameObject _stats;
-
-    public static Action[] shopOpen = new Action[6];
-
-    private void Awake()
+    public class MenuController : MonoBehaviour
     {
-        instance = this;
-    }
-
-    public void OpenShop(int shop)
-    {
-        currentMenu = -1;
-        for (int _j = 0; _j < _shops.Length; _j++)
+        private const int ALL_FIELD = 0;
+        public static int currentMenu = -1;
+        public enum Shops
         {
-            if (shop != _j && _shops[_j].activeSelf)
+            AllField=0,
+            Shop=1,
+            Versus=2,
+            Ranks=3,
+            UpgradeFields=4,
+            Quests=5
+        }
+
+        public static MenuController instance;
+
+        public GameObject[] _shops;
+
+
+        [SerializeField]
+        private GameObject _backPanel;
+
+
+        public static Dictionary<Shops, Action> openMenu = new Dictionary<Shops, Action>()
+        {
+            {Shops.AllField, null},
+            {Shops.Quests, null},
+            {Shops.Ranks, null},
+            {Shops.Shop, null},
+            {Shops.Versus, null},
+            {Shops.UpgradeFields, null}
+        };
+
+
+        private void Awake()
+        {
+            instance = this;
+        }
+
+        public void OpenShop(int numShop)
+        {
+            Shops _shop = (Shops) numShop;
+            if (currentMenu == (int) _shop && currentMenu != ALL_FIELD)
             {
-                OpenShop(_j);
+                currentMenu = -1;
+                _shops[(int) _shop-1].SetActive(false);
+                _backPanel.SetActive(false);
+                return;
             }
-        }
 
-        if (shop == ALL_FIELD)
-        {
-            return;
-        }
+            currentMenu = -1;
 
-        if (!_shops[shop].activeSelf)
-        {
-            shopOpen[shop]?.Invoke();
-            currentMenu = shop;
-            _buttons[shop].GetComponent<Image>().color = ThemeManager.instance.themes[ThemeManager.currentTheme].lightGray;
-            _backPanel.SetActive(true);
-        }
-        else
-        {
-            if (shop == _shops.Length - 1)
-                _stats.SetActive(false);
-            _buttons[shop].GetComponent<Image>().color =
-                ThemeManager.instance.themes[ThemeManager.currentTheme].fieldColor;
-            _backPanel.SetActive(false);
-        }
-
-        _shops[shop].SetActive(!_shops[shop].activeSelf);
-    }
-
-    public void BackPanelClick()
-    {
-        for (int _j = 0; _j < _shops.Length; _j++)
-        {
-            if (_shops[_j].activeSelf)
+            if ((int) _shop == ALL_FIELD)
             {
-                OpenShop(_j);
+                FieldManager.instance.OpenAllFields();
+                return;
+            }
+
+            openMenu[_shop]?.Invoke();
+            currentMenu = (int) _shop;
+            _backPanel.SetActive(true);
+            _shops[(int) _shop-1].SetActive(true);
+        }
+
+        public void BackPanelClick()
+        {
+            for (int _j = 0; _j < _shops.Length; _j++)
+            {
+                if (_shops[_j].activeSelf)
+                {
+                    OpenShop(_j);
+                }
             }
         }
     }

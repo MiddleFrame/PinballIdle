@@ -31,7 +31,22 @@ namespace Managers
         [SerializeField]
         private GameObject _completePanel;
 
+        [SerializeField]
+        private Image _rankFieldOnScreen;
+        [SerializeField]
+        private Image _rankFieldOnMenu;
+        [SerializeField]
+        private Image _rankCurrent;
+        [SerializeField]
+        private Image _rankNext;
 
+        [SerializeField]
+        private GameObject _arrow;
+
+        [SerializeField]
+        private Sprite[] _ranks;
+
+        
         public GameObject _challengeCanvas;
 
         [SerializeField]
@@ -99,6 +114,7 @@ namespace Managers
             };
             FieldManager.openOneField += () =>
             {
+                UpdateRank();
                 if (DefaultBuff.grade.autoFlippers[FieldManager.currentField])
                     OpenChallenges();
                 else
@@ -109,12 +125,12 @@ namespace Managers
                         getReward();
                         break;
                     case true:
-                        ChangeTextAndFill();
+                        ChangeTextAndFill(FieldManager.currentField);
                         break;
                 }
             };
-            MenuController.shopOpen[2] += ChangeCostBallText;
-            MenuController.shopOpen[2] += () =>
+            MenuController.openMenu[MenuController.Shops.Ranks] += ChangeCostBallText;
+            MenuController.openMenu[MenuController.Shops.Ranks] += () =>
             {
                 _countCompleteChallengeText.text = $"{progress.countCompleteChallenge[FieldManager.currentField]}/5";
                 _countBallsText.text =
@@ -158,6 +174,20 @@ namespace Managers
             }
 
             ChangeTextAndFill();
+        }
+
+        private void UpdateRank()
+        {
+            _rankFieldOnMenu.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
+            _rankCurrent.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
+            _rankFieldOnScreen.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
+            if (progress.countCompleteChallenge[FieldManager.currentField] == 5)
+            {
+                _rankNext.gameObject.SetActive(false);
+                _arrow.SetActive(false);
+                return;
+            }
+            _rankNext.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]+1];
         }
 
         private void ChangeCostBallText()
@@ -209,11 +239,16 @@ namespace Managers
         }
 
 
-        public void ChangeTextAndFill()
+        public void ChangeTextAndFill(int field = 0)
         {
             _challengeProgressText.text =
                 $"{progress.currentProgressChallenge[FieldManager.currentField]}/1000";
             _challengeProgress.fillAmount = progress.currentProgressChallenge[FieldManager.currentField] / 1000f;
+            if (MenuController.currentMenu != (int)MenuController.Shops.AllField) return;
+            _progressTexts[field].text =
+                $"{Mathf.Floor(progress.currentProgressChallenge[field] / 10f)}%";
+            _progressFills[field].fillAmount =
+                progress.currentProgressChallenge[field] / 1000f;
         }
 
         public void CompleteChallenge(int field)
@@ -223,7 +258,7 @@ namespace Managers
             {
                 getReward();
                 _challengeCanvas.SetActive(false);
-                GameManager.instance.bonusCanvas.SetActive(true);
+                // GameManager.instance.bonusCanvas.SetActive(true);
                 GameManager.instance.upperCanvas.SetActive(true);
             }
             else
@@ -256,6 +291,7 @@ namespace Managers
             }
 
             progress.countCompleteChallenge[FieldManager.currentField]++;
+            UpdateRank();
             progress.currentProgressChallenge[FieldManager.currentField] = 0;
         }
 
@@ -266,9 +302,9 @@ namespace Managers
                 _challengeCanvas.SetActive(true);
 
                 _newChallengePanel.SetActive(false);
-                GameManager.instance.bonusCanvas.SetActive(false);
+                // GameManager.instance.bonusCanvas.SetActive(false);
                 GameManager.instance.upperCanvas.SetActive(false);
-                ChangeTextAndFill();
+                ChangeTextAndFill(FieldManager.currentField);
             }
 
             _progressFills[field].color = new Color32(0x7A, 0xD9, 0xDB, 0xFF);
@@ -305,7 +341,7 @@ namespace Managers
                 yield return null;
             }
 
-            MenuController.instance.OpenShop(2);
+            MenuController.instance.OpenShop((int)MenuController.Shops.Ranks);
             _newChallengePanel.SetActive(true);
         }
 

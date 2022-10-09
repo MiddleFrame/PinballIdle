@@ -118,7 +118,7 @@ namespace Controllers
             _selectedTextAnim[CurrentAnim].SetActive(true);
             _strokesTrail[CurrentTrail].SetActive(true);
             _selectedTextTrail[CurrentTrail].SetActive(true);
-            MenuController.shopOpen[4] += () =>
+            MenuController.openMenu[MenuController.Shops.Shop] += () =>
             {
                 _coinText.text = GameManager.NormalSum(PlayerDataController.PointSum);
                 _diamondText.text = GameManager.NormalSum(PlayerDataController.Gems);

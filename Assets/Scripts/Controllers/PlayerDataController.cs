@@ -30,7 +30,7 @@ namespace Controllers
         }
 
         [SerializeField]
-        private Image _exp;
+        private Image[] _exp;
 
         [SerializeField]
         private Text _lvlMain;
@@ -97,12 +97,13 @@ namespace Controllers
             for (int _i = 0; _i < GameManager.instance.fields.Length; _i++)
             {
                 GameManager.instance.fields[_i].levelText.text = $"lvl {playerStats.lvl[_i]}";
-                GameManager.instance.fields[_i].ballsText.text = $"x{ChallengeManager.progress.balls[_i]+1}";
+                GameManager.instance.fields[_i].ballsText.text = $"x{ChallengeManager.progress.balls[_i] + 1}";
             }
         }
 
         public static void AddExp(int field, int exp)
         {
+            if (playerStats.lvl[field] > 9) return;
             playerStats.exp[field] += exp;
             if (playerStats.exp[field] >= 200 * playerStats.lvl[field])
             {
@@ -112,10 +113,11 @@ namespace Controllers
                 if (field == FieldManager.currentField)
                 {
                     _instance._lvlOnLvlUpPanel.text = playerStats.lvl[field].ToString();
-                    _instance._lvlOnLvlUpPanelMultiply.text = "x" + playerStats.lvl[field];
+                    _instance._lvlOnLvlUpPanelMultiply.text = "x" + (1 + 0.1f * (playerStats.lvl[field] - 1));
                     _instance._lvlUpPanel.SetActive(true);
-                    _instance._lvlMain.text = playerStats.lvl[field].ToString();
-                    _instance._lvlBuff.text = $"x {playerStats.lvl[field] * RewardPoint.hitMultiply[field]}";
+                    _instance._lvlMain.text = (playerStats.lvl[field] - 1).ToString();
+                    _instance._lvlBuff.text =
+                        $"x {1 + 0.1f * (playerStats.lvl[field] - 1) * RewardPoint.hitMultiply[field]}";
                 }
             }
 
@@ -127,21 +129,26 @@ namespace Controllers
         {
             _lvlUpPanel.SetActive(false);
             if (FieldManager.currentField != 0 || playerStats.lvl[0] != 2) return;
-            MenuController.instance.OpenShop(-2);
+            MenuController.instance.OpenShop((int)MenuController.Shops.AllField);
             FindObjectOfType<FieldManager>().OpenAllFields();
         }
 
         private static void changeFillAmount()
         {
-            _instance._exp.fillAmount = playerStats.exp[FieldManager.currentField] /
-                                        (200f * playerStats.lvl[FieldManager.currentField]);
+            for (int _i = 0; _i < _instance._exp.Length; _i++)
+            {
+                _instance._exp[_i].fillAmount = _i > playerStats.lvl[FieldManager.currentField]-1 ? 0 : 1;
+            }
+            _instance._exp[playerStats.lvl[FieldManager.currentField]-1].fillAmount =
+                playerStats.exp[FieldManager.currentField] /
+                (200f * playerStats.lvl[FieldManager.currentField]);
         }
 
         private static void changeLevelText()
         {
-            _instance._lvlMain.text = playerStats.lvl[FieldManager.currentField].ToString();
+            _instance._lvlMain.text = (playerStats.lvl[FieldManager.currentField] - 1).ToString();
             _instance._lvlBuff.text =
-                $"x {playerStats.lvl[FieldManager.currentField] * RewardPoint.hitMultiply[FieldManager.currentField]}";
+                $"x {1 + 0.1f * (playerStats.lvl[FieldManager.currentField] - 1) * RewardPoint.hitMultiply[FieldManager.currentField]}";
         }
 
         public void DeleteProgress()
@@ -156,6 +163,7 @@ namespace Controllers
     {
         public long pointSum;
         public int gems;
+        public int key;
         public int[] lvl = {1, 0, 0, 0, 0, 0, 0, 0, 0};
         public int[] exp = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     }

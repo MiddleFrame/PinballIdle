@@ -21,7 +21,7 @@ namespace Managers
         public Teleport[] spawnPoints;
         public GameObject oneFieldCanvas;
         public GameObject upperCanvas;
-        public GameObject bonusCanvas;
+        // public GameObject bonusCanvas;
         public Color tripleColor;
         public Color defaultColor;
         public static Gradient[] trails;

@@ -82,16 +82,16 @@ namespace Managers
         {
             if (instance == null)
                 instance = this;
-            currentTheme = CurrentTheme;
-            if (currentTheme == 0) return;
-            ChangeThemes(currentTheme);
+            // currentTheme = CurrentTheme;
+            // if (currentTheme == 0) return;
+                //ChangeThemes(currentTheme);
         }
 
         private void Start()
         {
             
-            if (_themeImage != null)
-                _themeImage.sprite = _themeDarkSprite;
+            //if (_themeImage != null)
+            //    _themeImage.sprite = _themeDarkSprite;
         }
 
         public void ChangeTheme()

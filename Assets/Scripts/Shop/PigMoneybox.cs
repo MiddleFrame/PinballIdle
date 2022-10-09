@@ -64,28 +64,12 @@ namespace Shop
                                                     (PlayerDataController.LevelSum * 15));
             }
 
-            StartCoroutine(checkSignal());
         }
 
        
 
 
-        private IEnumerator checkSignal()
-        {
-            while (true)
-            {
-                yield return new WaitForSeconds(1f);
-                if (MaxPoints == _points && !_signal.activeSelf)
-                {
-                    _signal.SetActive(true);
-                }
-                else if (MaxPoints != _points && _signal.activeSelf)
-                {
-                    _signal.SetActive(false);
-                }
-            }
-            // ReSharper disable once IteratorNeverReturns
-        }
+        
 
         public void OpenMoneybox()
         {

@@ -22,7 +22,7 @@ public class RewardPoint : MonoBehaviour
     public static int[] hitMultiply = {1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 
-    private bool _isAfterReward =false;
+    private bool _isAfterReward;
     private void Awake()
     {
         instance = this;
@@ -32,7 +32,13 @@ public class RewardPoint : MonoBehaviour
     private void openNewField()
     {
         if (reward[FieldManager.currentField])
+        {
+            changeColor();
+            _x2Bonus.SetActive(false);_lvlBuffs.text =
+            $"x {PlayerDataController.playerStats.lvl[FieldManager.currentField] * hitMultiply[FieldManager.currentField]}";
             return;
+        }
+
         _x2Bonus.SetActive(true);
         _timex2Reward.text = "";
         _lvlBuffs.text = $"x {PlayerDataController.playerStats.lvl[FieldManager.currentField]}";

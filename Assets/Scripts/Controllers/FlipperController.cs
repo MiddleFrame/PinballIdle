@@ -49,6 +49,7 @@ namespace Controllers
             Audio();
             RightOrLeft[_flipperLeft.Field] = true;
             IsFlipper[_flipperLeft.Field] = true;
+            Invoke(nameof(DisableFlipper),1f);
         }
 
         private void OnTriggerExit2D(Collider2D collision)
@@ -57,6 +58,11 @@ namespace Controllers
             {
                 IsFlipper[_flipperLeft.Field] = false;
             }
+        } 
+        
+        private void DisableFlipper()
+        {
+            IsFlipper[_flipperLeft.Field] = false;
         }
     }
 }

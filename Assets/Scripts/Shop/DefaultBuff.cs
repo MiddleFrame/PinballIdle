@@ -55,17 +55,15 @@ namespace Shop
         [SerializeField]
         private Image _buttonAutoFlipperImage;
 
-        [SerializeField]
-        private GameObject _autoModSlider;
 
         public static bool[] autoMod;
 
         private void Awake()
         {
-            MenuController.shopOpen[0] += ChangeHitText;
-            MenuController.shopOpen[0] += ChangeBonusText;
-            MenuController.shopOpen[0] += ChangeExpBonusText;
-            MenuController.shopOpen[1] += OpenAutoMod;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeHitText;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeBonusText;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeExpBonusText;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += OpenAutoMod;
         }
 
         private void Start()
@@ -79,13 +77,8 @@ namespace Shop
                 BuffExpBonusTime(_i, (grade.expTime[_i] - 30) / 5);
                 if (grade.autoFlippers[_i])
                 {
-                    AutoMod(_i);
+                    autoMod[_i] = true;
                 }
-            }
-            if (grade.autoFlippers[0])
-            {
-                AutoMod(0);
-                AutoMod();
             }
             if(grade.autoFlippers[0])
                 ChallengeManager.Instance.OpenChallenges();
@@ -213,13 +206,11 @@ namespace Shop
             if (grade.autoFlippers[FieldManager.currentField])
             {
                 _autoFlipperText.text = "Auto-flippers";
-                _autoModSlider.SetActive(true);
                 _buttonAutoFlipperImage.gameObject.SetActive(false);
             }
             else
             {
                 _autoFlipperText.text = "Buy Auto-flippers";
-                _autoModSlider.SetActive(false);
                 _buttonAutoFlipperImage.gameObject.SetActive(true);
             }
         }
@@ -293,35 +284,10 @@ namespace Shop
             grade.autoFlippers[FieldManager.currentField] = true;
             AnalyticManager.BuyAutoFlippers(FieldManager.currentField);
             OpenAutoMod();
-            AutoMod();
+            
             ChallengeManager.Instance.OpenChallenges();
         }
         
-        public void AutoMod(int field = -1)
-        {
-            if (field == -1)
-            {
-                autoMod[FieldManager.currentField] = !autoMod[FieldManager.currentField];
-                if (autoMod[FieldManager.currentField])
-                {
-                    var _localScale = _autoModSlider.transform.localScale;
-                    _localScale = new Vector3(1, _localScale.y, _localScale.z);
-                    _autoModSlider.transform.localScale = _localScale;
-                    _autoModSlider.GetComponent<Image>().color = new Color32(0x39, 0xB5, 0x4A, 0xFF);
-                }
-                else
-                {
-                    var _localScale = _autoModSlider.transform.localScale;
-                    _localScale = new Vector3(-1, _localScale.y, _localScale.z);
-                    _autoModSlider.transform.localScale = _localScale;
-                    _autoModSlider.GetComponent<Image>().color = Color.red;
-                }
-            }
-            else
-                autoMod[field] = !autoMod[field];
-
-            
-        }
     }
 
     [Serializable]
@@ -331,6 +297,7 @@ namespace Shop
         public bool[] autoFlippers;
         public int[] bonusTime;
         public int[] expTime;
+        public float[] multiplyPoint;
 
         public CostAndGrade()
         {
@@ -338,6 +305,7 @@ namespace Shop
             bonusTime = new[] {30, 30, 30, 30, 30, 30, 30, 30, 30};
             expTime = new[] {30, 30, 30, 30, 30, 30, 30, 30, 30};
             autoFlippers = new[] {false, false, false, false, false, false, false, false, false};
+            multiplyPoint = new[] {1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f};
         }
     }
 }

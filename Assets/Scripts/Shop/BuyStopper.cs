@@ -27,7 +27,7 @@ namespace Shop
 
         private void Awake()
         {
-            MenuController.shopOpen[1] += changeText;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += changeText;
         }
 
         private void Start()

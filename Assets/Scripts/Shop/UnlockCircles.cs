@@ -12,7 +12,7 @@ namespace Shop
         private bool _isOpen = true;
 
         private bool _isMax;
-        private static readonly int[] maxUpgrade = {12, 14, 10, 15, 16, 14, 12, 12, 12};
+        private static readonly int[] maxUpgrade = {12, 14, 12, 15, 16, 14, 16, 16, 14};
 
         [SerializeField]
         private Text _costText;
@@ -30,7 +30,7 @@ namespace Shop
 
         private void Awake()
         {
-            MenuController.shopOpen[1] += UpdateText;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += UpdateText;
         }
 
         private void Start()

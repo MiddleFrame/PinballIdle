@@ -233,8 +233,8 @@ namespace Competition
             GetPrice();
             FieldManager.openAllField = null;
             FieldManager.openOneField = null;
-            for (int _i = 0; _i < MenuController.shopOpen.Length; _i++)
-                MenuController.shopOpen[_i] = null;
+            for (int _i = 0; _i < MenuController.openMenu.Count; _i++)
+                MenuController.openMenu[(MenuController.Shops)_i] = null;
             SceneManager.LoadScene(0);
             AdManager.ShowInterstitial();
         }

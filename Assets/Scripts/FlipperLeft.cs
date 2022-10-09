@@ -15,6 +15,7 @@ public class FlipperLeft : MonoBehaviour
             As.Play();
         FlipperController.RightOrLeft[Field] = false;
         FlipperController.IsFlipper[Field] = true;
+        Invoke(nameof(DisableFlipper),1f);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -23,5 +24,10 @@ public class FlipperLeft : MonoBehaviour
         {
             FlipperController.IsFlipper[Field] = false;
         }
+    }
+
+    private void DisableFlipper()
+    {
+        FlipperController.IsFlipper[Field] = false;
     }
 }

@@ -72,7 +72,7 @@ public class LetsScript : MonoBehaviour
                 ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
 
                 if (FieldManager.currentField == _numField)
-                    ChallengeManager.Instance.ChangeTextAndFill();
+                    ChallengeManager.Instance.ChangeTextAndFill(_numField);
             }
             else if (ChallengeManager.progress.countCompleteChallenge[_numField] == 3)
             {
@@ -80,7 +80,7 @@ public class LetsScript : MonoBehaviour
                 ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
 
                 if (FieldManager.currentField == _numField)
-                    ChallengeManager.Instance.ChangeTextAndFill();
+                    ChallengeManager.Instance.ChangeTextAndFill(_numField);
             }
             else if (ChallengeManager.progress.countCompleteChallenge[_numField] == 4)
             {
@@ -93,14 +93,14 @@ public class LetsScript : MonoBehaviour
                 ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
 
                 if (FieldManager.currentField == _numField)
-                    ChallengeManager.Instance.ChangeTextAndFill();
+                    ChallengeManager.Instance.ChangeTextAndFill(_numField);
             }
             else
             {
                 _point = _pointLet;
                 ChallengeManager.progress.currentProgressChallenge[_numField] += _pointLet;
                 if (FieldManager.currentField == _numField)
-                    ChallengeManager.Instance.ChangeTextAndFill();
+                    ChallengeManager.Instance.ChangeTextAndFill(_numField);
             }
 
             if (ChallengeManager.progress.currentProgressChallenge[_numField] >= 1000)
@@ -110,9 +110,9 @@ public class LetsScript : MonoBehaviour
         }
         else
         {
-            _point = PlayerDataController.playerStats.lvl[_numField] * _pointLet *
+            _point = (long)((1+0.1f*(PlayerDataController.playerStats.lvl[_numField]-1)) * _pointLet *
                      DefaultBuff.grade.pointOnBit[_numField] * RewardPoint.hitMultiply[_numField] *
-                     SkinShopController.buyElementX2;
+                     SkinShopController.buyElementX2*DefaultBuff.grade.multiplyPoint[_numField]);
             PlayerDataController.PointSum += _point;
             PlayerDataController.AddExp(_numField, exp);
         }
