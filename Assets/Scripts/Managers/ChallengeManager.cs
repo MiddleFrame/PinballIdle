@@ -1,4 +1,3 @@
-using System.Collections;
 using Controllers;
 using Shop;
 using UnityEngine;
@@ -33,10 +32,13 @@ namespace Managers
 
         [SerializeField]
         private Image _rankFieldOnScreen;
+
         [SerializeField]
         private Image _rankFieldOnMenu;
+
         [SerializeField]
         private Image _rankCurrent;
+
         [SerializeField]
         private Image _rankNext;
 
@@ -46,7 +48,7 @@ namespace Managers
         [SerializeField]
         private Sprite[] _ranks;
 
-        
+
         public GameObject _challengeCanvas;
 
         [SerializeField]
@@ -57,6 +59,7 @@ namespace Managers
 
         [SerializeField]
         private Text _countBallsText;
+
         [SerializeField]
         private Text _countCompleteChallengeText;
 
@@ -188,7 +191,8 @@ namespace Managers
                 _arrow.SetActive(false);
                 return;
             }
-            _rankNext.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]+1];
+
+            _rankNext.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField] + 1];
         }
 
         private void ChangeCostBallText()
@@ -245,7 +249,7 @@ namespace Managers
             _challengeProgressText.text =
                 $"{progress.currentProgressChallenge[FieldManager.currentField]}/1000";
             _challengeProgress.fillAmount = progress.currentProgressChallenge[FieldManager.currentField] / 1000f;
-            if (MenuController.currentMenu != (int)MenuController.Shops.AllField) return;
+            if (MenuController.currentMenu != (int) MenuController.Shops.AllField) return;
             _progressTexts[field].text =
                 $"{Mathf.Floor(progress.currentProgressChallenge[field] / 10f)}%";
             _progressFills[field].fillAmount =
@@ -331,20 +335,10 @@ namespace Managers
             _challengeText.text =
                 "Score 1000 point" +
                 _challenges[progress.countCompleteChallenge[FieldManager.currentField]];
-            StartCoroutine(startChallenge());
-        }
-
-        private IEnumerator startChallenge()
-        {
-            for (int _i = 0; _i < 70; _i++)
-            {
-                MenuController.instance._shops[2].transform.position -= new Vector3(0, 0.15f, 0); //Todo time.deltatime
-                yield return null;
-            }
-
-            MenuController.instance.OpenShop((int)MenuController.Shops.Ranks);
+            MenuController.instance.OpenShop((int) MenuController.Shops.Ranks);
             _newChallengePanel.SetActive(true);
         }
+
 
         public void ConfirmStartChallenge()
         {

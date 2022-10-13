@@ -61,7 +61,7 @@ public class RewardExp : MonoBehaviour
 
         foreach (var _t in _lvlBuffs)
         {
-            _t.color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
+            _t.color = Color.white;
         }
     }
 
@@ -88,7 +88,7 @@ public class RewardExp : MonoBehaviour
             _timeExpReward.text = "";
             foreach (var _t in _lvlBuffs)
             {
-                _t.color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
+                _t.color = Color.white;
             }
         }
         reward[_field] = false;

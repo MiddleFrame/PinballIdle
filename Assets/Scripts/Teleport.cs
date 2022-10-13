@@ -35,7 +35,7 @@ public class Teleport : MonoBehaviour
         {
             _balls[_ball] = balls[_ball].GetComponent<BallsChallenge>();
         }
-       
+
         StartCoroutine(Spawn());
     }
 
@@ -59,24 +59,16 @@ public class Teleport : MonoBehaviour
         {
             _trail.colorGradient = GameManager.trails[trail];
         }
-       
 
-        if (trail == 0)
+
+        if (trail == 0) return;
+
+        foreach (var _ball in balls)
         {
-            foreach (var _ball in balls)
-            {
-                _ball.GetComponent<SpriteRenderer>().color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
-            }
-        }
-        else
-        {
-            foreach (var _ball in balls)
-            {
-                _ball.GetComponent<SpriteRenderer>().color = GameManager.ballColor[trail];
-            }
+            _ball.GetComponent<SpriteRenderer>().color = GameManager.ballColor[trail];
         }
     }
-    
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -90,14 +82,13 @@ public class Teleport : MonoBehaviour
             int _i = field;
             while (true)
             {
-                _i = _i==FieldManager.fields.isOpen.Length-1?0:_i+1;
+                _i = _i == FieldManager.fields.isOpen.Length - 1 ? 0 : _i + 1;
                 if (!FieldManager.fields.isOpen[_i]) continue;
-                
+
                 GameManager.instance.spawnPoints[_i].Spawn(collision.gameObject);
                 collision.gameObject.GetComponent<TrailRenderer>().Clear();
                 return;
             }
-            
         }
     }
 
@@ -109,6 +100,7 @@ public class Teleport : MonoBehaviour
         ball.GetComponent<BallsChallenge>().timeOnField = 0;
         ball.SetActive(true);
     }
+
     private IEnumerator Spawn()
     {
         //  var _child = balls[0].GetComponentsInChildren<TrailRenderer>();
@@ -128,6 +120,4 @@ public class Teleport : MonoBehaviour
             yield return new WaitForSeconds(0.8f);
         }
     }
-
- 
 }

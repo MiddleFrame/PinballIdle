@@ -42,7 +42,6 @@ public class RewardPoint : MonoBehaviour
         _x2Bonus.SetActive(true);
         _timex2Reward.text = "";
         _lvlBuffs.text = $"x {PlayerDataController.playerStats.lvl[FieldManager.currentField]}";
-        _lvlBuffs.color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
     }
 
     public void OnAdReceivedRewardX2()
@@ -87,7 +86,7 @@ public class RewardPoint : MonoBehaviour
         {
             _timex2Reward.text = "";
             _lvlBuffs.text = $"x {PlayerDataController.playerStats.lvl[FieldManager.currentField]}";
-            _lvlBuffs.color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
+            _lvlBuffs.color = Color.white;
         }
 
         ThemeManager.changeTheme -= changeColor;

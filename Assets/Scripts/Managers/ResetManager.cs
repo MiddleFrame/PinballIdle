@@ -6,7 +6,11 @@ namespace Managers
 {
     public class ResetManager : MonoBehaviour
     {
-        public void ResetProgressOnField(int field)
+        public void ResetCurrentField()
+        {
+            ResetProgressOnField(FieldManager.currentField);
+        }
+        private void ResetProgressOnField(int field)
         {
             DefaultBuff.grade.multiplyPoint[field] += 0.2f;
             if (DefaultBuff.grade.multiplyPoint[field] < 1.3f)

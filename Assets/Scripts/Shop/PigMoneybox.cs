@@ -45,7 +45,7 @@ namespace Shop
 
         private void Start()
         {
-            Debug.Log("Next claim: " + NextClaim);
+            /*Debug.Log("Next claim: " + NextClaim);
             if (NextClaim != DateTime.MinValue)
             {
                 if (NextClaim < DateTime.Now)
@@ -63,7 +63,7 @@ namespace Shop
                 NextClaim = DateTime.Now.AddMinutes((float) MaxPoints /
                                                     (PlayerDataController.LevelSum * 15));
             }
-
+*/
         }
 
        

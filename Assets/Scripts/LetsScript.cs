@@ -234,6 +234,5 @@ public class LetsScript : MonoBehaviour
             new Vector2(cp2d.point.x, cp2d.point.y), new Quaternion());
         _text.transform.localScale *= scale;
         _text.GetComponent<TextMesh>().text = point;
-        _text.GetComponent<TextMesh>().color = ThemeManager.instance.themes[ThemeManager.currentTheme].textColor;
     }
 }

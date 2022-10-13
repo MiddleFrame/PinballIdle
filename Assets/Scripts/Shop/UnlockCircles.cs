@@ -9,28 +9,35 @@ namespace Shop
     {
         public static UpgradeCircle upgrade;
 
-        private bool _isOpen = true;
 
-        private bool _isMax;
+        private static UnlockCircles instance;
+
+        [SerializeField]
+        private Image[] _levelForCircle;
+
+        [SerializeField]
+        private GameObject _levelCurrent;
+
+        [SerializeField]
+        private GameObject _levelElements;
+
+        [SerializeField]
+        private Text _countOfElements;
+
+
         private static readonly int[] maxUpgrade = {12, 14, 12, 15, 16, 14, 16, 16, 14};
 
-        [SerializeField]
-        private Text _costText;
+        public static readonly bool[] IsMax = {false, false, false, false, false, false, false, false, false};
 
-        [SerializeField]
-        private Text _count;
+        private const int START_COST = 5;
+        private const int MULTI_COST = 5;
 
-        [SerializeField]
-        private Image _imageCost;
-
-        private const int START_COST = 10;
-        private const int MULTI_COST = 10;
-
-        private readonly int[] _cost = {10, 10, 10, 10, 10, 10, 10, 10, 10};
+        private static readonly int[] costHit = {10, 10, 10, 10, 10, 10, 10, 10, 10};
 
         private void Awake()
         {
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += UpdateText;
+            instance = this;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += UpdateQuestText;
         }
 
         private void Start()
@@ -41,37 +48,86 @@ namespace Shop
                     $"Max unlock circle ({maxUpgrade}) not equal current circle on field ({GameManager.instance.fields[0].circles.Length - 1})");
             }
 
+            FieldManager.openOneField += UpdateLevelFill;
+            
             for (int _field = 0; _field < FieldManager.fields.isOpen.Length; _field++)
             {
                 if (!FieldManager.fields.isOpen[_field]) continue;
-                _cost[_field] = START_COST + MULTI_COST * upgrade.upgrades[_field];
                 for (int _i = 0; _i < upgrade.upgrades[_field]; _i++)
                 {
                     OpenCircle(_field, _i);
                 }
+                if (upgrade.upgrades[_field] >= maxUpgrade[_field])
+                {
+                    IsMax[_field] = true;
+                    continue;
+                }
+                costHit[_field] = START_COST + MULTI_COST * upgrade.upgrades[_field];
+               
+            }
+            UpdateLevelFill();
+        }
+
+        private void UpdateLevelFill()
+        {
+            if (IsMax[FieldManager.currentField])
+            {
+                _levelCurrent.SetActive(true);
+                _levelElements.SetActive(false);
+            }
+            else
+            {
+                _levelCurrent.SetActive(false);
+                _levelElements.SetActive(true);
+                for (int _i = 0; _i < _levelForCircle.Length; _i++)
+                {
+                    if (_i >= maxUpgrade[FieldManager.currentField] && _levelForCircle[_i].gameObject.activeSelf)
+                    {
+                        _levelForCircle[_i].gameObject.SetActive(false);
+                    }
+                    else if (_i < maxUpgrade[FieldManager.currentField] &&
+                             !_levelForCircle[_i].gameObject.activeSelf)
+                    {
+                        _levelForCircle[_i].gameObject.SetActive(true);
+                    }
+
+                    _levelForCircle[_i].fillAmount = upgrade.upgrades[FieldManager.currentField] <= _i ? 0 : 1;
+                }
+
+                _countOfElements.text = (GameManager.instance.fields[FieldManager.currentField].circles.Length -
+                                         maxUpgrade[FieldManager.currentField] +
+                                         upgrade.upgrades[FieldManager.currentField]).ToString();
+                _levelForCircle[upgrade.upgrades[FieldManager.currentField]].fillAmount =
+                    (float) upgrade.experience[FieldManager.currentField] / costHit[FieldManager.currentField];
             }
         }
 
-        private void Update()
+        private void UpdateQuestText()
         {
-            if (MenuController.currentMenu != 1) return;
-            if (_isMax)
-                return;
-            switch (_isOpen)
+        }
+
+        public static void AddExp(int field, int exp)
+        {
+            upgrade.experience[field] += exp;
+            if (FieldManager.currentField == field)
             {
-                case true when PlayerDataController.PointSum < _cost[FieldManager.currentField]:
-                    _isOpen = false;
-                    _imageCost.raycastTarget = false;
-                    _imageCost.sprite = GameManager.instance._lockedSprite;
-                    GameManager.TextDown(_costText.transform.parent.gameObject);
-                    break;
-                case false when PlayerDataController.PointSum >= _cost[FieldManager.currentField]:
-                    _isOpen = true;
-                    _imageCost.sprite = GameManager.instance._unlockedSprite;
-                    _imageCost.raycastTarget = true;
-                    GameManager.TextUp(_costText.transform.parent.gameObject);
-                    break;
+                instance.UpdateFill();
             }
+            if (upgrade.experience[field] < costHit[field]) return;
+            upgrade.experience[field] = 0;
+            BuyCircle(field);
+            if (upgrade.upgrades[field] >= maxUpgrade[field])
+                IsMax[field] = true;
+
+            if (!IsMax[field]||FieldManager.currentField != field) return;
+            instance._levelCurrent.SetActive(true);
+            instance._levelElements.SetActive(false);
+        }
+
+        private void UpdateFill()
+        {
+            _levelForCircle[upgrade.upgrades[FieldManager.currentField]].fillAmount =
+                (float) upgrade.experience[FieldManager.currentField] / costHit[FieldManager.currentField];
         }
 
         private static void OpenCircle(int fieldNumber, int circle)
@@ -80,60 +136,28 @@ namespace Shop
                 GameManager.instance.fields[fieldNumber].circles[circle].SetActive(true);
             if (circle == maxUpgrade[fieldNumber] - 1)
             {
+                IsMax[fieldNumber] = true;
                 GameManager.instance.fields[fieldNumber].MakeTriple();
-                Debug.Log("MakeTriple");
             }
         }
 
-        public void BuyCircle()
+        private static void BuyCircle(int fieldNumber)
         {
-            if (PlayerDataController.PointSum < _cost[FieldManager.currentField]) return;
-            PlayerDataController.PointSum -= _cost[FieldManager.currentField];
-            Statistics.stats.pointSpent += _cost[FieldManager.currentField];
-            OpenCircle(FieldManager.currentField, upgrade.upgrades[FieldManager.currentField]);
-            upgrade.upgrades[FieldManager.currentField]++;
-            _cost[FieldManager.currentField] = START_COST + MULTI_COST * upgrade.upgrades[FieldManager.currentField];
-            UpdateText();
-        }
-
-        private void UpdateText()
-        {
-            if (upgrade.upgrades[FieldManager.currentField] >= maxUpgrade[FieldManager.currentField] && _isMax)
-                return;
-            if (upgrade.upgrades[FieldManager.currentField] >= maxUpgrade[FieldManager.currentField])
-            {
-                _isMax = true;
-                _costText.text = "MAX";
-                _count.text = (maxUpgrade[FieldManager.currentField] + 1).ToString();
-                if (!_isOpen) return;
-                GameManager.TextDown(_costText.transform.parent.gameObject);
-                _imageCost.sprite = GameManager.instance._lockedSprite;
-                _imageCost.raycastTarget = false;
-            }
-            else
-            {
-                if (_isMax)
-                {
-                    _isMax = false;
-                    GameManager.TextUp(_costText.transform.parent.gameObject);
-                    _imageCost.sprite = GameManager.instance._unlockedSprite;
-                    _imageCost.raycastTarget = true;
-                }
-
-                _costText.text = _cost[FieldManager.currentField].ToString();
-                _count.text = (upgrade.upgrades[FieldManager.currentField] + 1) + "→" +
-                              (upgrade.upgrades[FieldManager.currentField] + 2);
-            }
+            OpenCircle(fieldNumber, upgrade.upgrades[fieldNumber]);
+            upgrade.upgrades[fieldNumber]++;
+            costHit[fieldNumber] = START_COST + MULTI_COST * upgrade.upgrades[fieldNumber];
         }
     }
-
 
     public class UpgradeCircle
     {
         public int[] upgrades;
 
+        public int[] experience;
+
         public UpgradeCircle()
         {
+            experience = new int[9];
             upgrades = new int[9];
             upgrades[0] = 6;
         }

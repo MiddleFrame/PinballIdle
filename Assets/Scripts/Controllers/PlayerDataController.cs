@@ -103,6 +103,11 @@ namespace Controllers
 
         public static void AddExp(int field, int exp)
         {
+            if (!UnlockCircles.IsMax[field])
+            {
+                UnlockCircles.AddExp(field,exp);
+                return;
+            }
             if (playerStats.lvl[field] > 9) return;
             playerStats.exp[field] += exp;
             if (playerStats.exp[field] >= 200 * playerStats.lvl[field])
