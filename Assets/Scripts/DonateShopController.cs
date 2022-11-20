@@ -11,6 +11,8 @@ public class DonateShopController : MonoBehaviour
 {
     [SerializeField]
     private Text[] _diamondPacks;
+    [SerializeField]
+    private Text[] _keyPacks;
 
     [SerializeField]
     private Text _coffeeCost;
@@ -30,8 +32,12 @@ public class DonateShopController : MonoBehaviour
     [SerializeField]
     private Text _rewardGoldTimer;
     // Start is called before the first frame update
-    public void Init()
-    {
+    public IEnumerator Init()
+    { 
+        while (!IaPurchase.IsIapInitialized())
+        {
+            yield return new WaitForSeconds(1f);
+        }
         _diamondPacks[0].text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.LITTLE_PACK)
             .metadata.localizedPriceString;
         _fakePrice.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.MEDIUM_PACK).metadata
@@ -43,6 +49,12 @@ public class DonateShopController : MonoBehaviour
         _coffeeCost.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.COFFEE).metadata
             .localizedPriceString;
         _removeAds.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.REMOVE_ADS).metadata
+            .localizedPriceString;
+        _keyPacks[0].text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.KEY_LITTLE_PACK)
+            .metadata.localizedPriceString;
+        _keyPacks[1].text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.KEY_MEDIUM_PACK)
+            .metadata.localizedPriceString;
+        _keyPacks[2].text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.KEY_BIG_PACK).metadata
             .localizedPriceString;
     }
 

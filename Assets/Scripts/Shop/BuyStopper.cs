@@ -1,7 +1,5 @@
-﻿using Controllers;
-using Managers;
+﻿using Managers;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Shop
 {
@@ -9,25 +7,15 @@ namespace Shop
     {
         public static StopperGrades grades;
 
-        private const int COST_STOPPERS = 40000;
-
-        [SerializeField]
-        private Image _buyStoppers;
-
         [SerializeField]
         private GameObject[] _stoppers;
 
-        [SerializeField]
-        private Text _costStoppersText;
-
-        [SerializeField]
-        private Text _buyStoppersText;
-
-        private bool _isStopperOpen = true;
+        public static BuyStopper instance;
 
         private void Awake()
         {
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += changeText;
+            instance = this;
+            //MenuController.openMenu[MenuController.Shops.UpgradeFields] += changeText;
         }
 
         private void Start()
@@ -40,60 +28,15 @@ namespace Shop
             }
         }
 
-        private void Update()
-        {
-            if (FieldManager.currentField == -1)
-            {
-                return;
-            }
-
-            if (MenuController.currentMenu == 1 && !grades.isStopper[FieldManager.currentField])
-            {
-                if (_isStopperOpen && PlayerDataController.PointSum < COST_STOPPERS)
-                {
-                    _isStopperOpen = false;
-                    _buyStoppers.raycastTarget = false;
-                    _buyStoppers.sprite = GameManager.instance._lockedSprite;
-                    GameManager.TextDown(_costStoppersText.transform.parent.gameObject);
-                }
-                else if (!_isStopperOpen && PlayerDataController.PointSum >= COST_STOPPERS)
-                {
-                    _isStopperOpen = true;
-                    _buyStoppers.sprite = GameManager.instance._unlockedSprite;
-                    _buyStoppers.raycastTarget = true;
-                    GameManager.TextUp(_costStoppersText.transform.parent.gameObject);
-                }
-            }
-        }
-
-        public void BuyStoppers()
-        {
-            if (PlayerDataController.PointSum < COST_STOPPERS) return;
-            PlayerDataController.PointSum -= COST_STOPPERS;
-            Statistics.stats.pointSpent += COST_STOPPERS;
-            grades.isStopper[FieldManager.currentField] = true;
-            openStoppers(FieldManager.currentField);
-            changeText();
-        }
-
-        private void openStoppers(int i)
+        public void openStoppers(int i)
         {
             _stoppers[i].SetActive(true);
         }
-
-        private void changeText()
+        public void closeStoppers(int i)
         {
-            if (grades.isStopper[FieldManager.currentField])
-            {
-                _buyStoppersText.text = "Stoppers";
-                _buyStoppers.gameObject.SetActive(false);
-            }
-            else
-            {
-                _buyStoppersText.text = "Buy stoppers";
-                _buyStoppers.gameObject.SetActive(true);
-            }
+            _stoppers[i].SetActive(false);
         }
+
     }
 
 

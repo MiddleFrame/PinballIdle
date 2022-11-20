@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Controllers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,15 +12,17 @@ namespace Managers
         public static GameManager instance;
 
         public Field[] fields;
-        public GameObject shop;
 
         public Sprite _lockedSprite;
 
+        [SerializeField]
+        private Element[] _elementsAchievement;
         public Sprite defaultShadowBall;
         public Sprite goldShadowBall;
         public Sprite _unlockedSprite;
         public Teleport[] spawnPoints;
         public GameObject oneFieldCanvas;
+        public GameObject triggerCanvas;
         public GameObject upperCanvas;
         // public GameObject bonusCanvas;
         public Color tripleColor;
@@ -53,6 +56,52 @@ namespace Managers
             LetsScript.isCompetitive = false;
             Vibration.Init();
             deleteProgressImage = _deleteProgressImage;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += () =>
+            {
+                if (PlayerDataController.playerStats.lvl[FieldManager.currentField]-1 >= 3)
+                {
+                    _elementsAchievement[0].Color();
+                }
+                else
+                {
+                    _elementsAchievement[0].RemoveColor();
+                }
+                if (PlayerDataController.playerStats.lvl[FieldManager.currentField]-1 >= 1)
+                {
+                    _elementsAchievement[1].Color();
+                }
+                else
+                {
+                    _elementsAchievement[1].RemoveColor();
+                }  
+                if (PlayerDataController.playerStats.lvl[FieldManager.currentField]-1 >= 6)
+                {
+                    _elementsAchievement[3].Color();
+                }
+                else
+                {
+                    _elementsAchievement[3].RemoveColor();
+                }
+
+                if (ChallengeManager.progress.balls[FieldManager.currentField] > 5)
+                {
+                    _elementsAchievement[2].Color();
+                }
+                else
+                {
+                    _elementsAchievement[2].RemoveColor();
+                }
+
+                if (ChallengeManager.progress.countCompleteChallenge[FieldManager.currentField] >= 5)
+                {
+                    _elementsAchievement[4].Color();
+                }
+                else
+                {
+                    _elementsAchievement[4].RemoveColor();
+                }
+
+            };
         }
 
         private void Start()

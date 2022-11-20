@@ -1,3 +1,4 @@
+using System.Collections;
 using Controllers;
 using Shop;
 using UnityEngine;
@@ -6,9 +7,11 @@ namespace Managers
 {
     public class SaveManager : MonoBehaviour
     {
-
         private static bool isInit;
-    
+
+        private static bool isLoading;
+        private static SaveManager instance;
+
         private void Awake()
         {
             if (isInit)
@@ -18,9 +21,10 @@ namespace Managers
             }
 
             isInit = true;
+            instance = this;
             DontDestroyOnLoad(this);
             LoadGame();
-            Debug.Log("Init save manager "+isInit);
+            Debug.Log("Init save manager " + isInit);
         }
 
         private void OnApplicationQuit()
@@ -28,20 +32,19 @@ namespace Managers
             SaveGame();
         }
 
-          
-  
-          private void OnApplicationPause(bool pause)
-          {
-              if (pause)
-              {
-                  SaveGame();
-              }
-              else
-              {
-                  LoadGame();
-              }
-          }
-
+#if !UNITY_EDITOR
+        private void OnApplicationPause(bool pause)
+        {
+            if (pause)
+            {
+                SaveGame();
+            }
+            else
+            {
+                LoadGame();
+            }
+        }
+#endif
 
         private static void SaveGame()
         {
@@ -56,11 +59,17 @@ namespace Managers
             PlayerPrefs.SetString("Challenge", JsonUtility.ToJson(ChallengeManager.progress));
             PlayerPrefs.SetString("BallsManager", JsonUtility.ToJson(BallsManager.balls));
             PlayerPrefs.SetString("Skins", JsonUtility.ToJson(SkinShopController.skins));
+            PlayerPrefs.SetString("GlobalQuest", JsonUtility.ToJson(QuestManager.progress[0]));
+            for (int _i = 0; _i < 9; _i++)
+            {
+                PlayerPrefs.SetString("Quest" + _i, JsonUtility.ToJson(QuestManager.progress[_i + 1]));
+            }
         }
 
 
         private static void LoadGame()
         {
+            if (isLoading) return;
             Debug.Log("Loading player data.");
             if (!PlayerPrefs.HasKey("version 2.3"))
             {
@@ -85,14 +94,46 @@ namespace Managers
             FieldManager.fields =
                 JsonUtility.FromJson<Fields>(PlayerPrefs.GetString("Fields", JsonUtility.ToJson(new Fields())));
             UnlockCircles.upgrade = JsonUtility.FromJson<UpgradeCircle>(
-                PlayerPrefs.GetString("UpgradeCircle", JsonUtility.ToJson(new UpgradeCircle())));  
+                PlayerPrefs.GetString("UpgradeCircle", JsonUtility.ToJson(new UpgradeCircle())));
             BallsManager.balls = JsonUtility.FromJson<StatsBall>(
                 PlayerPrefs.GetString("BallsManager", JsonUtility.ToJson(new StatsBall())));
             ChallengeManager.progress = JsonUtility.FromJson<ChallengeProgress>(
                 PlayerPrefs.GetString("Challenge", JsonUtility.ToJson(new ChallengeProgress())));
             SkinShopController.skins = JsonUtility.FromJson<Skins>(
                 PlayerPrefs.GetString("Skins", JsonUtility.ToJson(new Skins())));
+            instance.StartCoroutine(instance.loadQuest());
+
             Debug.Log("Player data complete loading.");
+            isLoading = true;
+        }
+
+        private void LoadQuest()
+        {
+            if (!QuestManager.instance) return;
+            QuestManager.progress = new Quest[10];
+            QuestManager.progress[0] = JsonUtility.FromJson<Quest>(
+                PlayerPrefs.GetString("GlobalQuest",
+                    JsonUtility.ToJson(new Quest(QuestManager.instance.completeGlobalEvent.Length)))
+            );
+            for (int _i = 0; _i < 9; _i++)
+            {
+                QuestManager.progress[_i + 1] = JsonUtility.FromJson<Quest>(
+                    PlayerPrefs.GetString("Quest" + _i,
+                        JsonUtility.ToJson(new Quest(QuestManager.instance.completeLocalEvent.Length)))
+                );
+            }
+
+            QuestManager.instance.InitializeQuest();
+        }
+
+        private IEnumerator loadQuest()
+        {
+            while (!QuestManager.instance)
+            {
+                yield return null;
+            }
+
+            LoadQuest();
         }
     }
 }

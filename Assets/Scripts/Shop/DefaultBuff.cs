@@ -11,59 +11,66 @@ namespace Shop
         // Start is called before the first frame update
         [SerializeField]
         private Text _costText;
-
-        [SerializeField]
-        private Text _costBonusText;
-
-        [SerializeField]
-        private Text _costExpBonusText;
-
-        [SerializeField]
-        private Text _costAutoFlipperText;
+        //
+        // [SerializeField]
+        // private Text _costBonusText;
+        //
+        // [SerializeField]
+        // private Text _costExpBonusText;
+        //
+        // [SerializeField]
+        // private Text _costAutoFlipperText;
 
         [SerializeField]
         private Text _pointBuffText;
 
-        [SerializeField]
-        private Text _pointBonusText;
-
-        [SerializeField]
-        private Text _pointExpBonusText;
+        // [SerializeField]
+        // private Text _pointBonusText;
+        //
+        // [SerializeField]
+        // private Text _pointExpBonusText;
 
         private bool _isOpen = true;
-        private bool _isOpenAutoFlipper = true;
-        private bool _isBonusOpen = true;
-        private bool _isExpBonusOpen = true;
-        public static CostAndGrade grade;
-        private readonly int[] _costOnGrade = {100, 100, 100, 100, 100, 100, 100, 100, 100};
-        private readonly int[] _costOnBonusGrade = {500, 500, 500, 500, 500, 500, 500, 500, 500};
-        private readonly int[] _costOnExpBonusGrade = {500, 500, 500, 500, 500, 500, 500, 500, 500};
-        private const int COST_AUTO_FLIPPER = 10000;
 
-        [SerializeField]
-        private Text _autoFlipperText;
+        private static DefaultBuff _instance;
+        //private bool _isOpenAutoFlipper = true;
+        //private bool _isBonusOpen = true;
+        // private bool _isExpBonusOpen = true;
+        public static CostAndGrade grade;
+
+        public static readonly int[] costOnGrade =
+        {
+            DEFAULT_COST, DEFAULT_COST, DEFAULT_COST, DEFAULT_COST, DEFAULT_COST, DEFAULT_COST, DEFAULT_COST,
+            DEFAULT_COST, DEFAULT_COST
+        };
+
+        public const int DEFAULT_COST = 100;
+        // private readonly int[] _costOnBonusGrade = {500, 500, 500, 500, 500, 500, 500, 500, 500};
+        // private readonly int[] _costOnExpBonusGrade = {500, 500, 500, 500, 500, 500, 500, 500, 500};
+        // private const int COST_AUTO_FLIPPER = 10000;
+
+        // [SerializeField]
+        // private Text _autoFlipperText;
 
         [SerializeField]
         private Image _buttonImage;
 
-        [SerializeField]
-        private Image _buttonBonusImage;
+        // [SerializeField]
+        // private Image _buttonBonusImage;
 
-        [SerializeField]
-        private Image _buttonExpBonusImage;
+        // [SerializeField]
+        // private Image _buttonExpBonusImage;
 
-        [SerializeField]
-        private Image _buttonAutoFlipperImage;
+        //[SerializeField]
+        // private Image _buttonAutoFlipperImage;
 
 
         public static bool[] autoMod;
 
         private void Awake()
         {
+            _instance = this;
             MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeHitText;
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeBonusText;
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeExpBonusText;
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += OpenAutoMod;
         }
 
         private void Start()
@@ -73,99 +80,49 @@ namespace Shop
             {
                 if (!FieldManager.fields.isOpen[_i]) continue;
                 BuffHit(_i, grade.pointOnBit[_i] - 1);
-                BuffBonusTime(_i, (grade.bonusTime[_i] - 30) / 5);
-                BuffExpBonusTime(_i, (grade.expTime[_i] - 30) / 5);
+                // BuffBonusTime(_i, (grade.bonusTime[_i] - 30) / 5);
+                // BuffExpBonusTime(_i, (grade.expTime[_i] - 30) / 5);
                 if (grade.autoFlippers[_i])
                 {
                     autoMod[_i] = true;
                 }
             }
-            if(grade.autoFlippers[0])
+
+            if (grade.autoFlippers[0])
                 ChallengeManager.Instance.OpenChallenges();
         }
 
+
+        public static void ResetProgress(int field)
+        {
+            grade.multiplyPoint[field] += 0.2f;
+            grade.autoFlippers[field] = false;
+            autoMod[field] = false;
+            grade.pointOnBit[field] = 1;
+            costOnGrade[field] = DEFAULT_COST;
+            _instance.ChangeHitText();
+        }
+        
         private void Update()
         {
             if (FieldManager.currentField == -1)
                 return;
 
-            switch (MenuController.currentMenu)
+            if (MenuController.currentMenu != (int) MenuController.Shops.UpgradeFields) return;
+            switch (_isOpen)
             {
-                case 0:
-                {
-                    switch (_isOpen)
-                    {
-                        case true when PlayerDataController.PointSum < _costOnGrade[FieldManager.currentField]:
-                            _isOpen = false;
-                            _buttonImage.raycastTarget = false;
-                            _buttonImage.sprite = GameManager.instance._lockedSprite;
-                            GameManager.TextDown(_costText.transform.parent.gameObject);
-                            break;
-                        case false when PlayerDataController.PointSum >= _costOnGrade[FieldManager.currentField]:
-                            _isOpen = true;
-                            _buttonImage.sprite = GameManager.instance._unlockedSprite;
-                            _buttonImage.raycastTarget = true;
-                            GameManager.TextUp(_costText.transform.parent.gameObject);
-                            break;
-                    }
-
-                    switch (_isBonusOpen)
-                    {
-                        case true when PlayerDataController.PointSum < _costOnBonusGrade[FieldManager.currentField]:
-                            _isBonusOpen = false;
-                            _buttonBonusImage.raycastTarget = false;
-                            _buttonBonusImage.sprite = GameManager.instance._lockedSprite;
-                            GameManager.TextDown(_costBonusText.transform.parent.gameObject);
-                            break;
-                        case false when PlayerDataController.PointSum >= _costOnBonusGrade[FieldManager.currentField]:
-                            _isBonusOpen = true;
-                            _buttonBonusImage.sprite = GameManager.instance._unlockedSprite;
-                            _buttonBonusImage.raycastTarget = true;
-                            GameManager.TextUp(_costBonusText.transform.parent.gameObject);
-                            break;
-                    }
-
-                    switch (_isExpBonusOpen)
-                    {
-                        case true when PlayerDataController.PointSum < _costOnExpBonusGrade[FieldManager.currentField]:
-                            _isExpBonusOpen = false;
-                            _buttonExpBonusImage.raycastTarget = false;
-                            _buttonExpBonusImage.sprite = GameManager.instance._lockedSprite;
-                            GameManager.TextDown(_costExpBonusText.transform.parent.gameObject);
-                            break;
-                        case false
-                            when PlayerDataController.PointSum >= _costOnExpBonusGrade[FieldManager.currentField]:
-                            _isExpBonusOpen = true;
-                            _buttonExpBonusImage.sprite = GameManager.instance._unlockedSprite;
-                            _buttonExpBonusImage.raycastTarget = true;
-                            GameManager.TextUp(_costExpBonusText.transform.parent.gameObject);
-                            break;
-                    }
-
+                case true when PlayerDataController.PointSum < costOnGrade[FieldManager.currentField]:
+                    _isOpen = false;
+                    _buttonImage.raycastTarget = false;
+                    _buttonImage.sprite = GameManager.instance._lockedSprite;
+                    GameManager.TextDown(_costText.transform.parent.gameObject);
                     break;
-                }
-                case 1 when _isOpenAutoFlipper && !grade.autoFlippers[FieldManager.currentField] &&
-                            PlayerDataController.PointSum < COST_AUTO_FLIPPER:
-                    _isOpenAutoFlipper = false;
-
-                    _buttonAutoFlipperImage.raycastTarget = false;
-                    _buttonAutoFlipperImage.sprite = GameManager.instance._lockedSprite;
-                    GameManager.TextDown(_costAutoFlipperText.transform.parent.gameObject);
+                case false when PlayerDataController.PointSum >= costOnGrade[FieldManager.currentField]:
+                    _isOpen = true;
+                    _buttonImage.sprite = GameManager.instance._unlockedSprite;
+                    _buttonImage.raycastTarget = true;
+                    GameManager.TextUp(_costText.transform.parent.gameObject);
                     break;
-                case 1:
-                {
-                    if (!_isOpenAutoFlipper && !grade.autoFlippers[FieldManager.currentField] &&
-                        PlayerDataController.PointSum >= COST_AUTO_FLIPPER)
-                    {
-                        _isOpenAutoFlipper = true;
-
-                        _buttonAutoFlipperImage.sprite = GameManager.instance._unlockedSprite;
-                        _buttonAutoFlipperImage.raycastTarget = true;
-                        GameManager.TextUp(_costAutoFlipperText.transform.parent.gameObject);
-                    }
-
-                    break;
-                }
             }
         }
 
@@ -175,54 +132,59 @@ namespace Shop
                 return;
             for (int _i = 0; _i < countGrades; _i++)
             {
-                _costOnGrade[field] = (int) (_costOnGrade[field] * 1.1f);
+                costOnGrade[field] = (int) (costOnGrade[field] * 1.1f);
             }
         }
 
         private void ChangeHitText()
         {
-            _costText.text = GameManager.NormalSum(_costOnGrade[FieldManager.currentField]);
-            _pointBuffText.text = grade.pointOnBit[FieldManager.currentField] + "→" +
-                                  (grade.pointOnBit[FieldManager.currentField] + 1);
+            _costText.text = GameManager.NormalSum(costOnGrade[FieldManager.currentField]);
+            _pointBuffText.text = "Field Element gain " + grade.pointOnBit[FieldManager.currentField];
         }
 
-        private void ChangeBonusText()
-        {
-            _costBonusText.text = GameManager.NormalSum(_costOnBonusGrade[FieldManager.currentField]);
-            _pointBonusText.text = grade.bonusTime[FieldManager.currentField] + "→" +
-                                   (grade.bonusTime[FieldManager.currentField] + 5);
-        }
+        // private void ChangeBonusText()
+        // {
+        //     _costBonusText.text = GameManager.NormalSum(_costOnBonusGrade[FieldManager.currentField]);
+        //     _pointBonusText.text = grade.bonusTime[FieldManager.currentField] + "→" +
+        //                            (grade.bonusTime[FieldManager.currentField] + 5);
+        // }
 
-        private void ChangeExpBonusText()
-        {
-            _costExpBonusText.text = GameManager.NormalSum(_costOnExpBonusGrade[FieldManager.currentField]);
-            _pointExpBonusText.text = grade.expTime[FieldManager.currentField] + "→" +
-                                      (grade.expTime[FieldManager.currentField] + 5);
-        }
+        // private void ChangeExpBonusText()
+        // {
+        //     _costExpBonusText.text = GameManager.NormalSum(_costOnExpBonusGrade[FieldManager.currentField]);
+        //     _pointExpBonusText.text = grade.expTime[FieldManager.currentField] + "→" +
+        //                               (grade.expTime[FieldManager.currentField] + 5);
+        // }
 
 
-        private void OpenAutoMod()
-        {
-            if (grade.autoFlippers[FieldManager.currentField])
-            {
-                _autoFlipperText.text = "Auto-flippers";
-                _buttonAutoFlipperImage.gameObject.SetActive(false);
-            }
-            else
-            {
-                _autoFlipperText.text = "Buy Auto-flippers";
-                _buttonAutoFlipperImage.gameObject.SetActive(true);
-            }
-        }
+        // private void OpenAutoMod()
+        // {
+        //     if (grade.autoFlippers[FieldManager.currentField])
+        //     {
+        //         _autoFlipperText.text = "Auto-flippers";
+        //         _buttonAutoFlipperImage.gameObject.SetActive(false);
+        //     }
+        //     else
+        //     {
+        //         _autoFlipperText.text = "Buy Auto-flippers";
+        //         _buttonAutoFlipperImage.gameObject.SetActive(true);
+        //     }
+        // }
 
         public void BuyBuffHit()
         {
-            if (PlayerDataController.PointSum < _costOnGrade[FieldManager.currentField]) return;
-            PlayerDataController.PointSum -= _costOnGrade[FieldManager.currentField];
+            if (PlayerDataController.PointSum < costOnGrade[FieldManager.currentField]) return;
+            PlayerDataController.PointSum -= costOnGrade[FieldManager.currentField];
             //statistic
-            Statistics.stats.pointSpent += _costOnGrade[FieldManager.currentField];
+            Statistics.stats.pointSpent += costOnGrade[FieldManager.currentField];
 
             grade.pointOnBit[FieldManager.currentField] += 1;
+            for (int _i = 0; _i < 3; _i++)
+            {
+                QuestManager.progress[0].progressQuest[_i]++;
+            }
+
+            QuestManager.instance.UpdateGlobalQuest();
             if (FieldManager.currentField == 0 && grade.pointOnBit[FieldManager.currentField] == 10)
                 AnalyticManager.BuyTenUpgrade();
             BuffHit(FieldManager.currentField);
@@ -230,64 +192,59 @@ namespace Shop
         }
 
 
-        private void BuffBonusTime(int field = 0, int countGrades = 1)
+        // private void BuffBonusTime(int field = 0, int countGrades = 1)
+        // {
+        //     if (!FieldManager.fields.isOpen[field])
+        //         return;
+        //     for (int _i = 0; _i < countGrades; _i++)
+        //     {
+        //         _costOnBonusGrade[field] = (int) (_costOnBonusGrade[field] * 1.1f);
+        //     }
+        // }
+        //
+        //
+        // public void BuyBuffBonusTime()
+        // {
+        //     if (PlayerDataController.PointSum < _costOnBonusGrade[FieldManager.currentField]) return;
+        //     PlayerDataController.PointSum -= _costOnBonusGrade[FieldManager.currentField];
+        //     //statistic
+        //     Statistics.stats.pointSpent += _costOnBonusGrade[FieldManager.currentField];
+        //
+        //     grade.bonusTime[FieldManager.currentField] += 5;
+        //     BuffBonusTime(FieldManager.currentField);
+        //     ChangeBonusText();
+        // }
+        //
+        // private void BuffExpBonusTime(int field = 0, int countGrades = 1)
+        // {
+        //     if (!FieldManager.fields.isOpen[field])
+        //         return;
+        //     for (int _i = 0; _i < countGrades; _i++)
+        //     {
+        //         _costOnExpBonusGrade[field] = (int) (_costOnExpBonusGrade[field] * 1.1f);
+        //     }
+        // }
+        //
+        //
+        // public void BuyBuffExpBonusTime()
+        // {
+        //     if (PlayerDataController.PointSum < _costOnExpBonusGrade[FieldManager.currentField]) return;
+        //     PlayerDataController.PointSum -= _costOnExpBonusGrade[FieldManager.currentField];
+        //     //statistic
+        //     Statistics.stats.pointSpent += _costOnExpBonusGrade[FieldManager.currentField];
+        //
+        //     grade.expTime[FieldManager.currentField] += 5;
+        //     BuffExpBonusTime(FieldManager.currentField);
+        //     ChangeExpBonusText();
+        // }
+
+        public void BuyAutoMod(int field)
         {
-            if (!FieldManager.fields.isOpen[field])
-                return;
-            for (int _i = 0; _i < countGrades; _i++)
-            {
-                _costOnBonusGrade[field] = (int) (_costOnBonusGrade[field] * 1.1f);
-            }
+            grade.autoFlippers[field] = true;
+            autoMod[field] = true;
+            if (field == FieldManager.currentField)
+                ChallengeManager.Instance.OpenChallenges();
         }
-
-
-        public void BuyBuffBonusTime()
-        {
-            if (PlayerDataController.PointSum < _costOnBonusGrade[FieldManager.currentField]) return;
-            PlayerDataController.PointSum -= _costOnBonusGrade[FieldManager.currentField];
-            //statistic
-            Statistics.stats.pointSpent += _costOnBonusGrade[FieldManager.currentField];
-
-            grade.bonusTime[FieldManager.currentField] += 5;
-            BuffBonusTime(FieldManager.currentField);
-            ChangeBonusText();
-        }
-
-        private void BuffExpBonusTime(int field = 0, int countGrades = 1)
-        {
-            if (!FieldManager.fields.isOpen[field])
-                return;
-            for (int _i = 0; _i < countGrades; _i++)
-            {
-                _costOnExpBonusGrade[field] = (int) (_costOnExpBonusGrade[field] * 1.1f);
-            }
-        }
-
-
-        public void BuyBuffExpBonusTime()
-        {
-            if (PlayerDataController.PointSum < _costOnExpBonusGrade[FieldManager.currentField]) return;
-            PlayerDataController.PointSum -= _costOnExpBonusGrade[FieldManager.currentField];
-            //statistic
-            Statistics.stats.pointSpent += _costOnExpBonusGrade[FieldManager.currentField];
-
-            grade.expTime[FieldManager.currentField] += 5;
-            BuffExpBonusTime(FieldManager.currentField);
-            ChangeExpBonusText();
-        }
-
-        public void BuyAutoMod()
-        {
-            if (PlayerDataController.PointSum < COST_AUTO_FLIPPER) return;
-            PlayerDataController.PointSum -= COST_AUTO_FLIPPER;
-            Statistics.stats.pointSpent += COST_AUTO_FLIPPER;
-            grade.autoFlippers[FieldManager.currentField] = true;
-            AnalyticManager.BuyAutoFlippers(FieldManager.currentField);
-            OpenAutoMod();
-            
-            ChallengeManager.Instance.OpenChallenges();
-        }
-        
     }
 
     [Serializable]

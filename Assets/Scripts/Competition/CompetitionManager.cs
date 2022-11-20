@@ -97,6 +97,10 @@ namespace Competition
             {
                 isWinners[field] = true;
                 winner++;
+                if (winner == 8 && !isWinners[0])
+                {
+                    Concede();
+                }
                 instance._completeWindow[field].SetActive(true);
             }
             if (field == 0)
@@ -231,6 +235,17 @@ namespace Competition
         public static void EndCompetition()
         {
             GetPrice();
+            FieldManager.openAllField = null;
+            FieldManager.openOneField = null;
+            for (int _i = 0; _i < MenuController.openMenu.Count; _i++)
+                MenuController.openMenu[(MenuController.Shops)_i] = null;
+            SceneManager.LoadScene(0);
+            AdManager.ShowInterstitial();
+        }  
+        
+        public static void Concede()
+        {
+            if(isWinners[0]) GetPrice();
             FieldManager.openAllField = null;
             FieldManager.openOneField = null;
             for (int _i = 0; _i < MenuController.openMenu.Count; _i++)

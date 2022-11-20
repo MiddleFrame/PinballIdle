@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Managers;
 using UnityEngine;
 
@@ -101,7 +100,19 @@ public class Teleport : MonoBehaviour
         ball.SetActive(true);
     }
 
-    private IEnumerator Spawn()
+    public void ResetBalls()
+    {
+        for (int _j = 0; _j <= ChallengeManager.progress.balls[field]; _j++)
+        {
+            if (!balls[_j].activeSelf) continue;
+            balls[_j].SetActive(false);
+            _ballsTrail[_j].Clear();
+        }
+
+        StartCoroutine(Spawn());
+    }
+
+    public IEnumerator Spawn()
     {
         //  var _child = balls[0].GetComponentsInChildren<TrailRenderer>();
 

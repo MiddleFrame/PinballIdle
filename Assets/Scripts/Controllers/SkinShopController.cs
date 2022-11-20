@@ -9,6 +9,9 @@ namespace Controllers
 {
     public class SkinShopController : MonoBehaviour
     {
+
+        public static SkinShopController instance;
+        
         public static int buyElementX2 = 1;
         public static Skins skins;
         public static int CurrentTrail;
@@ -73,6 +76,10 @@ namespace Controllers
         [SerializeField]
         private GameObject[] _selectedTextAnim;
 
+        private void Awake()
+        {
+            instance = this;
+        }
 
         private void Start()
         {
@@ -99,20 +106,7 @@ namespace Controllers
                 }
             }
 
-            if (IaPurchase.CheckProduct("ball_anim_1")||IaPurchase.CheckProduct("ball_anim_1"))
-            {
-                skins.anim[3] = true;
-            }
-
-            if (IaPurchase.CheckProduct("ball_trail") || IaPurchase.CheckProduct("ball_trail_1"))
-            {
-                skins.trail[7] = true;
-            }
-
-            if (skins.trail[7] && skins.anim[3])
-            {
-                _specialOffer.SetActive(false);
-            }
+            
 
             _strokesAnim[CurrentAnim].SetActive(true);
             _selectedTextAnim[CurrentAnim].SetActive(true);
@@ -123,10 +117,7 @@ namespace Controllers
                 _coinText.text = GameManager.NormalSum(PlayerDataController.PointSum);
                 _diamondText.text = GameManager.NormalSum(PlayerDataController.Gems);
 
-                _animCost.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_ANIM)
-                    .metadata.localizedPriceString;
-                _trailCost.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_TRAIL)
-                    .metadata.localizedPriceString);
+                if (!IaPurchase.IsIapInitialized()) return;
                 if (DateTime.Now >= DateTime.Parse(PlayerPrefs.GetString("SpecialOfferTime",DateTime.Now.ToString())).AddDays(3))
                 {
                     _specialCost.text = IaPurchase._storeController.products
@@ -177,6 +168,32 @@ namespace Controllers
 
                 yield return new WaitForSeconds(1f);
             }
+        }
+
+        public IEnumerator InitSkins()
+        {
+            while (!IaPurchase.IsIapInitialized())
+            {
+                yield return new WaitForSeconds(1f);
+            }
+            if (IaPurchase.CheckProduct("ball_anim_1")||IaPurchase.CheckProduct("ball_anim_1"))
+            {
+                skins.anim[3] = true;
+            }
+
+            if (IaPurchase.CheckProduct("ball_trail") || IaPurchase.CheckProduct("ball_trail_1"))
+            {
+                skins.trail[7] = true;
+            }
+
+            if (skins.trail[7] && skins.anim[3])
+            {
+                _specialOffer.SetActive(false);
+            }
+            _animCost.text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_ANIM)
+                .metadata.localizedPriceString;
+            _trailCost.text = (IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.BALL_TRAIL)
+                .metadata.localizedPriceString);
         }
 
         public void BuyTrail(int trail)

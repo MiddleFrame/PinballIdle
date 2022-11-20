@@ -4,11 +4,13 @@ using Managers;
 using Shop;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class RewardPoint : MonoBehaviour
 {
     //  private Graphic[] _lvlBuffs;
-    
+
     public static RewardPoint instance;
+
     [SerializeField]
     private Text _timex2Reward;
 
@@ -23,10 +25,12 @@ public class RewardPoint : MonoBehaviour
 
 
     private bool _isAfterReward;
+
     private void Awake()
     {
         instance = this;
         FieldManager.openOneField += openNewField;
+        FieldManager.openAllField += () => { _x2Bonus.SetActive(false); };
     }
 
     private void openNewField()
@@ -34,14 +38,15 @@ public class RewardPoint : MonoBehaviour
         if (reward[FieldManager.currentField])
         {
             changeColor();
-            _x2Bonus.SetActive(false);_lvlBuffs.text =
-            $"x {PlayerDataController.playerStats.lvl[FieldManager.currentField] * hitMultiply[FieldManager.currentField]}";
+            _x2Bonus.SetActive(false);
+            _lvlBuffs.text =
+                $"x {1+0.1f*(PlayerDataController.playerStats.lvl[FieldManager.currentField]-1) * hitMultiply[FieldManager.currentField]}";
             return;
         }
 
         _x2Bonus.SetActive(true);
         _timex2Reward.text = "";
-        _lvlBuffs.text = $"x {PlayerDataController.playerStats.lvl[FieldManager.currentField]}";
+        _lvlBuffs.text = $"x {1+0.1f*(PlayerDataController.playerStats.lvl[FieldManager.currentField]-1)}";
     }
 
     public void OnAdReceivedRewardX2()
@@ -49,11 +54,13 @@ public class RewardPoint : MonoBehaviour
         hitMultiply[FieldManager.currentField] *= 2;
         StartCoroutine(Timex2());
     }
+
     public void RewardLoad()
     {
-        if(!_isAfterReward)
+        if (!_isAfterReward)
             _x2Bonus.SetActive(true);
     }
+
     private void changeColor()
     {
         if (!reward[FieldManager.currentField]) return;
@@ -94,7 +101,7 @@ public class RewardPoint : MonoBehaviour
         GameManager.instance.fields[_field].stroke.SetActive(false);
         reward[_field] = false;
         yield return new WaitForSeconds(60f);
-        
+
         _isAfterReward = false;
         if (FieldManager.currentField == _field)
         {

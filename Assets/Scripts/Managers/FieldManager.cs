@@ -34,6 +34,8 @@ namespace Managers
         
         [SerializeField]
         private GameObject[] _fields;
+        [SerializeField]
+        private GameObject[] _areas;
 
         [SerializeField]
         private GameObject[] _buyFields;
@@ -42,7 +44,7 @@ namespace Managers
 
         private Coroutine _scale, _position;
 
-        private const int CENTER_SIZE = 15;
+        private const int CENTER_SIZE = 17;
         private const float DEFAULT_SIZE = 5f;
 
         public static Action openAllField;
@@ -63,6 +65,13 @@ namespace Managers
                 {
                     buyFields(_i);
                 }
+            }  
+            for (int _i = 0; _i < fields.isAreaOpen.Length; _i++)
+            {
+                if (fields.isAreaOpen[_i])
+                {
+                    _areas[_i].SetActive(false);
+                }
             }
 
             openAllField += () =>
@@ -72,7 +81,7 @@ namespace Managers
                 {
                     if (fields.isOpen[_i] && _i < fields.isOpen.Length - 1 && !fields.isOpen[_i + 1])
                     {
-                        _buyFieldsButton[_i+1].SetActive(true);
+                        _buyFieldsButton[_i+1].SetActive(_i+1 < 3 || fields.isAreaOpen[(_i+1)/3-1]);
                         _flag = _i+1;
                     }
 
@@ -90,6 +99,7 @@ namespace Managers
             lastField = currentField;
             openAllField?.Invoke();
             GameManager.instance.oneFieldCanvas.SetActive(false);
+            GameManager.instance.triggerCanvas.SetActive(false);
             // GameManager.instance.bonusCanvas.SetActive(false);
             GameManager.instance.upperCanvas.SetActive(true);
             ChallengeManager.Instance._challengeCanvas.SetActive(false);
@@ -129,6 +139,19 @@ namespace Managers
 
             _position = StartCoroutine(moveCamera(_fieldsPosition[i]));
             _scale = StartCoroutine(scaleCamera(false));
+        }
+
+        public void UnlockArea(int area)
+        {
+            if (PlayerDataController.playerStats.key < 3)
+            {
+                MenuController.instance.OpenShop(1);
+                return;
+            }
+            PlayerDataController.playerStats.key -= 3;
+            _areas[area].SetActive(false);
+            fields.isAreaOpen[area] = true;
+            openAllField?.Invoke();
         }
 
         private IEnumerator moveCamera(Vector3 lastPos)
@@ -177,13 +200,16 @@ namespace Managers
                 // GameManager.instance.bonusCanvas.SetActive(false);
                 GameManager.instance.upperCanvas.SetActive(false);
                 ChallengeManager.Instance._challengeCanvas.SetActive(true);
+                ChallengeManager.Instance._level.SetActive(false);
             }
             else
             {
+                ChallengeManager.Instance._level.SetActive(true);
                 // GameManager.instance.bonusCanvas.SetActive(true);
             }
 
             GameManager.instance.oneFieldCanvas.SetActive(true);
+            GameManager.instance.triggerCanvas.SetActive(true);
         }
 
 
@@ -191,7 +217,7 @@ namespace Managers
         {
             if (PlayerDataController.Gems < fieldCosts[field])
             {
-                GameManager.instance.shop.SetActive(true);
+                MenuController.instance.OpenShop((int)MenuController.Shops.Shop);
                 AnalyticManager.OpenDonateShop();
                 return;
             }
@@ -219,5 +245,6 @@ namespace Managers
     public class Fields
     {
         public bool[] isOpen = {true, false, false, false, false, false, false, false, false};
+        public bool[] isAreaOpen = {false, false};
     }
 }

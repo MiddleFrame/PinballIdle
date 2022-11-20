@@ -22,10 +22,8 @@ namespace Controllers
         public static MenuController instance;
 
         public GameObject[] _shops;
+        public GameObject[] _back;
 
-
-        [SerializeField]
-        private GameObject _backPanel;
 
 
         public static Dictionary<Shops, Action> openMenu = new Dictionary<Shops, Action>()
@@ -42,6 +40,7 @@ namespace Controllers
         private void Awake()
         {
             instance = this;
+            FieldManager.openOneField += BackPanelClick;
         }
 
         public void OpenShop(int numShop)
@@ -51,11 +50,16 @@ namespace Controllers
             {
                 currentMenu = -1;
                 _shops[(int) _shop-1].SetActive(false);
-                _backPanel.SetActive(false);
+                if (numShop < 3)
+                {
+                    _back[numShop].SetActive(false);
+                }
                 return;
             }
-
-            currentMenu = -1;
+            if (numShop < 3)
+            {
+                _back[numShop].SetActive(true);
+            }
 
             if ((int) _shop == ALL_FIELD)
             {
@@ -63,9 +67,13 @@ namespace Controllers
                 return;
             }
 
+            if (currentMenu != -1 && currentMenu != ALL_FIELD)
+            {
+                OpenShop(currentMenu);
+            }
+            
             openMenu[_shop]?.Invoke();
             currentMenu = (int) _shop;
-            _backPanel.SetActive(true);
             _shops[(int) _shop-1].SetActive(true);
         }
 
@@ -75,7 +83,7 @@ namespace Controllers
             {
                 if (_shops[_j].activeSelf)
                 {
-                    OpenShop(_j);
+                    OpenShop(_j+1);
                 }
             }
         }

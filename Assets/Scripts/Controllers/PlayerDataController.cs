@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Managers;
 using Shop;
 using UnityEngine;
@@ -18,6 +17,10 @@ namespace Controllers
 
         [SerializeField]
         private Text _gems;
+        [SerializeField]
+        private Text _keyCount;
+        [SerializeField]
+        private GameObject _keyPanel;
 
         public static int Gems
         {
@@ -26,6 +29,15 @@ namespace Controllers
             {
                 playerStats.gems = value;
                 _instance._gems.text = GameManager.NormalSum(playerStats.gems);
+            }
+        }
+        public static int Key
+        {
+            get => playerStats.key;
+            set
+            {
+                playerStats.key = value;
+                _instance._keyCount.text = GameManager.NormalSum(playerStats.key);
             }
         }
 
@@ -76,6 +88,14 @@ namespace Controllers
         private void Awake()
         {
             FieldManager.openAllField += changeFieldsLevelText;
+            FieldManager.openAllField += () =>
+            {
+                _keyPanel.SetActive(true);
+            };
+            FieldManager.openOneField += () =>
+            {
+                _keyPanel.SetActive(false);
+            };
             FieldManager.openOneField += changeFillAmount;
             FieldManager.openOneField += changeLevelText;
             _instance = this;
@@ -83,11 +103,10 @@ namespace Controllers
 
         private void Start()
         {
-            _levelSum = playerStats.lvl.Sum();
-            PigMoneybox.MaxPoints = 5000 + _levelSum * 1000;
             Debug.Log("Sum of levels: " + LevelSum);
             PointSum = playerStats.pointSum;
             Gems = playerStats.gems;
+            Key = playerStats.key;
             changeFillAmount();
             changeLevelText();
         }
@@ -96,7 +115,7 @@ namespace Controllers
         {
             for (int _i = 0; _i < GameManager.instance.fields.Length; _i++)
             {
-                GameManager.instance.fields[_i].levelText.text = $"lvl {playerStats.lvl[_i]}";
+                GameManager.instance.fields[_i].levelText.text = $"lvl {playerStats.lvl[_i]-1}";
                 GameManager.instance.fields[_i].ballsText.text = $"x{ChallengeManager.progress.balls[_i] + 1}";
             }
         }
@@ -108,13 +127,19 @@ namespace Controllers
                 UnlockCircles.AddExp(field,exp);
                 return;
             }
-            if (playerStats.lvl[field] > 9) return;
+            if (playerStats.lvl[field] > 10) return;
             playerStats.exp[field] += exp;
-            if (playerStats.exp[field] >= 200 * playerStats.lvl[field])
+            if (playerStats.exp[field] >= 100 * playerStats.lvl[field])
             {
                 playerStats.lvl[field]++;
+                for (int _i = 6; _i < QuestManager.progress[0].isComplete.Length; _i++)
+                {
+                    QuestManager.progress[0].progressQuest[_i]++;
+                }
+                QuestManager.instance.UpdateGlobalQuest();
                 LevelSum++;
                 playerStats.exp[field] = 0;
+                QuestManager.instance.CheckLevelQuest(field);
                 if (field == FieldManager.currentField)
                 {
                     _instance._lvlOnLvlUpPanel.text = playerStats.lvl[field].ToString();
@@ -144,6 +169,8 @@ namespace Controllers
             {
                 _instance._exp[_i].fillAmount = _i > playerStats.lvl[FieldManager.currentField]-1 ? 0 : 1;
             }
+
+            if (playerStats.lvl[FieldManager.currentField]-1 >= _instance._exp.Length ) return;
             _instance._exp[playerStats.lvl[FieldManager.currentField]-1].fillAmount =
                 playerStats.exp[FieldManager.currentField] /
                 (200f * playerStats.lvl[FieldManager.currentField]);
@@ -168,7 +195,7 @@ namespace Controllers
     {
         public long pointSum;
         public int gems;
-        public int key;
+        public int key=0;
         public int[] lvl = {1, 0, 0, 0, 0, 0, 0, 0, 0};
         public int[] exp = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     }

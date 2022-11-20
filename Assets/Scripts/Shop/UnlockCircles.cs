@@ -29,8 +29,8 @@ namespace Shop
 
         public static readonly bool[] IsMax = {false, false, false, false, false, false, false, false, false};
 
-        private const int START_COST = 5;
-        private const int MULTI_COST = 5;
+        private const int START_COST = 3;
+        private const int MULTI_COST = 3;
 
         private static readonly int[] costHit = {10, 10, 10, 10, 10, 10, 10, 10, 10};
 
@@ -137,7 +137,7 @@ namespace Shop
             if (circle == maxUpgrade[fieldNumber] - 1)
             {
                 IsMax[fieldNumber] = true;
-                GameManager.instance.fields[fieldNumber].MakeTriple();
+                
             }
         }
 

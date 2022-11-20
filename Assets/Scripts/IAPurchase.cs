@@ -10,6 +10,9 @@ public class IaPurchase : IStoreListener
     public static string BIG_PACK = "get_big_pack";
     public static string LITTLE_PACK = "get_little_pack_daimonds";
     public static string MEDIUM_PACK = "pack_medium_diamond";
+    public static string KEY_BIG_PACK = "get_key_big_pack";
+    public static string KEY_LITTLE_PACK = "get_key_little_pack_daimonds";
+    public static string KEY_MEDIUM_PACK = "pack_key_medium_diamond";
     public static string SPECIAL_OFFER = "special_offer";
     public static string NOT_SPECIAL_OFFER = "not_special_offer";
     public static string BALL_TRAIL = "ball_trail";
@@ -45,9 +48,14 @@ public class IaPurchase : IStoreListener
         _builder.AddProduct(NOT_SPECIAL_OFFER, ProductType.NonConsumable);
         _builder.AddProduct(BALL_TRAIL, ProductType.NonConsumable);
         _builder.AddProduct(BALL_ANIM, ProductType.NonConsumable);
+        _builder.AddProduct(KEY_BIG_PACK, ProductType.Consumable);
+        _builder.AddProduct(KEY_LITTLE_PACK, ProductType.Consumable);
+        _builder.AddProduct(KEY_MEDIUM_PACK, ProductType.Consumable);
 
 
         UnityPurchasing.Initialize(this, _builder);
+
+       Managers.GameManager.instance.StartCoroutine( SkinShopController.instance.InitSkins());
     }
 
     public static bool IsIapInitialized()
@@ -120,6 +128,16 @@ public class IaPurchase : IStoreListener
         else if (purchaseEvent.purchasedProduct.definition.id == BIG_PACK)
         {
             PlayerDataController.Gems += 20000;
+        } else if (purchaseEvent.purchasedProduct.definition.id == KEY_LITTLE_PACK)
+        {
+            PlayerDataController.Key += 10;
+        } else if (purchaseEvent.purchasedProduct.definition.id == KEY_MEDIUM_PACK)
+        {
+            PlayerDataController.Gems += 4000;
+            PlayerDataController.Key += 20;
+        } else if (purchaseEvent.purchasedProduct.definition.id == KEY_BIG_PACK)
+        {
+            PlayerDataController.Key += 40;
         }
         else if (purchaseEvent.purchasedProduct.definition.id == SPECIAL_OFFER)
         {

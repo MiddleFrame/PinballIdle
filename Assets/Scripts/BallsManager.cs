@@ -19,11 +19,12 @@ public class BallsManager : MonoBehaviour
     {
         if (balls.fieldBallCount > 0)
         {
-            StartCoroutine(firstSpawnFieldBall());
-            if (balls.fieldBallCount == 9)
+            if (balls.fieldBallCount > 9)
             {
-                _buyFieldBallButton.SetActive(false);
+                balls.fieldBallCount = 9;
             }
+            StartCoroutine(firstSpawnFieldBall());
+            
         }
         
     }
@@ -38,22 +39,13 @@ public class BallsManager : MonoBehaviour
     }
     
     
-    public void BuyFieldBall()
+    public void OpenFieldBall()
     {
-        
-        if (PlayerDataController.Gems < costFieldBall)
-        {
-            GameManager.instance.shop.SetActive(true);
-            AnalyticManager.OpenDonateShop();
+        if (balls.fieldBallCount == 9)
             return;
-        }
+        
         _fieldBalls[balls.fieldBallCount].SetActive(true);
         balls.fieldBallCount++;
-        PlayerDataController.Gems -= costFieldBall;
-        if (balls.fieldBallCount == 9)
-        {
-            _buyFieldBallButton.SetActive(false);
-        }
     }
     
 }

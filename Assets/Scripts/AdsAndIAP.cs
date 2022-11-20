@@ -28,7 +28,7 @@ public class AdsAndIAP : MonoBehaviour
         StartCoroutine(IaPurchase.CheckSubscription());
         StartCoroutine(IaPurchase.CheckX2());
         if (IaPurchase.IsIapInitialized())
-            _donateShopController.Init();
+            yield return _donateShopController.Init();
         else
         {
             StartCoroutine(InitShop());
@@ -40,7 +40,7 @@ public class AdsAndIAP : MonoBehaviour
         while (!IaPurchase.IsIapInitialized())
             yield return new WaitForSeconds(1f);
 
-        _donateShopController.Init();
+        yield return _donateShopController.Init();
     }
 
     public void HideAds()
@@ -74,6 +74,21 @@ public class AdsAndIAP : MonoBehaviour
                 break;
             case 2:
                 IaPurchase.BuyProductID(IaPurchase.BIG_PACK);
+                break;
+        }
+    }
+    public void BuyKey(int pack)
+    {
+        switch (pack)
+        {
+            case 0:
+                IaPurchase.BuyProductID(IaPurchase.KEY_LITTLE_PACK);
+                break;
+            case 1:
+                IaPurchase.BuyProductID(IaPurchase.KEY_MEDIUM_PACK);
+                break;
+            case 2:
+                IaPurchase.BuyProductID(IaPurchase.KEY_BIG_PACK);
                 break;
         }
     }

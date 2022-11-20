@@ -66,53 +66,70 @@ public class LetsScript : MonoBehaviour
 
         if (ChallengeManager.IsStartChallenge[_numField])
         {
-            if (ChallengeManager.progress.countCompleteChallenge[_numField] == 2)
+            switch (ChallengeManager.progress.countCompleteChallenge[_numField])
             {
-                _point = ChallengeTwo();
-                ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
-
-                if (FieldManager.currentField == _numField)
-                    ChallengeManager.Instance.ChangeTextAndFill(_numField);
-            }
-            else if (ChallengeManager.progress.countCompleteChallenge[_numField] == 3)
-            {
-                _point = ChallengeThree(collision.gameObject.GetComponent<BallsChallenge>());
-                ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
-
-                if (FieldManager.currentField == _numField)
-                    ChallengeManager.Instance.ChangeTextAndFill(_numField);
-            }
-            else if (ChallengeManager.progress.countCompleteChallenge[_numField] == 4)
-            {
-                _point = (ChallengeTwo() * ChallengeThree(collision.gameObject.GetComponent<BallsChallenge>())) switch
+                case 2:
                 {
-                    9 => 3,
-                    -9 => -3,
-                    _ => ChallengeTwo() * ChallengeThree(collision.gameObject.GetComponent<BallsChallenge>())
-                };
-                ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
+                    _point = ChallengeTwo();
+                    ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
+                    if (ChallengeManager.progress.currentProgressChallenge[_numField] < 0)
+                    {
+                        ChallengeManager.progress.currentProgressChallenge[_numField] = 0;
+                    }
 
-                if (FieldManager.currentField == _numField)
-                    ChallengeManager.Instance.ChangeTextAndFill(_numField);
-            }
-            else
-            {
-                _point = _pointLet;
-                ChallengeManager.progress.currentProgressChallenge[_numField] += _pointLet;
-                if (FieldManager.currentField == _numField)
-                    ChallengeManager.Instance.ChangeTextAndFill(_numField);
+                    if (FieldManager.currentField == _numField)
+                        ChallengeManager.Instance.ChangeTextAndFill(_numField);
+                    break;
+                }
+                case 3:
+                {
+                    _point = ChallengeThree(collision.gameObject.GetComponent<BallsChallenge>());
+                    ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
+
+                    if (FieldManager.currentField == _numField)
+                        ChallengeManager.Instance.ChangeTextAndFill(_numField);
+                    break;
+                }
+                case 4:
+                {
+                    _point =
+                        (ChallengeFour() * ChallengeThree(collision.gameObject.GetComponent<BallsChallenge>())) switch
+                        {
+                            9 => 3,
+                            -9 => -3,
+                            _ => ChallengeFour() * ChallengeThree(collision.gameObject.GetComponent<BallsChallenge>())
+                        };
+                    ChallengeManager.progress.currentProgressChallenge[_numField] += (int) _point;
+                    if (ChallengeManager.progress.currentProgressChallenge[_numField] < 0)
+                    {
+                        ChallengeManager.progress.currentProgressChallenge[_numField] = 0;
+                    }
+
+                    if (FieldManager.currentField == _numField)
+                        ChallengeManager.Instance.ChangeTextAndFill(_numField);
+                    break;
+                }
+                default:
+                {
+                    _point = _pointLet;
+                    ChallengeManager.progress.currentProgressChallenge[_numField] += _pointLet;
+                    if (FieldManager.currentField == _numField)
+                        ChallengeManager.Instance.ChangeTextAndFill(_numField);
+                    break;
+                }
             }
 
-            if (ChallengeManager.progress.currentProgressChallenge[_numField] >= 1000)
+            if (ChallengeManager.progress.currentProgressChallenge[_numField] >=
+                1000f * ((ChallengeManager.progress.countCompleteChallenge[_numField] + 1) % 5 + 1))
             {
                 ChallengeManager.Instance.CompleteChallenge(_numField);
             }
         }
         else
         {
-            _point = (long)((1+0.1f*(PlayerDataController.playerStats.lvl[_numField]-1)) * _pointLet *
-                     DefaultBuff.grade.pointOnBit[_numField] * RewardPoint.hitMultiply[_numField] *
-                     SkinShopController.buyElementX2*DefaultBuff.grade.multiplyPoint[_numField]);
+            _point = (long) ((1 + 0.1f * (PlayerDataController.playerStats.lvl[_numField] - 1)) * _pointLet *
+                             DefaultBuff.grade.pointOnBit[_numField] * RewardPoint.hitMultiply[_numField] *
+                             SkinShopController.buyElementX2 * DefaultBuff.grade.multiplyPoint[_numField]);
             PlayerDataController.PointSum += _point;
             PlayerDataController.AddExp(_numField, exp);
         }
@@ -121,11 +138,11 @@ public class LetsScript : MonoBehaviour
         {
             _point *= 10;
             _isTriple = false;
-            if (_tRing.Length>0)
+            if (_tRing.Length > 0)
                 _sprite.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
                     GameManager.instance.defaultShadowBall;
-            
-            GameManager.instance.fields[_numField].MakeTriple();
+            if (QuestManager.progress[_numField + 1].isComplete[0])
+                GameManager.instance.fields[_numField].MakeTriple();
         }
 
         Anim:
@@ -134,7 +151,7 @@ public class LetsScript : MonoBehaviour
 
         if (Setting.settings.exNum &&
             (_numField == FieldManager.currentField || FieldManager.currentField == -1 || isCompetitive))
-            ShowNumber(collision.contacts[0],
+            ShowNumber(collision.contacts[0].point,
                 _point == 0 ? "0" : (_point > 0 ? "+" : "") + GameManager.NormalSum(_point),
                 (isCompetitive && _numField == 0) ? 4 : 1);
         if (_anim == null && _tRing != null && _tRing.Length > 0)
@@ -159,7 +176,18 @@ public class LetsScript : MonoBehaviour
 
     private int ChallengeTwo()
     {
-        if (Random.Range(0, 1f) < 0.85f)
+        if (Random.Range(0, 1f) < 0.7f)
+        {
+            return _pointLet;
+        }
+
+        if (ChallengeManager.progress.currentProgressChallenge[_numField] <= 1) return 0;
+        return -_pointLet;
+    }
+
+    private int ChallengeFour()
+    {
+        if (Random.Range(0, 1f) < 0.3f)
         {
             return _pointLet;
         }
@@ -177,7 +205,7 @@ public class LetsScript : MonoBehaviour
     {
         _isTriple = true;
         _sprite.GetComponent<SpriteRenderer>().color = GameManager.instance.tripleColor;
-        if (_tRing.Length>0)
+        if (_tRing.Length > 0)
             _sprite.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = GameManager.instance.goldShadowBall;
     }
 
@@ -207,7 +235,7 @@ public class LetsScript : MonoBehaviour
     private IEnumerator ChangeColor()
     {
         yield return new WaitForSeconds(0.02f);
-        _sprite.GetComponent<SpriteRenderer>().color = _isTriple? GameManager.instance.tripleColor :_defaultColor;
+        _sprite.GetComponent<SpriteRenderer>().color = _isTriple ? GameManager.instance.tripleColor : _defaultColor;
     }
 
     private IEnumerator Ring(int currAnim)
@@ -228,10 +256,10 @@ public class LetsScript : MonoBehaviour
         _anim = null;
     }
 
-    private static void ShowNumber(ContactPoint2D cp2d, string point, int scale = 1)
+    public static void ShowNumber(Vector2 cp2d, string point, int scale = 1)
     {
         var _text = Instantiate(isCompetitive ? CompetitionManager.Text : GameManager.Text,
-            new Vector2(cp2d.point.x, cp2d.point.y), new Quaternion());
+            cp2d, new Quaternion());
         _text.transform.localScale *= scale;
         _text.GetComponent<TextMesh>().text = point;
     }

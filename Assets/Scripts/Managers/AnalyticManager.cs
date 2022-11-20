@@ -10,6 +10,8 @@ namespace Managers
     public class AnalyticManager : MonoBehaviour
     {
         public static bool isRemoteInit;
+
+        public static bool isAnalytiycInit;
         // private void Awake()
         // {
         //     
@@ -25,6 +27,7 @@ namespace Managers
                 var _dependencyStatus = task.Result;
                 if (_dependencyStatus == DependencyStatus.Available)
                 {
+                    isAnalytiycInit = true;
                     try
                     {
                         Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.Zero)
@@ -50,10 +53,10 @@ namespace Managers
                                                 Debug.LogError(task1.Exception);
                                             }
 
-                                            isRemoteInit = true;
                                             Debug.Log(
                                                 $"Firebase config last fetch time {Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.Info.FetchTime}.");
                                             IaPurchase.NumberOfPrice = (int) GetLong("Price");
+                                            isRemoteInit = true;
                                             Debug.Log("This price " + IaPurchase.NumberOfPrice);
                                         });
                                 }
@@ -132,96 +135,117 @@ namespace Managers
 
         public static void StartChallenge()
         {
-            FirebaseAnalytics.LogEvent("start_challenge");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("start_challenge");
             AppMetrica.Instance.ReportEvent("start_challenge");
         }
 
         public static void CompleteChallenge()
         {
-            FirebaseAnalytics.LogEvent("complete_challenge");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("complete_challenge");
             AppMetrica.Instance.ReportEvent("complete_challenge");
         }
 
         public static void OpenDonateShop()
         {
-            FirebaseAnalytics.LogEvent("open_donate_shop");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("open_donate_shop");
             AppMetrica.Instance.ReportEvent("open_donate_shop");
         }
 
         public static void OpenNewField(int field)
         {
-            FirebaseAnalytics.LogEvent("open_new_field");
-            FirebaseAnalytics.LogEvent($"open_new_field_00{field}");
+            if (isAnalytiycInit)
+            {
+                FirebaseAnalytics.LogEvent("open_new_field");
+                FirebaseAnalytics.LogEvent($"open_new_field_00{field}");
+            }
+
             AppMetrica.Instance.ReportEvent("open_new_field");
         }
 
         public static void OpenNewBall()
         {
-            FirebaseAnalytics.LogEvent("open_new_ball");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("open_new_ball");
             AppMetrica.Instance.ReportEvent("open_new_ball");
         }
 
         public static void OpenStatistic()
         {
-            FirebaseAnalytics.LogEvent("statistic");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("statistic");
             AppMetrica.Instance.ReportEvent("statistic");
         }
 
         public static void BuyCoinForDiamond()
         {
-            FirebaseAnalytics.LogEvent("buy_coin_for_diamond");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("buy_coin_for_diamond");
             AppMetrica.Instance.ReportEvent("buy_coin_for_diamond");
         }
 
         public static void ChangeTheme()
         {
-            FirebaseAnalytics.LogEvent("change_theme");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("change_theme");
             AppMetrica.Instance.ReportEvent("change_theme");
         }
 
         public static void StartCompetition()
         {
-            FirebaseAnalytics.LogEvent("start_competition");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("start_competition");
             AppMetrica.Instance.ReportEvent("start_competition");
         }
 
         public static void FirstPlaceCompetition()
         {
-            FirebaseAnalytics.LogEvent("first_place_competition");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("first_place_competition");
             AppMetrica.Instance.ReportEvent("first_place_competition");
         }
 
         public static void SecondPlaceCompetition()
         {
-            FirebaseAnalytics.LogEvent("second_place_competition");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("second_place_competition");
             AppMetrica.Instance.ReportEvent("second_place_competition");
         }
 
         public static void ThirdPlaceCompetition()
         {
-            FirebaseAnalytics.LogEvent("third_place_competition");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("third_place_competition");
             AppMetrica.Instance.ReportEvent("third_place_competition");
         }
 
         public static void LoseCompetition()
         {
-            FirebaseAnalytics.LogEvent("lose_competition");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("lose_competition");
             AppMetrica.Instance.ReportEvent("lose_competition");
         }
 
         public static void ReviewWasShow()
         {
-            FirebaseAnalytics.LogEvent("review_was_show");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("review_was_show");
             AppMetrica.Instance.ReportEvent("review_was_show");
         }
-        public static void BuyAutoFlippers(int field)
+
+        public static void CompleteLocalQuest(int field, int numberQuest)
         {
-            FirebaseAnalytics.LogEvent($"buy_auto_flippers_00{field}");
-            AppMetrica.Instance.ReportEvent($"buy_auto_flippers_00{field}");
-        } 
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent($"complete_local_quest_00{field}_00{numberQuest}");
+            AppMetrica.Instance.ReportEvent($"complete_local_quest_00{field}_00{numberQuest}");
+        }
+
         public static void BuyTenUpgrade()
         {
-            FirebaseAnalytics.LogEvent($"buy_first_ten_upgrade");
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent($"buy_first_ten_upgrade");
             AppMetrica.Instance.ReportEvent($"buy_first_ten_upgrade");
         }
     }

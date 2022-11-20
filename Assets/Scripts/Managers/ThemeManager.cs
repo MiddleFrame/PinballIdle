@@ -74,7 +74,7 @@ namespace Managers
 
         private static int CurrentTheme
         {
-            get => PlayerPrefs.GetInt("theme", 0);
+            get => PlayerPrefs.GetInt("theme", 1);
             set => PlayerPrefs.SetInt("theme", value);
         }
 
@@ -82,9 +82,7 @@ namespace Managers
         {
             if (instance == null)
                 instance = this;
-            // currentTheme = CurrentTheme;
-            // if (currentTheme == 0) return;
-                //ChangeThemes(currentTheme);
+            ChangeThemes(1);
         }
 
         private void Start()
