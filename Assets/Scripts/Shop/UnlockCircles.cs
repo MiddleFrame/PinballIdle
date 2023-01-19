@@ -121,6 +121,7 @@ namespace Shop
 
             if (!IsMax[field]||FieldManager.currentField != field) return;
             instance._levelCurrent.SetActive(true);
+            AnalyticManager.GetFirstLevel(field);
             instance._levelElements.SetActive(false);
         }
 

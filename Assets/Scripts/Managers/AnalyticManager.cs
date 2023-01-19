@@ -234,6 +234,25 @@ namespace Managers
                 FirebaseAnalytics.LogEvent("review_was_show");
             AppMetrica.Instance.ReportEvent("review_was_show");
         }
+        public static void EndTutorial()
+        {
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent("tutorial_ended");
+            AppMetrica.Instance.ReportEvent("tutorial_ended");
+        } 
+        
+        public static void TutorialNext(int window)
+        {
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent($"open_tutorial_screen_00{window}");
+            AppMetrica.Instance.ReportEvent($"open_tutorial_screen_00{window}");
+        }
+        public static void GetFirstLevel(int field)
+        {
+            if (isAnalytiycInit)
+                FirebaseAnalytics.LogEvent($"first_level_00{field}");
+            AppMetrica.Instance.ReportEvent($"first_level_00{field}");
+        }
 
         public static void CompleteLocalQuest(int field, int numberQuest)
         {

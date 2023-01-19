@@ -130,20 +130,21 @@ public class LetsScript : MonoBehaviour
             _point = (long) ((1 + 0.1f * (PlayerDataController.playerStats.lvl[_numField] - 1)) * _pointLet *
                              DefaultBuff.grade.pointOnBit[_numField] * RewardPoint.hitMultiply[_numField] *
                              SkinShopController.buyElementX2 * DefaultBuff.grade.multiplyPoint[_numField]);
+            
+            if (_isTriple && !isCompetitive)
+            {
+                _point *= 10;
+                _isTriple = false;
+                if (_tRing.Length > 0)
+                    _sprite.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
+                        GameManager.instance.defaultShadowBall;
+                if (QuestManager.progress[_numField + 1].isComplete[0])
+                    GameManager.instance.fields[_numField].MakeTriple();
+            }
             PlayerDataController.PointSum += _point;
             PlayerDataController.AddExp(_numField, exp);
         }
 
-        if (_isTriple && !isCompetitive)
-        {
-            _point *= 10;
-            _isTriple = false;
-            if (_tRing.Length > 0)
-                _sprite.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
-                    GameManager.instance.defaultShadowBall;
-            if (QuestManager.progress[_numField + 1].isComplete[0])
-                GameManager.instance.fields[_numField].MakeTriple();
-        }
 
         Anim:
         if (_numField == FieldManager.currentField)

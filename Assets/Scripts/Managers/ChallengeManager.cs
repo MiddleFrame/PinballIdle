@@ -152,6 +152,8 @@ namespace Managers
                 _getRank.SetActive(progress.countCompleteChallenge[FieldManager.currentField] == 0);
                 _costWithImage.SetActive(progress.countCompleteChallenge[FieldManager.currentField] > 0);
                 _rankFieldOnGrade.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
+               
+
             };
             MenuController.openMenu[MenuController.Shops.Ranks] += () =>
             {
@@ -166,8 +168,16 @@ namespace Managers
                 }
                 else
                 {
+                    _rankFieldOnMenu.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
+                    _rankCurrent.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
+                
+                  
+
                     if (progress.countCompleteChallenge[FieldManager.currentField] >= 5)
                     {
+                        _rankNext.gameObject.SetActive(false);
+                        _rankCurrent.gameObject.SetActive(false);
+                        _arrow.SetActive(false);
                         if (!_startChallengeImage.raycastTarget) return;
                         _startChallengeImage.raycastTarget = false;
                         _startChallengeImage.sprite = GameManager.instance._lockedSprite;
@@ -176,6 +186,14 @@ namespace Managers
                     }
                     else
                     {
+                        if (!_arrow.activeSelf)
+                        {
+                            _rankNext.gameObject.SetActive(true);
+                            _rankCurrent.gameObject.SetActive(true);
+                            _arrow.SetActive(true);
+                            _rankNext.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField] + 1];
+                        }
+
                         if (_startChallengeImage.raycastTarget) return;
                         _startChallengeImage.raycastTarget = true;
                         _startChallengeImage.sprite = GameManager.instance._unlockedSprite;
@@ -201,26 +219,7 @@ namespace Managers
 
         private void UpdateRank()
         {
-            _rankFieldOnMenu.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
-            _rankCurrent.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
-            _rankFieldOnScreen.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
-            if (progress.countCompleteChallenge[FieldManager.currentField] == 5)
-            {
-                _rankNext.gameObject.SetActive(false);
-                _rankCurrent.gameObject.SetActive(false);
-                _arrow.SetActive(false);
-                return;
-            }
-
-            if (!_arrow.activeSelf)
-            {
-                _rankNext.gameObject.SetActive(true);
-                _rankCurrent.gameObject.SetActive(true);
-                _arrow.SetActive(true);
-                return;
-            }
-
-            _rankNext.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField] + 1];
+             _rankFieldOnScreen.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
         }
 
         private void ChangeCostBallText()

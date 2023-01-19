@@ -52,23 +52,23 @@ namespace Competition
                 switch (CompetitionManager.winner)
                 {
                     case 1:
-                        _reward.text = "100";
-                        _buttonReward.text = "100";
-                        _buttonX2reward.text = "200";
+                        _reward.text = "3";
+                        _buttonReward.text = "3";
+                        _buttonX2reward.text = "6";
                         AnalyticManager.FirstPlaceCompetition();
                         break;
                     case 2:
 
-                        _reward.text = "75";
-                        _buttonReward.text = "75";
-                        _buttonX2reward.text = "150";
+                        _reward.text = "2";
+                        _buttonReward.text = "2";
+                        _buttonX2reward.text = "4";
                         AnalyticManager.SecondPlaceCompetition();
                         break;
                     case 3:
 
-                        _reward.text = "50";
-                        _buttonReward.text = "50";
-                        _buttonX2reward.text = "100";
+                        _reward.text = "1";
+                        _buttonReward.text = "1";
+                        _buttonX2reward.text = "2";
                         AnalyticManager.ThirdPlaceCompetition();
                         break;
                     default:

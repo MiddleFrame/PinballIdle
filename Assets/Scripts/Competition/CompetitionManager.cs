@@ -25,7 +25,7 @@ namespace Competition
 
         [SerializeField]
         private GameObject[] _completeWindow;
-        
+
         public CompetitionTeleport[] _teleports;
 
         [SerializeField]
@@ -40,6 +40,7 @@ namespace Competition
 
         [SerializeField]
         private Text[] _progressScores;
+
         [SerializeField]
         private Text _progress;
 
@@ -101,15 +102,18 @@ namespace Competition
                 {
                     Concede();
                 }
+
                 instance._completeWindow[field].SetActive(true);
             }
+
             if (field == 0)
             {
                 instance._progressScores[field].text =
                     point[field].ToString("##,##0", CultureInfo.CreateSpecificCulture("es-ES")) + "/" +
                     MAX_SCORE.ToString("##,##0", CultureInfo.CreateSpecificCulture("es-ES"));
                 instance._progress.text = "Progress (" + ((float) point[field] / MAX_SCORE)
-                    .ToString("#0%", CultureInfo.CreateSpecificCulture("es-ES"))+")";;
+                    .ToString("#0%", CultureInfo.CreateSpecificCulture("es-ES")) + ")";
+                ;
             }
             else
             {
@@ -150,8 +154,6 @@ namespace Competition
                     currentPattern[field - 1]++;
                 }
             }
-
-           
         }
 
         public static void ElementUp(GameObject tx)
@@ -167,7 +169,7 @@ namespace Competition
 
         public static void BuyUpgrade(int field, int cost)
         {
-            upgrades[field]+=1;
+            upgrades[field] += 1;
             AddPoint(-cost, field);
         }
 
@@ -221,13 +223,13 @@ namespace Competition
             switch (winner)
             {
                 case 1:
-                    PlayerDataController.playerStats.gems += 100;
+                    Rating.points += 3;
                     break;
                 case 2:
-                    PlayerDataController.playerStats.gems += 75;
+                    Rating.points += 2;
                     break;
                 case 3:
-                    PlayerDataController.playerStats.gems += 50;
+                    Rating.points += 1;
                     break;
             }
         }
@@ -238,18 +240,18 @@ namespace Competition
             FieldManager.openAllField = null;
             FieldManager.openOneField = null;
             for (int _i = 0; _i < MenuController.openMenu.Count; _i++)
-                MenuController.openMenu[(MenuController.Shops)_i] = null;
+                MenuController.openMenu[(MenuController.Shops) _i] = null;
             SceneManager.LoadScene(0);
             AdManager.ShowInterstitial();
-        }  
-        
+        }
+
         public static void Concede()
         {
-            if(isWinners[0]) GetPrice();
+            if (isWinners[0]) GetPrice();
             FieldManager.openAllField = null;
             FieldManager.openOneField = null;
             for (int _i = 0; _i < MenuController.openMenu.Count; _i++)
-                MenuController.openMenu[(MenuController.Shops)_i] = null;
+                MenuController.openMenu[(MenuController.Shops) _i] = null;
             SceneManager.LoadScene(0);
             AdManager.ShowInterstitial();
         }
