@@ -2,10 +2,8 @@ using System;
 using System.Collections;
 using Competition;
 using Controllers;
-using GoogleMobileAds.Api;
 using Managers;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -82,7 +80,7 @@ namespace Shop
         public void StartCompetitive()
         {
             _ruleWindow.SetActive(false);
-            AdManager.ShowBanner();
+            AdService.instanse.ShowBanner();
             _findWindow.SetActive(true);
             CompetitionManager.isBuff[0] = false;
             StartCoroutine(FindCompetitive());
@@ -107,6 +105,8 @@ namespace Shop
         private IEnumerator FindCompetitive()
         {
             _tips.text = tips[Random.Range(0, tips.Length)];
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Competition");
+            asyncLoad.allowSceneActivation = false;
             for (int _i = 0; _i < 9;)
             {
                 yield return new WaitForSeconds(0.1f);
@@ -115,9 +115,9 @@ namespace Shop
                 _players.text = $"{_i}/9";
             }
 
-            AdManager.HideBanner();
+            AdService.instanse.HideBanner();
             AnalyticManager.StartCompetition();
-            SceneManager.LoadScene(1);
+            asyncLoad.allowSceneActivation = true;
         }
 
         public void OnReceiveReward()
@@ -129,7 +129,7 @@ namespace Shop
                 StartCoroutine(FindCompetitive());
                 StartCoroutine(Timer());
           
-                AdManager.ShowBanner();
+                AdService.instanse.ShowBanner();
             
         }
     }

@@ -143,9 +143,9 @@ namespace Controllers
             _specialTrail = _buyButtonTrail[7];
             _specialAnim = _buyButtonAnim[3];
             _specialOfferStat = _specialOffer;
-            foreach (var _spawn in GameManager.instance.spawnPoints)
+            for (int field = 0; field < FieldsFactory.FieldsCount; field++)
             {
-                _spawn.ChangeTrail(CurrentTrail);
+                FieldsFactory.GetField(field).spawnTeleport.ChangeTrail(CurrentTrail);
             }
         }
 
@@ -249,9 +249,9 @@ namespace Controllers
             CurrentTrail = trail;
             _strokesTrail[trail].SetActive(true);
             _selectedTextTrail[trail].SetActive(true);
-            foreach (var _spawn in GameManager.instance.spawnPoints)
+            for (int field = 0; field < FieldsFactory.FieldsCount; field++)
             {
-                _spawn.ChangeTrail(CurrentTrail);
+                FieldsFactory.GetField(field).spawnTeleport.ChangeTrail(CurrentTrail);
             }
         }
 

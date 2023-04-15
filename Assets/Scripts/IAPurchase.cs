@@ -17,7 +17,6 @@ public class IaPurchase : IStoreListener
     public static string NOT_SPECIAL_OFFER = "not_special_offer";
     public static string BALL_TRAIL = "ball_trail";
     public static string BALL_ANIM = "ball_anim";
-    public static int NumberOfPrice;
     public static IStoreController _storeController;
     private static IExtensionProvider _storeExtensionProvider;
 
@@ -25,18 +24,6 @@ public class IaPurchase : IStoreListener
     {
         if (IsIapInitialized())
             return;
-        if (NumberOfPrice != 0)
-        {
-            REMOVE_ADS += "_1";
-            BIG_PACK += "_1";
-            LITTLE_PACK += "_1";
-            MEDIUM_PACK += "_1";
-            COFFEE += "_1";
-            SPECIAL_OFFER += "_1";
-            NOT_SPECIAL_OFFER += "_1";
-            BALL_TRAIL += "_1";
-            BALL_ANIM += "_1";
-        }
 
         var _builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
         _builder.AddProduct(REMOVE_ADS, ProductType.NonConsumable);
@@ -67,6 +54,11 @@ public class IaPurchase : IStoreListener
     {
     }
 
+    public void OnInitializeFailed(InitializationFailureReason error, string message)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public static IEnumerator CheckSubscription()
     {
         while (!IsIapInitialized())
@@ -76,12 +68,9 @@ public class IaPurchase : IStoreListener
 
         if (_storeController?.products == null) yield break;
         AdsAndIAP.isRemoveAds = false;
-        if (CheckProduct("remove_ads") ||
-            CheckProduct("remove_ads_1"))
-        {
-            AdsAndIAP.isRemoveAds = true;
-            AdsAndIAP.instance.HideAds();
-        }
+        if (!CheckProduct("remove_ads") && !CheckProduct("remove_ads_1")) yield break;
+        AdsAndIAP.isRemoveAds = true;
+        AdsAndIAP.instance.HideAds();
     }
 
     public static IEnumerator CheckX2()

@@ -113,10 +113,10 @@ namespace Controllers
 
         private static void changeFieldsLevelText()
         {
-            for (int _i = 0; _i < GameManager.instance.fields.Length; _i++)
+            for (int _i = 0; _i < FieldsFactory.FieldsCount; _i++)
             {
-                GameManager.instance.fields[_i].levelText.text = $"lvl {playerStats.lvl[_i]-1}";
-                GameManager.instance.fields[_i].ballsText.text = $"x{ChallengeManager.progress.balls[_i] + 1}";
+                FieldsFactory.GetField(_i).levelText.text = $"lvl {playerStats.lvl[_i]-1}";
+                FieldsFactory.GetField(_i).ballsText.text = $"x{ChallengeManager.progress.balls[_i] + 1}";
             }
         }
 
@@ -186,7 +186,7 @@ namespace Controllers
         public void DeleteProgress()
         {
             PlayerPrefs.DeleteAll();
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("MainFieldsScene");
         }
     }
 

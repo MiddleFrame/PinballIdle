@@ -33,6 +33,7 @@ namespace Shop
         private const int MULTI_COST = 3;
 
         private static readonly int[] costHit = {10, 10, 10, 10, 10, 10, 10, 10, 10};
+        
 
         private void Awake()
         {
@@ -42,10 +43,10 @@ namespace Shop
 
         private void Start()
         {
-            if (maxUpgrade[0] != GameManager.instance.fields[0].circles.Length - 1)
+            if (maxUpgrade[0] != FieldsFactory.GetField(0).CountCircles)
             {
                 Debug.LogError(
-                    $"Max unlock circle ({maxUpgrade}) not equal current circle on field ({GameManager.instance.fields[0].circles.Length - 1})");
+                    $"Max unlock circle ({maxUpgrade}) not equal current circle on field ({FieldsFactory.GetField(0).CountCircles})");
             }
 
             FieldManager.openOneField += UpdateLevelFill;
@@ -67,6 +68,7 @@ namespace Shop
             }
             UpdateLevelFill();
         }
+        
 
         private void UpdateLevelFill()
         {
@@ -94,7 +96,7 @@ namespace Shop
                     _levelForCircle[_i].fillAmount = upgrade.upgrades[FieldManager.currentField] <= _i ? 0 : 1;
                 }
 
-                _countOfElements.text = (GameManager.instance.fields[FieldManager.currentField].circles.Length -
+                _countOfElements.text = (FieldsFactory.GetField(FieldManager.currentField).circles.Length -
                                          maxUpgrade[FieldManager.currentField] +
                                          upgrade.upgrades[FieldManager.currentField]).ToString();
                 _levelForCircle[upgrade.upgrades[FieldManager.currentField]].fillAmount =
@@ -133,8 +135,8 @@ namespace Shop
 
         private static void OpenCircle(int fieldNumber, int circle)
         {
-            if (circle < GameManager.instance.fields[fieldNumber].circles.Length - 1)
-                GameManager.instance.fields[fieldNumber].circles[circle].SetActive(true);
+            if (circle < FieldsFactory.GetField(fieldNumber).CountCircles)
+                FieldsFactory.GetField(fieldNumber).OpenCircle(circle);
             if (circle == maxUpgrade[fieldNumber] - 1)
             {
                 IsMax[fieldNumber] = true;

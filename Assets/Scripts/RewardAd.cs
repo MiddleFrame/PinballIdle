@@ -15,7 +15,7 @@ public class RewardAd : MonoBehaviour
     {
         GetComponent<Button>().onClick.AddListener(() =>
         {
-            AdManager.ShowReward(OnReceiveReward);
+            AdService.instanse.ShowReward(OnReceiveReward);
         });
     }
 

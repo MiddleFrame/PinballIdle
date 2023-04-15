@@ -33,7 +33,7 @@ public class SwipeMenu : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         FlipperController.RightOrLeft[FieldManager.currentField] = eventData.position.x > width/2.0;
         if (FieldManager.currentField>=0)
         {
-            As[FieldManager.currentField].Play();
+            //As[FieldManager.currentField].Play();
         }
     }
 

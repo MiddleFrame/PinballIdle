@@ -10,8 +10,7 @@ namespace Managers
     public class GameManager : MonoBehaviour
     {
         public static GameManager instance;
-
-        public Field[] fields;
+     
 
         public Sprite _lockedSprite;
 
@@ -20,7 +19,6 @@ namespace Managers
         public Sprite defaultShadowBall;
         public Sprite goldShadowBall;
         public Sprite _unlockedSprite;
-        public Teleport[] spawnPoints;
         public GameObject oneFieldCanvas;
         public GameObject triggerCanvas;
         public GameObject upperCanvas;
@@ -127,6 +125,8 @@ namespace Managers
         }
 
 
+    
+        
         public static string NormalSum(long p)
         {
             string _res;

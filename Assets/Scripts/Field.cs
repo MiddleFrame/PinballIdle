@@ -9,9 +9,15 @@ public class Field : MonoBehaviour
     public TextMesh levelText;
     public TextMesh ballsText;
 
+    public int CountCircles => circles.Length - 1;
+    
     [field: SerializeField]
     public GameObject _allFieldElement;
 
+    public Teleport spawnTeleport;
+
+    [SerializeField]
+    private GameObject _stopper;
     private void Awake()
     {
         FieldManager.openAllField += () => { _allFieldElement.SetActive(true); };
@@ -21,5 +27,20 @@ public class Field : MonoBehaviour
     public void MakeTriple()
     {
         circles[Random.Range(0, circles.Length)].GetComponent<LetsScript>().MakeTriple();
+    }
+
+    public void OpenCircle(int circle)
+    {
+        circles[circle].SetActive(true);
+    }
+
+    public void OpenStopper()
+    {
+        _stopper.SetActive(true);
+    }
+
+    public void CloseStopper()
+    {
+        _stopper.SetActive(false);
     }
 }

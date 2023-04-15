@@ -33,8 +33,6 @@ namespace Managers
         private GameObject _backButton;
         
         [SerializeField]
-        private GameObject[] _fields;
-        [SerializeField]
         private GameObject[] _areas;
 
         [SerializeField]
@@ -59,18 +57,19 @@ namespace Managers
         {
             currentField = 0;
             Debug.Log("Fields: " + JsonUtility.ToJson(fields));
-            for (int _i = 0; _i < fields.isOpen.Length; _i++)
-            {
-                if (fields.isOpen[_i])
-                {
-                    buyFields(_i);
-                }
-            }  
+           
             for (int _i = 0; _i < fields.isAreaOpen.Length; _i++)
             {
                 if (fields.isAreaOpen[_i])
                 {
                     _areas[_i].SetActive(false);
+                }
+            }
+            for (int _i = 0; _i < fields.isOpen.Length; _i++)
+            {
+                if (fields.isOpen[_i])
+                {
+                    _buyFields[_i].SetActive(false);
                 }
             }
 
@@ -222,23 +221,18 @@ namespace Managers
                 return;
             }
 
-            AnalyticManager.OpenNewField(field);
+            
             PlayerDataController.Gems -= fieldCosts[field];
             fields.isOpen[field] = true;
             PlayerDataController.playerStats.lvl[field] = 1;
             PlayerDataController.LevelSum++;
-            buyFields(field);
-            GameManager.instance.fields[field]._allFieldElement.SetActive(true);
+            _buyFields[field].SetActive(false);
+            FieldsFactory.GetField(field)._allFieldElement.SetActive(true);
+            FieldsFactory.GetField(field).gameObject.SetActive(true);
             openAllField.Invoke();
+            AnalyticManager.OpenNewField(field);
         }
 
-        private void buyFields(int field)
-        {
-            _buyFields[field].SetActive(false);
-            _fields[field].SetActive(true);
-            
-        }
-        
     }
 
 

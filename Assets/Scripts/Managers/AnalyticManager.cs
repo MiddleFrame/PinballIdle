@@ -55,9 +55,7 @@ namespace Managers
 
                                             Debug.Log(
                                                 $"Firebase config last fetch time {Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.Info.FetchTime}.");
-                                            IaPurchase.NumberOfPrice = (int) GetLong("Price");
                                             isRemoteInit = true;
-                                            Debug.Log("This price " + IaPurchase.NumberOfPrice);
                                         });
                                 }
                                 catch (Exception _e)

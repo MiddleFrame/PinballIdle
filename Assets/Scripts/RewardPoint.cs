@@ -78,7 +78,7 @@ public class RewardPoint : MonoBehaviour
         ThemeManager.changeTheme += changeColor;
         _lvlBuffs.text =
             $"x {PlayerDataController.playerStats.lvl[_field] * hitMultiply[_field]}";
-        GameManager.instance.fields[_field].stroke.SetActive(true);
+        FieldsFactory.GetField(_field).stroke.SetActive(true);
         int _i = DefaultBuff.grade.bonusTime[_field];
         while (_i >= 1)
         {
@@ -98,7 +98,7 @@ public class RewardPoint : MonoBehaviour
 
         ThemeManager.changeTheme -= changeColor;
 
-        GameManager.instance.fields[_field].stroke.SetActive(false);
+        FieldsFactory.GetField(_field).stroke.SetActive(false);
         reward[_field] = false;
         yield return new WaitForSeconds(60f);
 

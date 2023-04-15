@@ -321,7 +321,7 @@ namespace Managers
             if (progress.countCompleteChallenge[FieldManager.currentField] == 1 ||
                 progress.countCompleteChallenge[FieldManager.currentField] == 4)
             {
-                foreach (var _t in GameManager.instance.fields[FieldManager.currentField].circles)
+                foreach (var _t in FieldsFactory.GetField(FieldManager.currentField).circles)
                 {
                     var _localScale = _t.transform.localScale;
                     _localScale = new Vector3(
@@ -353,7 +353,7 @@ namespace Managers
             IsStartChallenge[field] = true;
             if (progress.countCompleteChallenge[field] == 1 || progress.countCompleteChallenge[field] == 4)
             {
-                foreach (var _t in GameManager.instance.fields[field].circles)
+                foreach (var _t in FieldsFactory.GetField(field).circles)
                 {
                     var _localScale = _t.transform.localScale;
                     _localScale = new Vector3(
@@ -395,7 +395,7 @@ namespace Managers
             progress.balls[FieldManager.currentField]++;
             PlayerDataController.Gems -= 100;
             ChangeCostBallText();
-            StartCoroutine(GameManager.instance.spawnPoints[FieldManager.currentField].Spawn());
+            StartCoroutine(FieldsFactory.GetField(FieldManager.currentField).spawnTeleport.Spawn());
             _countBallsText.text =
                 $"{progress.balls[FieldManager.currentField] + 1}";
         }

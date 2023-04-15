@@ -7,9 +7,6 @@ namespace Shop
     {
         public static StopperGrades grades;
 
-        [SerializeField]
-        private GameObject[] _stoppers;
-
         public static BuyStopper instance;
 
         private void Awake()
@@ -24,17 +21,17 @@ namespace Shop
             {
                 if (!FieldManager.fields.isOpen[_i]) continue;
                 if (grades.isStopper[_i])
-                    openStoppers(_i);
+                    OpenStoppers(_i);
             }
         }
 
-        public void openStoppers(int i)
+        public void OpenStoppers(int i)
         {
-            _stoppers[i].SetActive(true);
+            FieldsFactory.GetField(i).OpenStopper();
         }
-        public void closeStoppers(int i)
+        public void CloseStoppers(int i)
         {
-            _stoppers[i].SetActive(false);
+            FieldsFactory.GetField(i).CloseStopper();
         }
 
     }

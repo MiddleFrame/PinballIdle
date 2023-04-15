@@ -1,4 +1,5 @@
 using Controllers;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -47,8 +48,8 @@ namespace Managers
 
         public UnityEvent<int>[] completeLocalEvent;
 
-        private readonly int[] _needToLocalQuest = new[] {1, 3, 6};
-        private readonly int[] _needToGlobalQuest = new[] {50, 100, 200, 5, 10, 20, 10, 20, 30, 40, 50, 60, 70, 80, 90};
+        private readonly int[] _needToLocalQuest = {1, 3, 6};
+        private readonly int[] _needToGlobalQuest =  {50, 100, 200, 5, 10, 20, 10, 20, 30, 40, 50, 60, 70, 80, 90};
 
         [SerializeField]
         private GameObject[] _iconQuest;
@@ -91,7 +92,7 @@ namespace Managers
 
         public void InitializeQuest()
         {
-            for (int _i = 0; _i < GameManager.instance.fields.Length; _i++)
+            for (int _i = 0; _i < FieldsFactory.FieldsCount; _i++)
             {
                 CheckLevelQuest(_i);
                 EventLevelQuest(_i);
@@ -101,10 +102,6 @@ namespace Managers
             UpdateGlobalQuest();
         }
 
-        public void OpenTriple(int field)
-        {
-            GameManager.instance.fields[field].MakeTriple();
-        }
 
         // public void CompleteLevelQuest(int field)
         // {
@@ -218,6 +215,11 @@ namespace Managers
                 if (progress[field + 1].isComplete[_index])
                     completeLocalEvent[_index].Invoke(field);
             }
+        }
+
+        public void MakeFieldTriple(int field)
+        {
+            FieldsFactory.GetField(field).MakeTriple();
         }
     }
 

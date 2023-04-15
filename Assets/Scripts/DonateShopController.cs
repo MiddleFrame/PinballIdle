@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.UI;
@@ -32,11 +33,11 @@ public class DonateShopController : MonoBehaviour
     [SerializeField]
     private Text _rewardGoldTimer;
     // Start is called before the first frame update
-    public IEnumerator Init()
+    public async Task Init()
     { 
         while (!IaPurchase.IsIapInitialized())
         {
-            yield return new WaitForSeconds(1f);
+            await Task.Delay(100);
         }
         _diamondPacks[0].text = IaPurchase._storeController.products.WithStoreSpecificID(IaPurchase.LITTLE_PACK)
             .metadata.localizedPriceString;

@@ -84,7 +84,7 @@ public class Teleport : MonoBehaviour
                 _i = _i == FieldManager.fields.isOpen.Length - 1 ? 0 : _i + 1;
                 if (!FieldManager.fields.isOpen[_i]) continue;
 
-                GameManager.instance.spawnPoints[_i].Spawn(collision.gameObject);
+                FieldsFactory.GetField(_i).spawnTeleport.Spawn(collision.gameObject);
                 collision.gameObject.GetComponent<TrailRenderer>().Clear();
                 return;
             }

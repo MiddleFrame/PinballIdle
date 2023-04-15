@@ -1,6 +1,8 @@
-using System.Collections;
+using System.Threading.Tasks;
 using Managers;
 using UnityEngine;
+using Unity.Services.Core.Environments;
+using Unity.Services.Core;
 
 public class AdsAndIAP : MonoBehaviour
 {
@@ -19,28 +21,32 @@ public class AdsAndIAP : MonoBehaviour
         instance = this;
     }
 
-    private IEnumerator Start()
+    private async void Start()
     {
         while (!AnalyticManager.isRemoteInit)
-            yield return null;
+            await Task.Yield();
+        var options = new InitializationOptions()
+            .SetEnvironmentName("production");
+ 
+        await UnityServices.InitializeAsync(options);
         IaPurchase _iAPurchase = new IaPurchase();
         _iAPurchase.IapInitialize();
         StartCoroutine(IaPurchase.CheckSubscription());
         StartCoroutine(IaPurchase.CheckX2());
         if (IaPurchase.IsIapInitialized())
-            yield return _donateShopController.Init();
+            await _donateShopController.Init();
         else
         {
-            StartCoroutine(InitShop());
+            InitShop();
         }
     }
 
-    private IEnumerator InitShop()
+    private async void InitShop()
     {
         while (!IaPurchase.IsIapInitialized())
-            yield return new WaitForSeconds(1f);
+            await Task.Delay(1000);
 
-        yield return _donateShopController.Init();
+        await _donateShopController.Init();
     }
 
     public void HideAds()

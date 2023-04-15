@@ -241,8 +241,8 @@ namespace Competition
             FieldManager.openOneField = null;
             for (int _i = 0; _i < MenuController.openMenu.Count; _i++)
                 MenuController.openMenu[(MenuController.Shops) _i] = null;
-            SceneManager.LoadScene(0);
-            AdManager.ShowInterstitial();
+            SceneManager.LoadScene("MainFieldsScene");
+            AdService.instanse.ShowInterstitial();
         }
 
         public static void Concede()
@@ -252,8 +252,8 @@ namespace Competition
             FieldManager.openOneField = null;
             for (int _i = 0; _i < MenuController.openMenu.Count; _i++)
                 MenuController.openMenu[(MenuController.Shops) _i] = null;
-            SceneManager.LoadScene(0);
-            AdManager.ShowInterstitial();
+            SceneManager.LoadScene("MainFieldsScene");
+            AdService.instanse.ShowInterstitial();
         }
     }
 

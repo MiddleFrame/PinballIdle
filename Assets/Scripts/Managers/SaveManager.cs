@@ -1,52 +1,17 @@
-using System.Collections;
+using System.Threading.Tasks;
 using Controllers;
 using Shop;
 using UnityEngine;
 
 namespace Managers
 {
-    public class SaveManager : MonoBehaviour
+    public static class SaveManager 
     {
-        private static bool isInit;
-
         private static bool isLoading;
-        private static SaveManager instance;
 
-        private void Awake()
-        {
-            if (isInit)
-            {
-                Destroy(this);
-                return;
-            }
 
-            isInit = true;
-            instance = this;
-            DontDestroyOnLoad(this);
-            LoadGame();
-            Debug.Log("Init save manager " + isInit);
-        }
 
-        private void OnApplicationQuit()
-        {
-            SaveGame();
-        }
-
-#if !UNITY_EDITOR
-        private void OnApplicationPause(bool pause)
-        {
-            if (pause)
-            {
-                SaveGame();
-            }
-            else
-            {
-                LoadGame();
-            }
-        }
-#endif
-
-        private static void SaveGame()
+        public static void SaveGame()
         {
             Debug.Log("Save player data.");
             PlayerPrefs.SetString("DefaultBuff", JsonUtility.ToJson(DefaultBuff.grade));
@@ -67,7 +32,8 @@ namespace Managers
         }
 
 
-        private static void LoadGame()
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static void LoadGame()
         {
             if (isLoading) return;
             Debug.Log("Loading player data.");
@@ -101,15 +67,16 @@ namespace Managers
                 PlayerPrefs.GetString("Challenge", JsonUtility.ToJson(new ChallengeProgress())));
             SkinShopController.skins = JsonUtility.FromJson<Skins>(
                 PlayerPrefs.GetString("Skins", JsonUtility.ToJson(new Skins())));
-            instance.StartCoroutine(instance.loadQuest());
+           loadQuest();
 
             Debug.Log("Player data complete loading.");
             isLoading = true;
         }
 
-        private void LoadQuest()
+        private static void LoadQuest()
         {
             if (!QuestManager.instance) return;
+            Debug.Log(QuestManager.progress);
             QuestManager.progress = new Quest[10];
             QuestManager.progress[0] = JsonUtility.FromJson<Quest>(
                 PlayerPrefs.GetString("GlobalQuest",
@@ -126,13 +93,12 @@ namespace Managers
             QuestManager.instance.InitializeQuest();
         }
 
-        private IEnumerator loadQuest()
+        private static async void loadQuest()
         {
             while (!QuestManager.instance)
             {
-                yield return null;
+                await Task.Delay(1000);
             }
-
             LoadQuest();
         }
     }

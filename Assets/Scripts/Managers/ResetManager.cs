@@ -38,7 +38,7 @@ namespace Managers
         {
             DefaultBuff.ResetProgress(field);
             BuyStopper.grades.isStopper[field] = false;
-            BuyStopper.instance.closeStoppers(field);
+            BuyStopper.instance.CloseStoppers(field);
             PlayerDataController.playerStats.lvl[field] = 1;
             PlayerDataController.Key += 1;
             PlayerDataController.playerStats.exp[field] = 0;
@@ -51,7 +51,7 @@ namespace Managers
             MenuController.instance.OpenShop(3);
             //Тут мб оставлять N шаров и некоторые открытия
             ChallengeManager.progress.balls[field] = 0; //DefaultBuff.grade.multiplyPoint[field] < 1.7f ? 0 : 1;
-            GameManager.instance.spawnPoints[field].ResetBalls();
+            FieldsFactory.GetField(field).spawnTeleport.ResetBalls();
             ChallengeManager.progress.countCompleteChallenge[field] = 0;
             //  DefaultBuff.grade.multiplyPoint[field] < 1.7f ? 0 : 1;
             ChallengeManager.progress.currentProgressChallenge[field] = 0;

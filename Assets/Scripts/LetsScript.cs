@@ -139,7 +139,7 @@ public class LetsScript : MonoBehaviour
                     _sprite.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
                         GameManager.instance.defaultShadowBall;
                 if (QuestManager.progress[_numField + 1].isComplete[0])
-                    GameManager.instance.fields[_numField].MakeTriple();
+                    FieldsFactory.GetField(_numField).MakeTriple();
             }
             PlayerDataController.PointSum += _point;
             PlayerDataController.AddExp(_numField, exp);
