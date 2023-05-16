@@ -3,6 +3,7 @@ using Controllers;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Shop
 {
@@ -11,58 +12,72 @@ namespace Shop
         // Start is called before the first frame update
         [SerializeField]
         private Text _costText;
-        //
-        // [SerializeField]
-        // private Text _costBonusText;
-        //
-        // [SerializeField]
-        // private Text _costExpBonusText;
-        //
-        // [SerializeField]
-        // private Text _costAutoFlipperText;
+
+        [SerializeField]
+        private Text _costMultiply;
+
+        [SerializeField]
+        private Text _countMultiply;
 
         [SerializeField]
         private Text _pointBuffText;
 
-        // [SerializeField]
-        // private Text _pointBonusText;
-        //
-        // [SerializeField]
-        // private Text _pointExpBonusText;
 
         private bool _isOpen = true;
 
         private static DefaultBuff _instance;
-        //private bool _isOpenAutoFlipper = true;
-        //private bool _isBonusOpen = true;
-        // private bool _isExpBonusOpen = true;
         public static CostAndGrade grade;
 
-        public static readonly int[] costOnGrade =
+        private const int COST_TRIPLE = 10000;
+
+        private static readonly int[] costOnGrade =
         {
             DEFAULT_COST, DEFAULT_COST, DEFAULT_COST, DEFAULT_COST, DEFAULT_COST, DEFAULT_COST, DEFAULT_COST,
             DEFAULT_COST, DEFAULT_COST
         };
 
-        public const int DEFAULT_COST = 100;
-        // private readonly int[] _costOnBonusGrade = {500, 500, 500, 500, 500, 500, 500, 500, 500};
-        // private readonly int[] _costOnExpBonusGrade = {500, 500, 500, 500, 500, 500, 500, 500, 500};
-        // private const int COST_AUTO_FLIPPER = 10000;
+        private static readonly int[] costOnGradeMultiply =
+        {
+            DEFAULT_COST_MULTIPLY, DEFAULT_COST_MULTIPLY, DEFAULT_COST_MULTIPLY, DEFAULT_COST_MULTIPLY,
+            DEFAULT_COST_MULTIPLY, DEFAULT_COST_MULTIPLY, DEFAULT_COST_MULTIPLY,
+            DEFAULT_COST_MULTIPLY, DEFAULT_COST_MULTIPLY
+        };
 
-        // [SerializeField]
-        // private Text _autoFlipperText;
+        private static readonly int[] chanceToUpgrade =
+        {
+            50, 40, 40, 35, 30, 25, 20, 15, 10
+        };
+
+        private static readonly int[] chanceToUpgradeMultiply =
+        {
+            50, 40, 40, 35, 30, 25, 20, 15, 10
+        };
+
+        private const int DEFAULT_COST = 100;
+        private const int DEFAULT_COST_MULTIPLY = 100;
+        private const int COST_AUTO_FLIPPER = 10000;
+
+        [SerializeField]
+        private GameObject _enableAutoMod;
+
+        [SerializeField]
+        private GameObject _buyTriple;
+
+        [SerializeField]
+        private GameObject _buyBuff;
+
+        [SerializeField]
+        private GameObject _buyMultiply;
+
+        [SerializeField]
+        private Text _autoFlipperText;
 
         [SerializeField]
         private Image _buttonImage;
 
-        // [SerializeField]
-        // private Image _buttonBonusImage;
 
-        // [SerializeField]
-        // private Image _buttonExpBonusImage;
-
-        //[SerializeField]
-        // private Image _buttonAutoFlipperImage;
+        [SerializeField]
+        private Image _buttonAutoFlipperImage;
 
 
         public static bool[] autoMod;
@@ -71,19 +86,30 @@ namespace Shop
         {
             _instance = this;
             MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeHitText;
+            FieldManager.openAllField += () =>
+            {
+                NewElement.isBallInElement = false;
+            };
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeHitTextMultiply;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += OpenAutoMod;
+            MenuController.openMenu[MenuController.Shops.UpgradeFields] += () =>
+            {
+                _buyTriple.SetActive(!grade.triple[FieldManager.currentField]);
+            };
         }
 
         private void Start()
         {
             autoMod = new bool[grade.autoFlippers.Length];
+
             for (int _i = 0; _i < FieldManager.fields.isOpen.Length; _i++)
             {
                 if (!FieldManager.fields.isOpen[_i]) continue;
-                BuffHit(_i, grade.pointOnBit[_i] - 1);
-                // BuffBonusTime(_i, (grade.bonusTime[_i] - 30) / 5);
-                // BuffExpBonusTime(_i, (grade.expTime[_i] - 30) / 5);
+                BuffHit(_i, grade.tryPointOnBit[_i] - 1);
+                BuffMultiply(_i, grade.tryMultiply[_i] - 1);
                 if (grade.autoFlippers[_i])
                 {
+                    _enableAutoMod.SetActive(false);
                     autoMod[_i] = true;
                 }
             }
@@ -102,7 +128,7 @@ namespace Shop
             costOnGrade[field] = DEFAULT_COST;
             _instance.ChangeHitText();
         }
-        
+
         private void Update()
         {
             if (FieldManager.currentField == -1)
@@ -142,34 +168,57 @@ namespace Shop
             _pointBuffText.text = "Field Element gain " + grade.pointOnBit[FieldManager.currentField];
         }
 
-        // private void ChangeBonusText()
-        // {
-        //     _costBonusText.text = GameManager.NormalSum(_costOnBonusGrade[FieldManager.currentField]);
-        //     _pointBonusText.text = grade.bonusTime[FieldManager.currentField] + "→" +
-        //                            (grade.bonusTime[FieldManager.currentField] + 5);
-        // }
+        private void BuffMultiply(int field = 0, int countGrades = 1)
+        {
+            if (!FieldManager.fields.isOpen[field])
+                return;
+            for (int _i = 0; _i < countGrades; _i++)
+            {
+                costOnGradeMultiply[field] = (int) (costOnGradeMultiply[field] * 1.1f);
+            }
+        }
 
-        // private void ChangeExpBonusText()
-        // {
-        //     _costExpBonusText.text = GameManager.NormalSum(_costOnExpBonusGrade[FieldManager.currentField]);
-        //     _pointExpBonusText.text = grade.expTime[FieldManager.currentField] + "→" +
-        //                               (grade.expTime[FieldManager.currentField] + 5);
-        // }
+        private void ChangeHitTextMultiply()
+        {
+            _costMultiply.text = GameManager.NormalSum(costOnGradeMultiply[FieldManager.currentField]);
+            _countMultiply.text =
+                "Multiple point on click " + grade.multiply[FieldManager.currentField];
+        }
 
+        public void BuyBuffMultiply()
+        {
+            if (PlayerDataController.PointSum < costOnGradeMultiply[FieldManager.currentField]) return;
+            PlayerDataController.PointSum -= costOnGradeMultiply[FieldManager.currentField];
+            //statistic
+            Statistics.stats.pointSpent += costOnGradeMultiply[FieldManager.currentField];
+            BuffMultiply(FieldManager.currentField);
+            grade.tryMultiply[FieldManager.currentField]++;
+            if (Random.Range(0, 100) <
+                chanceToUpgradeMultiply[(int) ((grade.multiply[FieldManager.currentField] - 2) / 0.5f)])
+            {
+                grade.multiply[FieldManager.currentField] += 0.5f;
+                if (Math.Abs(grade.multiply[FieldManager.currentField] - 7f) < 0.1f)
+                {
+                    _buyMultiply.SetActive(false);
+                }
+            }
 
-        // private void OpenAutoMod()
-        // {
-        //     if (grade.autoFlippers[FieldManager.currentField])
-        //     {
-        //         _autoFlipperText.text = "Auto-flippers";
-        //         _buttonAutoFlipperImage.gameObject.SetActive(false);
-        //     }
-        //     else
-        //     {
-        //         _autoFlipperText.text = "Buy Auto-flippers";
-        //         _buttonAutoFlipperImage.gameObject.SetActive(true);
-        //     }
-        // }
+            ChangeHitTextMultiply();
+        }
+
+        private void OpenAutoMod()
+        {
+            if (grade.autoFlippers[FieldManager.currentField])
+            {
+                _autoFlipperText.text = "Auto-flippers";
+                _buttonAutoFlipperImage.gameObject.SetActive(false);
+            }
+            else
+            {
+                _autoFlipperText.text = "Buy Auto-flippers";
+                _buttonAutoFlipperImage.gameObject.SetActive(true);
+            }
+        }
 
         public void BuyBuffHit()
         {
@@ -177,81 +226,73 @@ namespace Shop
             PlayerDataController.PointSum -= costOnGrade[FieldManager.currentField];
             //statistic
             Statistics.stats.pointSpent += costOnGrade[FieldManager.currentField];
-
-            grade.pointOnBit[FieldManager.currentField] += 1;
-            for (int _i = 0; _i < 3; _i++)
+            BuffHit(FieldManager.currentField);
+            grade.tryPointOnBit[FieldManager.currentField]++;
+            if (Random.Range(0, 100) < chanceToUpgrade[grade.pointOnBit[FieldManager.currentField] - 1])
             {
-                QuestManager.progress[0].progressQuest[_i]++;
+                grade.pointOnBit[FieldManager.currentField] += 1;
+                if (grade.pointOnBit[FieldManager.currentField] == 10)
+                {
+                    _buyBuff.SetActive(false);
+                }
+
+                for (int _i = 0; _i < 3; _i++)
+                {
+                    QuestManager.progress[0].progressQuest[_i]++;
+                }
+
+                QuestManager.instance.UpdateGlobalQuest();
             }
 
-            QuestManager.instance.UpdateGlobalQuest();
-            if (FieldManager.currentField == 0 && grade.pointOnBit[FieldManager.currentField] == 10)
-                AnalyticManager.BuyTenUpgrade();
-            BuffHit(FieldManager.currentField);
             ChangeHitText();
         }
 
 
-        // private void BuffBonusTime(int field = 0, int countGrades = 1)
-        // {
-        //     if (!FieldManager.fields.isOpen[field])
-        //         return;
-        //     for (int _i = 0; _i < countGrades; _i++)
-        //     {
-        //         _costOnBonusGrade[field] = (int) (_costOnBonusGrade[field] * 1.1f);
-        //     }
-        // }
-        //
-        //
-        // public void BuyBuffBonusTime()
-        // {
-        //     if (PlayerDataController.PointSum < _costOnBonusGrade[FieldManager.currentField]) return;
-        //     PlayerDataController.PointSum -= _costOnBonusGrade[FieldManager.currentField];
-        //     //statistic
-        //     Statistics.stats.pointSpent += _costOnBonusGrade[FieldManager.currentField];
-        //
-        //     grade.bonusTime[FieldManager.currentField] += 5;
-        //     BuffBonusTime(FieldManager.currentField);
-        //     ChangeBonusText();
-        // }
-        //
-        // private void BuffExpBonusTime(int field = 0, int countGrades = 1)
-        // {
-        //     if (!FieldManager.fields.isOpen[field])
-        //         return;
-        //     for (int _i = 0; _i < countGrades; _i++)
-        //     {
-        //         _costOnExpBonusGrade[field] = (int) (_costOnExpBonusGrade[field] * 1.1f);
-        //     }
-        // }
-        //
-        //
-        // public void BuyBuffExpBonusTime()
-        // {
-        //     if (PlayerDataController.PointSum < _costOnExpBonusGrade[FieldManager.currentField]) return;
-        //     PlayerDataController.PointSum -= _costOnExpBonusGrade[FieldManager.currentField];
-        //     //statistic
-        //     Statistics.stats.pointSpent += _costOnExpBonusGrade[FieldManager.currentField];
-        //
-        //     grade.expTime[FieldManager.currentField] += 5;
-        //     BuffExpBonusTime(FieldManager.currentField);
-        //     ChangeExpBonusText();
-        // }
-
-        public void BuyAutoMod(int field)
+        private void buyAutoMod()
         {
-            grade.autoFlippers[field] = true;
-            autoMod[field] = true;
-            if (field == FieldManager.currentField)
-                ChallengeManager.Instance.OpenChallenges();
+            grade.autoFlippers[FieldManager.currentField] = true;
+            autoMod[FieldManager.currentField] = true;
+            OpenAutoMod();
+        }
+
+        public void BuyAutoMod()
+        {
+            if (PlayerDataController.PointSum < COST_AUTO_FLIPPER) return;
+            PlayerDataController.PointSum -= COST_AUTO_FLIPPER;
+            buyAutoMod();
+        }
+
+        public void EnableAutoMod()
+        {
+            autoMod[FieldManager.currentField] = true;
+            _enableAutoMod.SetActive(false);
+        }
+
+        public void DisableAutoMod()
+        {
+            autoMod[FieldManager.currentField] = false;
+            _enableAutoMod.SetActive(true);
+        }
+
+        public void BuyTriple()
+        {
+            if (PlayerDataController.PointSum < COST_TRIPLE) return;
+            PlayerDataController.PointSum -= COST_TRIPLE;
+            grade.triple[FieldManager.currentField] = true;
+            _buyTriple.SetActive(false);
         }
     }
 
     [Serializable]
     public class CostAndGrade
     {
+        public float[] multiply;
+        public int[] tryMultiply;
         public int[] pointOnBit;
+        public int[] tryPointOnBit;
         public bool[] autoFlippers;
+        public bool[] stopper;
+        public bool[] triple;
         public int[] bonusTime;
         public int[] expTime;
         public float[] multiplyPoint;
@@ -259,9 +300,14 @@ namespace Shop
         public CostAndGrade()
         {
             pointOnBit = new[] {1, 1, 1, 1, 1, 1, 1, 1, 1};
+            tryPointOnBit = new[] {1, 1, 1, 1, 1, 1, 1, 1, 1};
+            multiply = new[] {2f, 2f, 2f, 2f, 2f, 2f, 2f, 2f, 2f};
+            tryMultiply = new[] {1, 1, 1, 1, 1, 1, 1, 1, 1};
             bonusTime = new[] {30, 30, 30, 30, 30, 30, 30, 30, 30};
             expTime = new[] {30, 30, 30, 30, 30, 30, 30, 30, 30};
             autoFlippers = new[] {false, false, false, false, false, false, false, false, false};
+            stopper = new[] {false, false, false, false, false, false, false, false, false};
+            triple = new[] {false, false, false, false, false, false, false, false, false};
             multiplyPoint = new[] {1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f};
         }
     }

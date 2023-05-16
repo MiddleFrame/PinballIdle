@@ -1,5 +1,4 @@
 using Controllers;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -39,6 +38,7 @@ namespace Managers
 
         [SerializeField]
         private GameObject GlobalQuest;
+
         [SerializeField]
         private GameObject _notification;
 
@@ -49,10 +49,8 @@ namespace Managers
         public UnityEvent<int>[] completeLocalEvent;
 
         private readonly int[] _needToLocalQuest = {1, 3, 6};
-        private readonly int[] _needToGlobalQuest =  {50, 100, 200, 5, 10, 20, 10, 20, 30, 40, 50, 60, 70, 80, 90};
+        private readonly int[] _needToGlobalQuest = {50, 100, 200, 5, 10, 20, 10, 20, 30, 40, 50, 60, 70, 80, 90};
 
-        [SerializeField]
-        private GameObject[] _iconQuest;
 
         private void Awake()
         {
@@ -122,13 +120,6 @@ namespace Managers
             {
                 if (FieldManager.currentField == field)
                 {
-                    if (progress[field + 1].isComplete[_index] && _iconQuest[_index].activeSelf)
-                        _iconQuest[_index].SetActive(false);
-                    else if (!progress[field + 1].isComplete[_index] && !_iconQuest[_index].activeSelf)
-                    {
-                        _iconQuest[_index].SetActive(true);
-                    }
-
                     _textsFieldQuest[_index].text =
                         (PlayerDataController.playerStats.lvl[field] - 1 >= _needToLocalQuest[_index]
                             ? _needToLocalQuest[_index]
@@ -140,10 +131,8 @@ namespace Managers
                 if (progress[field + 1].isComplete[_index] ||
                     PlayerDataController.playerStats.lvl[field] - 1 < _needToLocalQuest[_index]) continue;
                 progress[field + 1].isComplete[_index] = true;
-                completeLocalEvent[_index].Invoke(field);
                 if (FieldManager.currentField == field)
                 {
-                    _iconQuest[_index].SetActive(false);
                     if (_index == 1 && TutorialManager._isNeedTutorialRank)
                         TutorialManager.RankTutorialWindow();
                 }
@@ -167,7 +156,7 @@ namespace Managers
                 {
                     _buttonsGlobalQuest[_index].raycastTarget = true;
                     _buttonsGlobalQuest[_index].sprite = GameManager.instance._unlockedSprite;
-                    if(!_notification.activeSelf)
+                    if (!_notification.activeSelf)
                         _notification.SetActive(true);
                 }
             }
@@ -178,17 +167,13 @@ namespace Managers
             PlayerDataController.Gems += gems;
         }
 
-        public void GiveKeys(int keys)
-        {
-            PlayerDataController.Key += keys;
-        }
 
         public void GiveReward(int quest)
         {
             progress[0].isComplete[quest] = true;
             completeGlobalEvent[quest].Invoke();
             _buttonsGlobalQuest[quest].gameObject.SetActive(false);
-            
+
             _notification.SetActive(false);
         }
 

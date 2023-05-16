@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using Controllers;
 using Managers;
+using Shop;
 using UnityEngine;
 
 public class Teleport : MonoBehaviour
@@ -16,7 +19,11 @@ public class Teleport : MonoBehaviour
     public float fieldMultiply = 1;
     public float restrictions = 1.35f;
     private int _a = 1;
-    public int field;
+    [SerializeField]
+    private int field;
+
+    public event Action SpawnBall;
+
 
     private void Awake()
     {
@@ -115,7 +122,7 @@ public class Teleport : MonoBehaviour
     public IEnumerator Spawn()
     {
         //  var _child = balls[0].GetComponentsInChildren<TrailRenderer>();
-
+        SpawnBall?.Invoke();
 
         for (int _j = 0; _j <= ChallengeManager.progress.balls[field]; _j++)
         {

@@ -58,13 +58,7 @@ namespace Managers
             currentField = 0;
             Debug.Log("Fields: " + JsonUtility.ToJson(fields));
            
-            for (int _i = 0; _i < fields.isAreaOpen.Length; _i++)
-            {
-                if (fields.isAreaOpen[_i])
-                {
-                    _areas[_i].SetActive(false);
-                }
-            }
+           
             for (int _i = 0; _i < fields.isOpen.Length; _i++)
             {
                 if (fields.isOpen[_i])
@@ -80,7 +74,7 @@ namespace Managers
                 {
                     if (fields.isOpen[_i] && _i < fields.isOpen.Length - 1 && !fields.isOpen[_i + 1])
                     {
-                        _buyFieldsButton[_i+1].SetActive(_i+1 < 3 || fields.isAreaOpen[(_i+1)/3-1]);
+                        _buyFieldsButton[_i+1].SetActive(true);
                         _flag = _i+1;
                     }
 
@@ -140,7 +134,7 @@ namespace Managers
             _scale = StartCoroutine(scaleCamera(false));
         }
 
-        public void UnlockArea(int area)
+        /*public void UnlockArea(int area)
         {
             if (PlayerDataController.playerStats.key < 3)
             {
@@ -151,7 +145,7 @@ namespace Managers
             _areas[area].SetActive(false);
             fields.isAreaOpen[area] = true;
             openAllField?.Invoke();
-        }
+        }*/
 
         private IEnumerator moveCamera(Vector3 lastPos)
         {
@@ -239,6 +233,6 @@ namespace Managers
     public class Fields
     {
         public bool[] isOpen = {true, false, false, false, false, false, false, false, false};
-        public bool[] isAreaOpen = {false, false};
+        //public bool[] isAreaOpen = {false, false};
     }
 }

@@ -18,14 +18,13 @@ public class FieldsFactory : IFieldsFactory
     public void Load()
     {
         _fields = Resources.LoadAll<Field>("Fields");
-        
-        Debug.Log(_fields[0]);
     }
     
     public void InstantiateField(int fieldNumber, Transform marker)
     {
         _fieldsObjects.Add(_diContainer.InstantiatePrefab(_fields[fieldNumber].gameObject, marker.position,
-            Quaternion.identity, marker).GetComponent<Field>());
+            Quaternion.identity, marker).GetComponent<Field>().Construct(_fields[fieldNumber]));
+        
         if (!Managers.FieldManager.fields.isOpen[fieldNumber])
         {
             _fieldsObjects[fieldNumber].gameObject.SetActive(false);

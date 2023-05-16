@@ -37,10 +37,7 @@ namespace Managers
         private void ResetProgressOnField(int field)
         {
             DefaultBuff.ResetProgress(field);
-            BuyStopper.grades.isStopper[field] = false;
-            BuyStopper.instance.CloseStoppers(field);
             PlayerDataController.playerStats.lvl[field] = 1;
-            PlayerDataController.Key += 1;
             PlayerDataController.playerStats.exp[field] = 0;
             for (var _index = 0; _index < QuestManager.progress[field + 1].isComplete.Length; _index++)
             {

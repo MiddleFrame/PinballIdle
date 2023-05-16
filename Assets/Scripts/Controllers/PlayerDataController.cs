@@ -11,16 +11,11 @@ namespace Controllers
     {
         public static PlayerStats playerStats;
         private static PlayerDataController _instance;
-
         [SerializeField]
         private GameObject _lvlUpPanel;
 
         [SerializeField]
         private Text _gems;
-        [SerializeField]
-        private Text _keyCount;
-        [SerializeField]
-        private GameObject _keyPanel;
 
         public static int Gems
         {
@@ -31,16 +26,6 @@ namespace Controllers
                 _instance._gems.text = GameManager.NormalSum(playerStats.gems);
             }
         }
-        public static int Key
-        {
-            get => playerStats.key;
-            set
-            {
-                playerStats.key = value;
-                _instance._keyCount.text = GameManager.NormalSum(playerStats.key);
-            }
-        }
-
         [SerializeField]
         private Image[] _exp;
 
@@ -88,14 +73,14 @@ namespace Controllers
         private void Awake()
         {
             FieldManager.openAllField += changeFieldsLevelText;
-            FieldManager.openAllField += () =>
+            /*FieldManager.openAllField += () =>
             {
                 _keyPanel.SetActive(true);
             };
             FieldManager.openOneField += () =>
             {
                 _keyPanel.SetActive(false);
-            };
+            };*/
             FieldManager.openOneField += changeFillAmount;
             FieldManager.openOneField += changeLevelText;
             _instance = this;
@@ -106,7 +91,7 @@ namespace Controllers
             Debug.Log("Sum of levels: " + LevelSum);
             PointSum = playerStats.pointSum;
             Gems = playerStats.gems;
-            Key = playerStats.key;
+            //Key = playerStats.key;
             changeFillAmount();
             changeLevelText();
         }
@@ -122,11 +107,6 @@ namespace Controllers
 
         public static void AddExp(int field, int exp)
         {
-            if (!UnlockCircles.IsMax[field])
-            {
-                UnlockCircles.AddExp(field,exp);
-                return;
-            }
             if (playerStats.lvl[field] > 10) return;
             playerStats.exp[field] += exp;
             if (playerStats.exp[field] >= 100 * playerStats.lvl[field])

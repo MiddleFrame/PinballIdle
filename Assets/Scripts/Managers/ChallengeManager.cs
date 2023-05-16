@@ -64,9 +64,6 @@ namespace Managers
         private Text _countBallsText;
 
         [SerializeField]
-        private Text _countCompleteChallengeText;
-
-        [SerializeField]
         private Image _startChallengeImage;
 
         [SerializeField]
@@ -151,13 +148,9 @@ namespace Managers
                     $"{progress.balls[FieldManager.currentField] + 1}";
                 _getRank.SetActive(progress.countCompleteChallenge[FieldManager.currentField] == 0);
                 _costWithImage.SetActive(progress.countCompleteChallenge[FieldManager.currentField] > 0);
-                _rankFieldOnGrade.sprite = _ranks[progress.countCompleteChallenge[FieldManager.currentField]];
-               
-
             };
             MenuController.openMenu[MenuController.Shops.Ranks] += () =>
             {
-                _countCompleteChallengeText.text = $"{progress.countCompleteChallenge[FieldManager.currentField]}/5";
                 if (IsStartChallenge[FieldManager.currentField])
                 {
                     if (!_startChallengeImage.raycastTarget) return;

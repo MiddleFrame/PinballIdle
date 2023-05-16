@@ -3,10 +3,10 @@ using UnityEngine;
 using Google.Play.Review;
 using Managers;
 
-public class Review 
+public class Review
 {
-private static ReviewManager _reviewManager;
-private static PlayReviewInfo _playReviewInfo;
+    private static ReviewManager _reviewManager;
+    private static PlayReviewInfo _playReviewInfo;
 
 
     public static IEnumerator OpenReview()
@@ -25,7 +25,7 @@ private static PlayReviewInfo _playReviewInfo;
 
         var launchFlowOperation = _reviewManager.LaunchReviewFlow(_playReviewInfo);
         yield return launchFlowOperation;
-        
+
         _playReviewInfo = null; // Reset the object
         if (launchFlowOperation.Error != ReviewErrorCode.NoError)
         {

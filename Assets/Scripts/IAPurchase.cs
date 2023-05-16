@@ -94,8 +94,7 @@ public class IaPurchase : IStoreListener
     {
         if (IsIapInitialized() && _storeController.products.WithID(id) != null)
             return _storeController.products.WithID(id).hasReceipt;
-        else
-            return false;
+        return false;
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs purchaseEvent)
@@ -117,17 +116,7 @@ public class IaPurchase : IStoreListener
         else if (purchaseEvent.purchasedProduct.definition.id == BIG_PACK)
         {
             PlayerDataController.Gems += 20000;
-        } else if (purchaseEvent.purchasedProduct.definition.id == KEY_LITTLE_PACK)
-        {
-            PlayerDataController.Key += 10;
-        } else if (purchaseEvent.purchasedProduct.definition.id == KEY_MEDIUM_PACK)
-        {
-            PlayerDataController.Gems += 4000;
-            PlayerDataController.Key += 20;
-        } else if (purchaseEvent.purchasedProduct.definition.id == KEY_BIG_PACK)
-        {
-            PlayerDataController.Key += 40;
-        }
+        } 
         else if (purchaseEvent.purchasedProduct.definition.id == SPECIAL_OFFER)
         {
             SkinShopController.ConfBuyTrail();

@@ -15,7 +15,7 @@ namespace Shop
         [SerializeField]
         private Image _startCompetitive;
 
-        private bool _isOpen = true;
+        private bool _isOpen = false;
 
         [SerializeField]
         private Sprite _openSprite;
