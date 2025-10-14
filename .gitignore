@@ -68,3 +68,7 @@ crashlytics-build.properties
 
 
 # End of https://www.gitignore.io/api/unity
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp-12_8_0.so
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp-12_8_0.so.meta
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp-12_8_0.bundle
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp-12_8_0.bundle.meta

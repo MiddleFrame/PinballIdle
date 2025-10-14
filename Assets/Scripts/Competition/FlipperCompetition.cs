@@ -1,6 +1,4 @@
-﻿using Managers;
-using Shop;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Competition
 {

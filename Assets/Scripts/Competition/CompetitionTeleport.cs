@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Controllers;
 using Managers;
 using UnityEngine;
@@ -76,7 +75,7 @@ namespace Competition
         }
         private void Spawn(GameObject ball)
         {
-            ball.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            ball.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
             ball.GetComponent<Rigidbody2D>().angularVelocity = 0f;
             ball.transform.position = spawnPoint.transform.position;
             ball.GetComponent<BallsChallenge>().timeOnField = 0;
@@ -121,7 +120,7 @@ namespace Competition
             {
                 _t.GetComponent<TrailRenderer>().Clear();
             }*/
-                balls[_j].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                balls[_j].GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
                 balls[_j].GetComponent<Rigidbody2D>().angularVelocity = 0f;
                 balls[_j].transform.localPosition = spawnPoint.transform.localPosition;
                 balls[_j].SetActive(true);

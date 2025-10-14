@@ -47,6 +47,7 @@ namespace Competition
         [SerializeField]
         private GameObject text;
 
+        private PopupsController _popupsController;
         public static GameObject Text => instance.text;
         public static bool[] isBuff = {false, false, false, false, false, false, false, false, false};
 
@@ -69,7 +70,7 @@ namespace Competition
             point = new int[9]; //{9997, 9997, 9997, 9997, 9997, 9997, 9997, 9997, 9997};
             instance = this;
             FieldManager.currentField = 0;
-            LetsScript.isCompetitive = true;
+            Let.IsCompetitive = true;
             currentPattern = new int[8];
 
             for (int _i = 1; _i < isBuff.Length; _i++)
@@ -77,7 +78,7 @@ namespace Competition
                 isBuff[_i] = Random.Range(0, 1.0f) > 0.4f;
             }
 
-            if (!Setting.settings.sound)
+            if (!Setting.Sound)
             {
                 AudioListener.volume = 0;
             }
@@ -239,8 +240,7 @@ namespace Competition
             GetPrice();
             FieldManager.openAllField = null;
             FieldManager.openOneField = null;
-            for (int _i = 0; _i < MenuController.openMenu.Count; _i++)
-                MenuController.openMenu[(MenuController.Shops) _i] = null;
+            instance._popupsController.CloseAllPopups();
             SceneManager.LoadScene("MainFieldsScene");
             AdService.instanse.ShowInterstitial();
         }
@@ -250,8 +250,8 @@ namespace Competition
             if (isWinners[0]) GetPrice();
             FieldManager.openAllField = null;
             FieldManager.openOneField = null;
-            for (int _i = 0; _i < MenuController.openMenu.Count; _i++)
-                MenuController.openMenu[(MenuController.Shops) _i] = null;
+            
+            instance._popupsController.CloseAllPopups();
             SceneManager.LoadScene("MainFieldsScene");
             AdService.instanse.ShowInterstitial();
         }

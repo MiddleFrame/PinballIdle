@@ -1,17 +1,47 @@
 {
-    "m_SelectedDeviceId": "ce041714c19a10580d",
-    "m_SelectedPackage": {
-        "deviceId": "",
-        "name": "",
-        "processId": 0,
+    "m_SelectedDeviceId": "86694829",
+    "m_SelectedProcess": {
+        "deviceId": "86694829",
+        "name": "com.MiddleFrame.IdlePinball",
+        "processId": 18185,
         "exited": false
     },
     "m_SelectedPriority": 0,
-    "m_KnownPackagesForSerialization": [
+    "m_KnownProcessesForSerialization": [
         {
-            "deviceId": "ce041714c19a10580d",
-            "name": "com.teslacoilsw.launcher",
-            "processId": 6105,
+            "deviceId": "86694829",
+            "name": "com.mi.android.globallauncher",
+            "processId": 4406,
+            "exited": true
+        },
+        {
+            "deviceId": "86694829",
+            "name": "com.android.vending",
+            "processId": 21690,
+            "exited": true
+        },
+        {
+            "deviceId": "86694829",
+            "name": "com.MiddleFrame.IdlePinball",
+            "processId": 13197,
+            "exited": true
+        },
+        {
+            "deviceId": "86694829",
+            "name": "com.TechTreeGames.TheTower",
+            "processId": 27625,
+            "exited": false
+        },
+        {
+            "deviceId": "86694829",
+            "name": "com.MiddleFrame.IdlePinball",
+            "processId": 27901,
+            "exited": true
+        },
+        {
+            "deviceId": "86694829",
+            "name": "com.MiddleFrame.IdlePinball",
+            "processId": 18185,
             "exited": false
         }
     ],
@@ -47,8 +77,11 @@
             }
         ]
     },
+    "m_ExtraWindowState": {
+        "Type": 0,
+        "Height": 0.0
+    },
     "m_MemoryViewerState": {
-        "MemoryWindowHeight": 300.0,
         "MemoryWindowWidth": 170.0,
         "MemoryTypeEnabled": [
             true,
@@ -63,9 +96,46 @@
             true
         ],
         "MemoryGroup": 2,
-        "Behavior": 0
+        "AutoCapture": true
     },
-    "m_Filter": "",
-    "m_FilterIsRegularExpression": false,
-    "m_SymbolPaths": []
+    "m_FilterOptions": {
+        "m_Filter": "",
+        "m_UseRegularExpressions": false,
+        "m_MatchCase": false
+    },
+    "m_SymbolPaths": [],
+    "m_CaptureVideoSettings": {
+        "TimeLimitEnabled": false,
+        "TimeLimit": 180,
+        "VideoSizeEnabled": false,
+        "VideoSizeX": 1280,
+        "VideoSizeY": 720,
+        "BitRateEnabled": false,
+        "BitRateK": 20000,
+        "DisplayIdEnabled": false,
+        "DisplayId": ""
+    },
+    "m_ScreenCaptureSettings": {
+        "Mode": 0,
+        "m_LastSaveLocation": [
+            "C:\\Repo\\PinballIdle",
+            "C:\\Repo\\PinballIdle"
+        ]
+    },
+    "m_QueryLayoutSettings": {
+        "LastLayoutSaveLocation": "",
+        "LastScreenshotSaveLocation": ""
+    },
+    "m_InputSettings": {
+        "ShiftModifier": false,
+        "SendText": "",
+        "PosixKillSignal": 0,
+        "TargetProcess": {
+            "deviceId": "",
+            "name": "",
+            "processId": 0,
+            "exited": false
+        }
+    },
+    "m_AutoScroll": 2
 }

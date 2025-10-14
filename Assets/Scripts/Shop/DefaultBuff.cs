@@ -3,6 +3,7 @@ using Controllers;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 using Random = UnityEngine.Random;
 
 namespace Shop
@@ -21,14 +22,15 @@ namespace Shop
 
         [SerializeField]
         private Text _pointBuffText;
-
+        [Inject]
+        private PopupsController _popupsController;
 
         private bool _isOpen = true;
 
         private static DefaultBuff _instance;
         public static CostAndGrade grade;
 
-        private const int COST_TRIPLE = 10000;
+        private const int COST_TRIPLE = 3000;
 
         private static readonly int[] costOnGrade =
         {
@@ -55,7 +57,7 @@ namespace Shop
 
         private const int DEFAULT_COST = 100;
         private const int DEFAULT_COST_MULTIPLY = 100;
-        private const int COST_AUTO_FLIPPER = 10000;
+        private const int COST_AUTO_FLIPPER = 50000;
 
         [SerializeField]
         private GameObject _enableAutoMod;
@@ -71,6 +73,8 @@ namespace Shop
 
         [SerializeField]
         private Text _autoFlipperText;
+        [SerializeField]
+        private GameObject _autoMod;
 
         [SerializeField]
         private Image _buttonImage;
@@ -85,21 +89,16 @@ namespace Shop
         private void Awake()
         {
             _instance = this;
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeHitText;
-            FieldManager.openAllField += () =>
-            {
-                NewElement.isBallInElement = false;
-            };
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += ChangeHitTextMultiply;
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += OpenAutoMod;
-            MenuController.openMenu[MenuController.Shops.UpgradeFields] += () =>
-            {
-                _buyTriple.SetActive(!grade.triple[FieldManager.currentField]);
-            };
+         
         }
 
         private void Start()
         {
+            _popupsController.RegisterActionToOpenPopup<FieldLevelPanel>(OpenTriple);
+            _popupsController.RegisterActionToOpenPopup<FieldLevelPanel>(ChangeHitText);
+            _popupsController.RegisterActionToOpenPopup<FieldLevelPanel>(ChangeHitTextMultiply);
+            _popupsController.RegisterActionToOpenPopup<FieldLevelPanel>(openAutoMod);
+           
             autoMod = new bool[grade.autoFlippers.Length];
 
             for (int _i = 0; _i < FieldManager.fields.isOpen.Length; _i++)
@@ -134,7 +133,7 @@ namespace Shop
             if (FieldManager.currentField == -1)
                 return;
 
-            if (MenuController.currentMenu != (int) MenuController.Shops.UpgradeFields) return;
+            if (!_popupsController.isPopupOpened<FieldLevelPanel>()) return;
             switch (_isOpen)
             {
                 case true when PlayerDataController.PointSum < costOnGrade[FieldManager.currentField]:
@@ -206,8 +205,15 @@ namespace Shop
             ChangeHitTextMultiply();
         }
 
-        private void OpenAutoMod()
+        private void OpenTriple()
         {
+            _buyTriple.SetActive(QuestManager.progress[FieldManager.currentField + 1].isComplete[0]);
+            if(grade.triple[FieldManager.currentField])
+                _buyTriple.SetActive(false);
+        }
+        private void openAutoMod()
+        {
+            _autoMod.SetActive(QuestManager.progress[FieldManager.currentField + 1].isComplete[1]);
             if (grade.autoFlippers[FieldManager.currentField])
             {
                 _autoFlipperText.text = "Auto-flippers";
@@ -239,9 +245,10 @@ namespace Shop
                 for (int _i = 0; _i < 3; _i++)
                 {
                     QuestManager.progress[0].progressQuest[_i]++;
+                    
+                    QuestManager.instance.CheckGlobalQuest(_i);
                 }
 
-                QuestManager.instance.UpdateGlobalQuest();
             }
 
             ChangeHitText();
@@ -252,7 +259,7 @@ namespace Shop
         {
             grade.autoFlippers[FieldManager.currentField] = true;
             autoMod[FieldManager.currentField] = true;
-            OpenAutoMod();
+            openAutoMod();
         }
 
         public void BuyAutoMod()
@@ -272,8 +279,8 @@ namespace Shop
         {
             autoMod[FieldManager.currentField] = false;
             _enableAutoMod.SetActive(true);
-        }
-
+        } 
+        
         public void BuyTriple()
         {
             if (PlayerDataController.PointSum < COST_TRIPLE) return;

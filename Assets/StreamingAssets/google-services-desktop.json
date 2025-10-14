@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "1089568064159",
-    "project_id": "pinball-i",
-    "storage_bucket": "pinball-i.appspot.com"
+    "project_number": "1061491567422",
+    "project_id": "idle-pinball-14cc4",
+    "storage_bucket": "idle-pinball-14cc4.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1089568064159:android:88f53da2b6e4fe71cf18aa",
+        "mobilesdk_app_id": "1:1061491567422:android:6a8ea479192ce4d73a9a6f",
         "android_client_info": {
-          "package_name": "com.MiddleFrame.PinballIdle"
+          "package_name": "com.MiddleFrame.IdlePinball"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "1089568064159-2a65d10do4f139cfd6aod65nuant41rh.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDSjKzCV9xbSQlHrP9v15LsbMSiK9qD0vI"
+          "current_key": "AIzaSyABzdl32iMSw1IoZthgUVe936jDzpEOOOk"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1089568064159-2a65d10do4f139cfd6aod65nuant41rh.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

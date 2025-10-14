@@ -1,6 +1,3 @@
-using Controllers;
-using Managers;
-using Shop;
 using UnityEngine;
 
 namespace Competition

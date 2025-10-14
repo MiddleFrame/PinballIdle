@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4830391788420698327}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5965306589652350234
 MonoBehaviour:
@@ -47,8 +48,9 @@ MonoBehaviour:
   _scriptableObjectInstallers: []
   _monoInstallers:
   - {fileID: -1005947272069632803}
-  _installerPrefabs: []
-  _parentNewObjectsUnderContext: 0
+  _installerPrefabs:
+  - {fileID: 6663182230598984941, guid: 2be11533ab7a0514589833899f55b60f, type: 3}
+  _parentNewObjectsUnderContext: 1
   _editorReflectionBakingCoverageMode: 0
   _buildsReflectionBakingCoverageMode: 0
   _settings:
@@ -73,5 +75,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39292fa297151d14f87594840bfa9f15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _adsService: {fileID: 502262412882916548, guid: 816fbff4a1cc4764bb1ed1e1e372e9dd,
+  _popupsViewPrefab: {fileID: 6663182230598984941, guid: 2be11533ab7a0514589833899f55b60f,
     type: 3}
